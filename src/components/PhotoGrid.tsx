@@ -143,7 +143,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
     <>
       <div class={filterStyles.filters} role="group" aria-label="Vis bilder">
         <button
-          class={filterStyles.chip}
+          class={styles.chip}
           type="button"
           aria-pressed={filter === null}
           onClick={() => choose(null)}
@@ -156,7 +156,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
               <span class={filterStyles.sep} aria-hidden="true" />
             )}
             <button
-              class={filterStyles.chip}
+              class={styles.chip}
               type="button"
               aria-pressed={filter === key}
               onClick={() => choose(filter === key ? null : key)}

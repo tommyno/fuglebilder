@@ -103,7 +103,7 @@ export default function RandomBirds() {
       </h2>
       <div class={own.choices}>
         <button
-          class={styles.button}
+          class={styles.chip}
           type="button"
           aria-label="Tilfeldige fugler"
           aria-pressed={mode === 'tilfeldige'}
@@ -115,7 +115,7 @@ export default function RandomBirds() {
           </span>
         </button>
         <button
-          class={styles.button}
+          class={styles.chip}
           type="button"
           aria-label="Norske fugler"
           aria-pressed={mode === 'norske'}

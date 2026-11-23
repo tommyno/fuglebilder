@@ -1,4 +1,4 @@
-/* Filter chips above the photos on a bird page */
+/* Filters above the photos on a bird page (the chips themselves are in Grid.module.css) */
 
 .filters {
   display: flex;
@@ -13,35 +13,6 @@
 
 .filters::-webkit-scrollbar {
   display: none;
-}
-
-/* Compact text pills: no outline, the chosen one is filled with the text colour */
-.chip {
-  flex: none;
-  height: var(--control-xs);
-  padding: 0 var(--space-sm);
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--text);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) {
-  .chip:hover {
-    background: var(--surface-2);
-  }
-}
-
-.chip[aria-pressed='true'] {
-  background: var(--text);
-  color: var(--surface);
 }
 
 .sep {
