@@ -33,6 +33,6 @@
 
 .emptyTitle {
   margin: 0 0 var(--space-lg);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   font-size: var(--text-lg);
 }

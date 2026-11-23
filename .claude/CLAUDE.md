@@ -46,7 +46,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 - **Photo order** (`alle`): iNat's curated taxon photos, then sightings annotated "Alive" by votes, then other sightings by votes. Research grade only, cover photo of each sighting only, at least 800 px long edge, no panoramas (aspect > 2.5). Skip sightings annotated dead or feathers/tracks/bones, and ones whose description says dead/roadkill/carcass (several languages).
 - **Age/sex filters require "Alive" too,** and skip curated photos. Many dead birds carry an age or sex annotation with no dead annotation or telling description. iNat's API can't combine two annotation filters, so "Alive" is checked server side and a filtered page can come back short. One filter at a time.
 - **Norske fugler:** species seen in Norway at least 3 times (research grade), ~280, A–Å. The minimum drops one-off strays and escapes. **Tilfeldige fugler:** 24 picked uniformly from every species with a photo, a Norwegian name and at least 50 sightings worldwide (~7,600; fewer sightings means a nearly empty photo page); 100,000 possible sets, each cached by its seed; new set per click. The front-page choice is remembered per browser.
-- **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. No Tailwind.
+- **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. System font at light weights (headings 500, labels 500, chips 400): headings stand out by size, not weight. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. No Tailwind.
 - **No database, no login.** Fits the free Vercel plan.
 
 ## Not done yet

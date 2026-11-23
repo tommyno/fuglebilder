@@ -24,7 +24,7 @@
 
 .bp-name {
   font-size: var(--text-xl);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
 }
 

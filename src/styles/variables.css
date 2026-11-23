@@ -58,14 +58,16 @@
   --text-xl: 1.4rem;
   --text-display: clamp(2rem, 5vw, 2.8rem);
 
-  --weight-semibold: 600;
-  --weight-bold: 700;
-  --weight-heavy: 800;
+  /* Kept light so the photos carry the page; headings stand out by size, not weight.
+     Segoe UI (Windows) has no 500, so medium shows as 400 there. */
+  --weight-normal: 400; /* body text, chips, header links */
+  --weight-medium: 500; /* headings, names, buttons */
+  --weight-semibold: 600; /* the logo text */
 
   --leading-tight: 1.15;
   --leading-normal: 1.45;
 
-  --tracking-tight: -0.03em;
+  --tracking-tight: -0.01em;
 
   /* ---- Radii */
   --radius-sm: 8px;
