@@ -46,7 +46,8 @@
   --space-4xl: 96px;
 
   /* ---- Layout */
-  --gutter: clamp(var(--space-md), 3vw, var(--space-xl));
+  /* on phones the same as the gap between grid tiles (--space-sm) */
+  --gutter: clamp(var(--space-sm), 3vw, var(--space-xl));
   --max: 1400px;
   /* space above the search box; the same on every page so it never jumps. The header adds
      ~10px below the logo, so the logo-to-box gap (~22px) matches the --space-lg below the box. */
