@@ -64,9 +64,8 @@
 
   /* Kept light so the photos carry the page; headings stand out by size, not weight.
      Segoe UI (Windows) has no 500, so medium shows as 400 there. */
-  --weight-normal: 400; /* body text, chips, header links */
-  --weight-medium: 500; /* headings, names, buttons */
-  --weight-semibold: 600; /* the logo text */
+  --weight-medium: 500; /* headings, buttons */
+  --weight-semibold: 600; /* the logo text, bird names on photo tiles, chips */
 
   --leading-tight: 1.15;
   --leading-normal: 1.45;

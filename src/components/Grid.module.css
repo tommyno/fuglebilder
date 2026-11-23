@@ -81,7 +81,8 @@
 
 .labelName {
   display: block;
-  font-weight: var(--weight-medium);
+  margin-bottom: var(--space-3xs);
+  font-weight: var(--weight-semibold);
   font-size: var(--text-sm);
 }
 
@@ -147,7 +148,7 @@
   background: var(--surface-2);
   color: var(--text);
   font-size: var(--text-sm);
-  font-weight: var(--weight-normal);
+  font-weight: var(--weight-semibold);
   white-space: nowrap;
   cursor: pointer;
   transition:
