@@ -189,3 +189,18 @@ export function randomBirds(seed: number): RandomBird[] {
   const picked = shuffled(pool, mulberry32(seed)).slice(0, RANDOM_COUNT);
   return picked.map((s) => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! }));
 }
+
+// ---------------------------------------------------------------- Norwegian birds
+
+// Species seen in Norway at least 3 times (research grade). The minimum leaves out
+// one-off strays and escapes (a turkey, a black swan…). About 280 species.
+const NORWAY_MIN = 3;
+
+/** Birds seen in Norway with a photo and a Norwegian name, sorted A–Å (Norwegian order). */
+export function norwegianBirds(): RandomBird[] {
+  const collator = new Intl.Collator('nb');
+  return species
+    .filter((s) => s.photo && s.name && s.norway >= NORWAY_MIN)
+    .sort((a, b) => collator.compare(a.name!, b.name!))
+    .map((s) => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! }));
+}

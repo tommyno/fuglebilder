@@ -29,6 +29,7 @@ npm run build:index
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search over the index (server only) |
 | `src/pages/api/photos/[taxon]/[page].json.ts` | Photos best first: iNat's curated species photos, then sightings marked alive, then the rest. No dead birds, carcasses or feathers. |
 | `src/pages/api/random/[seed].json.ts` | 24 random well-known birds from anywhere in the world |
+| `src/pages/api/norske.json.ts` | Every bird seen in Norway, A–Å (static) |
 | `src/lib/lightbox.ts` | PhotoSwipe full view with caption, credit, heart and `?photo=n` history |
 
 Dynamic values go in the URL path, not `?query`, because Vercel ISR ignores query strings.

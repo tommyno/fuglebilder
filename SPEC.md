@@ -12,7 +12,7 @@ Research behind these choices: [RESEARCH.md](RESEARCH.md).
 | 3 | Search | Big search field with **live suggestions with thumbnails**: Norwegian name, Latin name, and "også kalt …" when an alternative Norwegian name matched. Tapping one opens that species' photo grid. Spaces/hyphens ignored, ø/æ/å optional ("kjottmeis" works). |
 | 4 | Licenses | Non-commercial site forever. Photos licensed **CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA, CC BY-ND, CC BY-NC-ND** are all allowed. Credit shown in full view. |
 | 5 | Extras | **Favorites ("My birds")** saved in localStorage, no login. |
-| 6 | Front page | **24 random birds + shuffle button**, picked uniformly from the 800 most observed species worldwide (with a photo and a Norwegian name). No Norway weighting. |
+| 6 | Front page | Two buttons, no heading: **Tilfeldige fugler** (shuffle icon) and **Norske fugler**; the one showing is green. The choice is remembered per browser. **Tilfeldige fugler:** 24 random birds, a new set on every click, picked uniformly from the 800 most observed species worldwide (with a photo and a Norwegian name). **Norske fugler:** every species seen in Norway at least 3 times (iNat place 7016, research grade), about 280, sorted A–Å by Norwegian name; the minimum leaves out one-off strays and escapes. |
 | 7 | Style | **Clean, photo-first, light theme only** (no dark mode). Big touch targets. **CSS Modules + CSS custom properties, no Tailwind.** |
 | 8 | Displayed names | Norwegian name with the Latin name under it. Latin only when there is no Norwegian name. |
 | 9 | Full view | Swipe/arrow between photos. Overlay shows the name, Latin name, a small credit (photographer + license, linking to the iNat observation) and a heart. Tap to hide the overlay. Pinch to zoom. |
@@ -31,6 +31,7 @@ Values the server needs go in the **path**, not in `?query` values, because Verc
 | `/api/search/[q].json` | On demand + ISR | Norwegian + Latin species search, top 12 results |
 | `/api/photos/[taxonId]/[page].json` | On demand + ISR | Photos, best first, sorted automatically: (1) iNat's curated photos for the species, (2) sightings annotated "Alive", most votes first, (3) other sightings, most votes first. Research grade and open licenses only, cover photo of each sighting only, at least 800 px, no panoramas. Skips sightings annotated dead or as feathers/tracks/bones, and ones whose description says dead/roadkill/carcass (English, Norwegian and a few other languages). |
 | `/api/random/[seed].json` | On demand + ISR | 24 random well-known birds that have a photo and a Norwegian name |
+| `/api/norske.json` | Static (build time) | Every bird seen in Norway (at least 3 times), A–Å |
 
 The full view is client-side only. `?photo=n` is updated in the URL, so the back button closes it.
 

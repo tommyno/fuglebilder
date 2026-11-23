@@ -6,8 +6,7 @@ import RandomBirds from '../components/RandomBirds.tsx';
 
 <Base>
   <section class="hero">
-    <h1>Finn en fugl</h1>
-    <p>Skriv navnet på norsk eller latin.</p>
+    <h1 class="visually-hidden">Finn en fugl</h1>
     <SearchBox client:load variant="hero" />
   </section>
   <RandomBirds client:load />
@@ -15,18 +14,6 @@ import RandomBirds from '../components/RandomBirds.tsx';
 
 <style>
   .hero {
-    padding: clamp(24px, 7vh, 72px) 0 0;
-    text-align: center;
-  }
-  h1 {
-    margin: 0 0 6px;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-  p {
-    margin: 0 0 28px;
-    color: var(--muted);
-    font-size: 1.1rem;
+    padding: clamp(8px, 2vh, 20px) 0 0;
   }
 </style>
