@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import { getSpeciesBySlug } from '../../lib/species.server';
 import { snlUrl, type Taxon } from '../../lib/shared';
-import button from '../../components/Button.module.css';
+import grid from '../../components/Grid.module.css';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
@@ -24,7 +24,7 @@ const others = species.names.slice(1);
   search
 >
   <header class="head">
-    <a class:list={[button.button, button.ghost, "back"]} href="/" data-back>
+    <a class:list={[grid.chip, "back"]} href="/" data-back>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M19 12H5M11 6l-6 6 6 6"></path></svg
       >
@@ -45,9 +45,15 @@ const others = species.names.slice(1);
   .head {
     margin: var(--space-sm) 0 var(--space-lg);
   }
-  /* Pulled left by its padding so the arrow lines up with the title. */
+  /* Same pill as the front-page chips, with the arrow before the text */
   .back {
-    margin-left: calc(-1 * var(--space-md));
+    margin-bottom: var(--space-sm);
+    padding-left: var(--space-xs);
+    text-decoration: none;
+  }
+  .back svg {
+    width: 1.1em;
+    height: 1.1em;
   }
   .latin {
     font-style: italic;

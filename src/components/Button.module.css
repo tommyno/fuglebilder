@@ -1,5 +1,5 @@
 /* Shared look for buttons and button-like links. Use .button plus one variant:
-   .ghost  quiet, no background until hover ("Mine fugler", "Tilbake", "Til toppen")
+   .ghost  quiet, no background until hover ("Mine fugler", "Til toppen")
    .primary  filled with the accent colour, for the main action in a message ("Prøv igjen", "Finn en fugl") */
 .button {
   display: inline-flex;
