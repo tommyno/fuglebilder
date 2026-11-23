@@ -121,17 +121,28 @@ export default function RandomBirds() {
         {mode === 'norske' ? 'Norske fugler fra A til Å' : 'Tilfeldige fugler'}
       </h2>
       <div class={own.choices}>
-        <button class={buttonClass('tilfeldige')} type="button" aria-pressed={mode === 'tilfeldige'} onClick={shuffle}>
+        <button
+          class={buttonClass('tilfeldige')}
+          type="button"
+          aria-label="Tilfeldige fugler"
+          aria-pressed={mode === 'tilfeldige'}
+          onClick={shuffle}
+        >
           <ShuffleIcon />
-          Tilfeldige fugler
+          <span>
+            Tilfeldige<span class={own.long}> fugler</span>
+          </span>
         </button>
         <button
           class={buttonClass('norske')}
           type="button"
+          aria-label="Norske fugler"
           aria-pressed={mode === 'norske'}
           onClick={() => mode !== 'norske' && choose('norske')}
         >
-          Norske fugler
+          <span>
+            Norske<span class={own.long}> fugler</span>
+          </span>
         </button>
       </div>
 
