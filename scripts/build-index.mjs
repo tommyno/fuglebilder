@@ -1,5 +1,5 @@
 // Builds data/species.json: every active bird species on iNaturalist with its
-// Norwegian (bokmål) names. Run occasionally: `npm run build:index`.
+// Norwegian (bokmål) names. Run occasionally: `pnpm build:index`.
 //
 // Record format (compact, array per species):
 //   [taxonId, latinName, observationsCount, photo, names]

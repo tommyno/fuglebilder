@@ -1,5 +1,5 @@
 // Renders the PNG app icons from public/favicon.svg. Run after changing the logo:
-// `npm run build:icons`.
+// `pnpm build:icons`.
 //
 // The favicon has rounded corners; the app icons are full-bleed squares because
 // iOS and Android round or mask them themselves. The maskable icon shrinks the
