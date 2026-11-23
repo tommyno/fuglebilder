@@ -5,7 +5,7 @@ import { json, notFound } from '../../../lib/http.server';
 
 export const prerender = false;
 
-// GET /api/random/42.json — 24 random well-known birds, the same for each seed
+// GET /api/random/42.json — 24 random birds, the same for each seed
 // so responses can be cached. The browser picks a random seed.
 export const GET: APIRoute = ({ params }) => {
   const seed = Number(params.seed);

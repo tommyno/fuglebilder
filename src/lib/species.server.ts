@@ -148,11 +148,12 @@ export function search(query: string, limit = 12): SearchResult[] {
 
 // ---------------------------------------------------------------- random birds
 
-// The 800 most observed species worldwide that have a photo and a Norwegian name.
-// Picked uniformly at random: no weighting towards Norway.
-const RANDOM_POOL = 800;
+// Every species with a photo, a Norwegian name and at least 50 sightings worldwide
+// (about 7,600). The minimum leaves out species whose photo page would be nearly
+// empty. Picked uniformly at random: no weighting towards Norway or popularity.
+const RANDOM_MIN_OBS = 50;
 const RANDOM_COUNT = 24;
-const pool = species.filter((s) => s.photo && s.name).slice(0, RANDOM_POOL);
+const pool = species.filter((s) => s.photo && s.name && s.obs >= RANDOM_MIN_OBS);
 
 function mulberry32(seed: number) {
   return () => {
@@ -174,18 +175,20 @@ export interface RandomBird {
 /** Only called for species that have a photo. */
 const toBird = (s: Species): RandomBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
 
-function shuffled<T>(list: T[], rand: () => number): T[] {
+/** `count` items picked uniformly without repeats (the first steps of a Fisher–Yates shuffle). */
+function pick<T>(list: T[], count: number, rand: () => number): T[] {
   const out = [...list];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
+  const n = Math.min(count, out.length);
+  for (let i = 0; i < n; i++) {
+    const j = i + Math.floor(rand() * (out.length - i));
     [out[i], out[j]] = [out[j], out[i]];
   }
-  return out;
+  return out.slice(0, n);
 }
 
-/** 24 random well-known birds, deterministic per seed so it can be cached. */
+/** 24 random birds, deterministic per seed so it can be cached. */
 export function randomBirds(seed: number): RandomBird[] {
-  return shuffled(pool, mulberry32(seed)).slice(0, RANDOM_COUNT).map(toBird);
+  return pick(pool, RANDOM_COUNT, mulberry32(seed)).map(toBird);
 }
 
 // ---------------------------------------------------------------- Norwegian birds

@@ -23,7 +23,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/pages/mine-fugler.astro` | Favorites, static shell rendered on the client from localStorage |
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search, top 12 (server only) |
 | `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first (see below). `filter` = `alle`, `voksen`, `ungfugl`, `hann` or `hunn` |
-| `src/pages/api/random/[seed].json.ts` | 24 random well-known birds |
+| `src/pages/api/random/[seed].json.ts` | 24 random birds (seed in the path so each set is cached) |
 | `src/pages/api/norske.json.ts` | Every bird seen in Norway, A–Å (static, build time) |
 | `src/lib/species.server.ts` | Loads the index; search, random pool, Norwegian list |
 | `src/lib/slug.ts` | `foldAccents`, `slugify`, `slugClashes`. No imports, so `scripts/build-index.mjs` can import it too |
@@ -45,7 +45,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 - **Licenses:** the site is non-commercial for good, so every CC license is allowed, NC and ND included. Credit (photographer + license, linking to the observation) is shown in the full view.
 - **Photo order** (`alle`): iNat's curated taxon photos, then sightings annotated "Alive" by votes, then other sightings by votes. Research grade only, cover photo of each sighting only, at least 800 px long edge, no panoramas (aspect > 2.5). Skip sightings annotated dead or feathers/tracks/bones, and ones whose description says dead/roadkill/carcass (several languages).
 - **Age/sex filters require "Alive" too,** and skip curated photos. Many dead birds carry an age or sex annotation with no dead annotation or telling description. iNat's API can't combine two annotation filters, so "Alive" is checked server side and a filtered page can come back short. One filter at a time.
-- **Norske fugler:** species seen in Norway at least 3 times (research grade), ~280, A–Å. The minimum drops one-off strays and escapes. **Tilfeldige fugler:** 24 picked uniformly from the 800 most observed species worldwide with a photo and a Norwegian name; new set per click. The front-page choice is remembered per browser.
+- **Norske fugler:** species seen in Norway at least 3 times (research grade), ~280, A–Å. The minimum drops one-off strays and escapes. **Tilfeldige fugler:** 24 picked uniformly from every species with a photo, a Norwegian name and at least 50 sightings worldwide (~7,600; fewer sightings means a nearly empty photo page); 100,000 possible sets, each cached by its seed; new set per click. The front-page choice is remembered per browser.
 - **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. No Tailwind.
 - **No database, no login.** Fits the free Vercel plan.
 

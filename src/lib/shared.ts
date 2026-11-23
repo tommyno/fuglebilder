@@ -90,5 +90,5 @@ export function licenseUrl(lic: string): string {
   return `https://creativecommons.org/licenses/${lic.replace(/^cc-/, '')}/4.0/deed.no`;
 }
 
-/** Number of distinct cached random-bird sets. */
-export const RANDOM_SEEDS = 1000;
+/** Number of distinct cached random-bird sets. Each is cheap to compute, so cache misses are fine. */
+export const RANDOM_SEEDS = 100_000;
