@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { birdPath, photoUrl, RANDOM_SEEDS } from '../lib/shared';
 import { ShuffleIcon } from './icons';
+import { Thumb } from './Thumb';
 import styles from './Grid.module.css';
 import own from './RandomBirds.module.css';
 
@@ -159,7 +160,7 @@ export default function RandomBirds() {
           ? birds.map((b) => (
               <li key={b.id}>
                 <a class={styles.tile} href={birdPath(b)}>
-                  <img src={photoUrl(b.photo, 'medium')} alt={b.name ?? b.sci} loading="lazy" />
+                  <Thumb src={photoUrl(b.photo, 'medium')} alt={b.name ?? b.sci} />
                   <span class={styles.label}>
                     <span class={styles.labelName}>{b.name ?? b.sci}</span>
                     {b.name && <span class={styles.labelSci}>{b.sci}</span>}

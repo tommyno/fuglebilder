@@ -109,6 +109,15 @@ export async function openLightbox({ slides, index, loadMore, onChange }: Lightb
   });
   pswp.addFilter('numItems', () => slides.length);
 
+  // Fade the large image in over the (already sharp) grid thumbnail once it's fully
+  // loaded, instead of letting it paint top-to-bottom. PhotoSwipe keeps the
+  // placeholder for 1 s after load, which covers the fade.
+  pswp.on('loadComplete', ({ content }) => {
+    const img = content.element;
+    if (!(img instanceof HTMLImageElement)) return;
+    img.decode().catch(() => {}).finally(() => img.classList.add('bp-ready'));
+  });
+
   pswp.on('uiRegister', () => {
     pswp.ui!.registerElement({
       name: 'bp-caption',

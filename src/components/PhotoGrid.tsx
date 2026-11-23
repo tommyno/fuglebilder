@@ -4,6 +4,7 @@ import { photoUrl, type Photo, type Taxon } from '../lib/shared';
 import { $favorites, type SlideTaxon } from '../lib/favorites';
 import { initialPhotoIndex, openLightbox, type Slide } from '../lib/lightbox';
 import { HeartIcon } from './icons';
+import { Thumb } from './Thumb';
 import styles from './Grid.module.css';
 
 /** Alle bildene av én art, best stemte først, med uendelig rulling. */
@@ -92,7 +93,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
         {slides.map((s, i) => (
           <li key={s.photo.p}>
             <button class={styles.tile} type="button" onClick={() => open(i)} aria-label={`Åpne bilde ${i + 1}`}>
-              <img src={photoUrl(s.photo.p, 'medium')} alt={alt} loading="lazy" decoding="async" />
+              <Thumb src={photoUrl(s.photo.p, 'medium')} alt={alt} />
               {favSet.has(s.photo.p) && <HeartIcon class={styles.heart} />}
             </button>
           </li>

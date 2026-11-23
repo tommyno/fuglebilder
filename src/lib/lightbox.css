@@ -44,6 +44,22 @@
   pointer-events: auto;
 }
 
+/* The large image fades in over the thumbnail placeholder once loaded (see lightbox.ts) */
+.pswp__img:not(.pswp__img--placeholder) {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.pswp__img.bp-ready {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pswp__img:not(.pswp__img--placeholder) {
+    transition: none;
+  }
+}
+
 /* Bigger touch targets */
 .pswp__button {
   width: 56px;

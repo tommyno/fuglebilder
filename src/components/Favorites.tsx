@@ -4,6 +4,7 @@ import { birdPath, photoUrl } from '../lib/shared';
 import { $favorites } from '../lib/favorites';
 import { openLightbox, type Slide } from '../lib/lightbox';
 import { HeartIcon } from './icons';
+import { Thumb } from './Thumb';
 import styles from './Grid.module.css';
 
 /** «Mine fugler»: lagrede bilder, nyeste først. */
@@ -35,7 +36,7 @@ export default function Favorites() {
       {favorites.map((f, i) => (
         <li key={f.p}>
           <button class={styles.tile} type="button" onClick={() => open(i)}>
-            <img src={photoUrl(f.p, 'medium')} alt={f.taxon.name ?? f.taxon.sci} loading="lazy" />
+            <Thumb src={photoUrl(f.p, 'medium')} alt={f.taxon.name ?? f.taxon.sci} />
             <span class={styles.label}>
               <span class={styles.labelName}>{f.taxon.name ?? f.taxon.sci}</span>
               {f.taxon.name && <span class={styles.labelSci}>{f.taxon.sci}</span>}
