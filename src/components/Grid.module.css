@@ -83,7 +83,7 @@
   display: block;
   margin-bottom: var(--space-3xs);
   font-weight: var(--weight-semibold);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 .labelSci {
