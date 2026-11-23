@@ -1,6 +1,9 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(46%, 200px), 1fr));
+  /* Smallest tile grows smoothly from 200px (at ≤1000px wide) to 240px (at ≥1400px), so a
+     full-width desktop gets 5 columns (~258px) instead of 6. Must stay fluid: a breakpoint
+     that jumps the minimum makes the column count go 5 → 4 → 5 as the window widens. */
+  grid-template-columns: repeat(auto-fill, minmax(min(46%, clamp(200px, 100px + 10vw, 240px)), 1fr));
   gap: var(--space-sm);
   margin: 0;
   padding: 0;
