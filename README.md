@@ -2,10 +2,12 @@
 
 Fuglebilder is a Norwegian website for exploring photos of a single bird species. Pick a bird and browse hundreds of photos of it, taken by people all over the world.
 
+![The Fuglebilder front page: a search box above a grid of bird photos with Norwegian and Latin names](docs/screenshot.jpg)
+
 ### Features:
 - **Find any bird in the world** by typing its Norwegian or Latin name.
 - **See the best photos first.** Photos are taken by people on [iNaturalist](https://www.inaturalist.org) and sorted by their votes. 
-- **Filters** Show only adults, young birds, males or females.
+- **Filter** photos by adult birds, young birds, males or females.
 - **Swipe through photos full screen,** and pinch to zoom.
 - **Save favorites** under "Mine fugler". They stay in your browser, with no account needed.
 - **Browse** every bird seen in Norway, A–Å, or a random set of birds from around the world.
