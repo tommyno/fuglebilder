@@ -48,8 +48,9 @@
   /* ---- Layout */
   --gutter: clamp(var(--space-md), 3vw, var(--space-xl));
   --max: 1400px;
-  /* space above the search box; the same on every page so it never jumps */
-  --page-top: clamp(var(--space-xs), 2vh, var(--space-lg));
+  /* space above the search box; the same on every page so it never jumps. The header adds
+     ~10px below the logo, so the logo-to-box gap (~22px) matches the --space-lg below the box. */
+  --page-top: var(--space-sm);
 
   /* ---- Type */
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
