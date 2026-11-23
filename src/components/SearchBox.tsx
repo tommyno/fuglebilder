@@ -19,7 +19,7 @@ const cacheKey = (q: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-export default function SearchBox({ variant = 'hero' }: { variant?: 'hero' | 'compact' }) {
+export default function SearchBox() {
   const [q, setQ] = useState('');
   const [results, setResults] = useState<Result[]>([]);
   const [searched, setSearched] = useState('');
@@ -83,7 +83,7 @@ export default function SearchBox({ variant = 'hero' }: { variant?: 'hero' | 'co
   const showList = open && searched !== '';
 
   return (
-    <div class={`${styles.root} ${styles[variant]}`} ref={rootRef}>
+    <div class={styles.root} ref={rootRef}>
       <form role="search" class={styles.field} onSubmit={(e) => e.preventDefault()}>
         <SearchIcon class={styles.icon} />
         <input

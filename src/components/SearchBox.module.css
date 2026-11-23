@@ -5,15 +5,6 @@
   margin: 0 auto;
 }
 
-.hero {
-  max-width: 760px;
-}
-
-.compact {
-  max-width: 560px;
-  margin: 0;
-}
-
 .field {
   position: relative;
   margin: 0;
@@ -56,17 +47,6 @@
 
 .input::-webkit-search-cancel-button {
   display: none;
-}
-
-.compact .input {
-  height: 56px;
-  font-size: 1.15rem;
-  box-shadow: none;
-}
-
-.compact .icon {
-  width: 22px;
-  height: 22px;
 }
 
 .list {

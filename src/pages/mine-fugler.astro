@@ -6,7 +6,7 @@ import Favorites from '../components/Favorites.tsx';
 
 <Base title="Mine fugler – birdpic">
   <div class="bar">
-    <SearchBox client:load variant="compact" />
+    <SearchBox client:load />
   </div>
   <h1>Mine fugler</h1>
   <p class="note">Lagret bare på denne enheten.</p>
@@ -15,7 +15,7 @@ import Favorites from '../components/Favorites.tsx';
 
 <style>
   .bar {
-    padding: 8px 0 0;
+    padding: clamp(8px, 2vh, 20px) 0 0; /* same as the front page, so the search box doesn't jump */
   }
   h1 {
     margin: 28px 0 0;
