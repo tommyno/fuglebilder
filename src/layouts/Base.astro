@@ -74,11 +74,16 @@ const {
     gap: 6px;
     min-height: 44px;
     padding: 0 16px;
-    border-radius: 999px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
     font-weight: 600;
     text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  @media (hover: hover) {
+    .mybirds:hover {
+      background: var(--surface-2);
+    }
   }
   .mybirds svg {
     width: 20px;
