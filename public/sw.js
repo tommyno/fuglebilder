@@ -2,7 +2,7 @@
 // it adds is a friendly page when a navigation fails because the phone is offline.
 // Nothing else is cached, so there is never stale content to worry about.
 
-const CACHE = 'birdpic-offline-v1';
+const CACHE = 'fuglebilder-offline-v1';
 const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', (event) => {

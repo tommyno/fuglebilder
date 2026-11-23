@@ -10,7 +10,17 @@ export interface Favorite extends Photo {
   added: number;
 }
 
-export const $favorites = persistentAtom<Favorite[]>('birdpic:favorites', [], {
+// The site was called BirdPic before. Carry saved favorites over from the old storage key once.
+// Must run before the atom below reads storage.
+try {
+  const old = localStorage.getItem('birdpic:favorites');
+  if (old !== null) {
+    if (localStorage.getItem('fuglebilder:favorites') === null) localStorage.setItem('fuglebilder:favorites', old);
+    localStorage.removeItem('birdpic:favorites');
+  }
+} catch {}
+
+export const $favorites = persistentAtom<Favorite[]>('fuglebilder:favorites', [], {
   encode: JSON.stringify,
   decode: (s) => {
     try {

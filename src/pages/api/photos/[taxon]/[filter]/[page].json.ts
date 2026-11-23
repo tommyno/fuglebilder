@@ -24,7 +24,7 @@ export const prerender = false;
 // The curated photos have no annotations, so they're left out.
 
 const API = 'https://api.inaturalist.org/v1';
-const UA = { 'User-Agent': 'birdpic' };
+const UA = { 'User-Agent': 'fuglebilder' };
 const PER_PAGE = 30;
 const MAX_PAGE = Math.floor(10_000 / PER_PAGE); // iNat stops paging at 10k results
 const LICENSES = 'cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa,cc-by-nd,cc-by-nc-nd';

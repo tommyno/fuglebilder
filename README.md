@@ -1,4 +1,4 @@
-# birdpic
+# Fuglebilder
 
 A Norwegian site for browsing bird photos. Search any bird by its Norwegian or Latin name, browse community-voted photos, swipe through them full screen, and save favorites. See [SPEC.md](SPEC.md) and [RESEARCH.md](RESEARCH.md).
 

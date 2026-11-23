@@ -11,7 +11,7 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 
 const API = 'https://api.inaturalist.org/v1/taxa';
-const UA = 'birdpic index builder';
+const UA = 'fuglebilder index builder';
 const PER_PAGE = 200;
 const DELAY_MS = 1100; // iNat asks for ~1 req/s
 

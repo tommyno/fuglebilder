@@ -1,4 +1,4 @@
-# birdpic — spec
+# Fuglebilder — spec
 
 A site for browsing photos of birds.
 Research behind these choices: [RESEARCH.md](RESEARCH.md).

@@ -11,10 +11,11 @@ import own from './RandomBirds.module.css';
 type Mode = 'tilfeldige' | 'norske';
 
 // Remember the viewer's choice. Storage can be missing or blocked, so never rely on it.
-const MODE_KEY = 'birdpic:front-mode';
+const MODE_KEY = 'fuglebilder:front-mode';
 function savedMode(): Mode {
   try {
-    if (localStorage.getItem(MODE_KEY) === 'norske') return 'norske';
+    // Fall back to the key from when the site was called BirdPic
+    if ((localStorage.getItem(MODE_KEY) ?? localStorage.getItem('birdpic:front-mode')) === 'norske') return 'norske';
   } catch {}
   return 'tilfeldige';
 }
@@ -26,7 +27,7 @@ function saveMode(mode: Mode) {
 
 // Keep the same random set for this tab, so going to a bird and back shows the same birds.
 // Only a browser reload (or the button) deals a new set. A new tab starts fresh.
-const SEED_KEY = 'birdpic:random-seed';
+const SEED_KEY = 'fuglebilder:random-seed';
 function isReload() {
   try {
     const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;

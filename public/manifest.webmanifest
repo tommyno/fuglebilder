@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "BirdPic",
-  "short_name": "BirdPic",
+  "name": "Fuglebilder",
+  "short_name": "Fuglebilder",
   "description": "Se fine bilder av alle verdens fugler. Søk på norsk eller latinsk navn.",
   "lang": "nb",
   "start_url": "/",

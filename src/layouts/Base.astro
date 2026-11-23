@@ -12,7 +12,7 @@ interface Props {
 }
 
 const {
-  title = 'BirdPic – bilder av alle verdens fugler',
+  title = 'Fuglebilder – bilder av alle verdens fugler',
   description = 'Se fine bilder av alle verdens fugler. Søk på norsk eller latinsk navn.',
   search = false,
 } = Astro.props;
@@ -28,7 +28,7 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="apple-mobile-web-app-title" content="BirdPic" />
+    <meta name="apple-mobile-web-app-title" content="Fuglebilder" />
     <meta name="theme-color" content="#f7f6f3" /><!-- = --bg in variables.css -->
     <script is:inline>
       if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
@@ -37,7 +37,7 @@ const {
   </head>
   <body>
     <header class="top">
-      <a class="brand" href="/"><Logo /><span>BirdPic</span></a>
+      <a class="brand" href="/"><Logo /><span>Fuglebilder</span></a>
       <a class="mybirds" href="/mine-fugler">
         <HeartIcon />
         Mine fugler
