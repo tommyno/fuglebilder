@@ -23,10 +23,11 @@ const others = species.names.slice(1);
   search
 >
   <header class="head">
-    <a class="back" href="/" aria-label="Tilbake" data-back>
+    <a class="back" href="/" data-back>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M19 12H5M11 6l-6 6 6 6"></path></svg
       >
+      Tilbake
     </a>
     <h1 class:list={["page-title", { latin: !species.name }]}>{title}</h1>
     {species.name && (
@@ -41,25 +42,25 @@ const others = species.names.slice(1);
 
 <style>
   .head {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: var(--space-sm);
-    margin: var(--space-lg) 0;
+    margin: var(--space-sm) 0 var(--space-lg);
   }
-  .head > :not(.back) {
-    grid-column: 2;
-  }
+  /* Same look as "Mine fugler" in the top bar. The negative margin keeps the arrow in line with the title. */
   .back {
-    grid-row: 1;
-    align-self: center;
-    display: grid;
-    place-items: center;
-    width: var(--control-sm);
-    height: var(--control-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: var(--control-md);
+    margin-left: calc(-1 * var(--space-md));
+    padding: 0 var(--space-md);
     border-radius: var(--radius-md);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
+    background: transparent;
+    text-decoration: none;
+    transition: background-color var(--duration-fast);
+  }
+  @media (hover: hover) {
+    .back:hover {
+      background: var(--surface-2);
+    }
   }
   .back svg {
     width: var(--icon-sm);
