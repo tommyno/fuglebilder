@@ -1,4 +1,4 @@
-# birdpic.net — spec
+# birdpic — spec
 
 A site for browsing photos of birds.
 Research behind these choices: [RESEARCH.md](RESEARCH.md).
@@ -17,7 +17,7 @@ Research behind these choices: [RESEARCH.md](RESEARCH.md).
 | 8 | Displayed names | Norwegian name with the Latin name under it. Latin only when there is no Norwegian name. |
 | 9 | Full view | Swipe/arrow between photos. Overlay shows the name, Latin name, a small credit (photographer + license, linking to the iNat observation) and a heart. Tap to hide the overlay. Pinch to zoom. |
 | 10 | Framework | **Astro + Preact islands**, TypeScript. |
-| 11 | Hosting | Private **GitHub repo → Vercel**, auto-deploy, preview deploys on PRs. Domain birdpic.net pointed at Vercel. |
+| 11 | Hosting | Private **GitHub repo → Vercel**, auto-deploy, preview deploys on PRs. |
 
 ## Routes
 

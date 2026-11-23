@@ -1,4 +1,4 @@
-# birdpic.net
+# birdpic
 
 A Norwegian site for browsing bird photos. Search any bird by its Norwegian or Latin name, browse community-voted photos, swipe through them full screen, and save favorites. See [SPEC.md](SPEC.md) and [RESEARCH.md](RESEARCH.md).
 
@@ -36,6 +36,6 @@ Dynamic values go in the URL path, not `?query`, because Vercel ISR ignores quer
 
 ## Deploy
 
-Push to GitHub, import the repo in Vercel (framework preset: Astro), then add the domain `birdpic.net` under Project → Settings → Domains.
+Push to GitHub, import the repo in Vercel (framework preset: Astro).
 
 Photos: © their iNaturalist observers, under the Creative Commons license shown on each photo.

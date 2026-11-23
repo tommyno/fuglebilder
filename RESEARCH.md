@@ -1,4 +1,4 @@
-# birdpic.net — research notes (2026-11-23)
+# birdpic — research notes (2026-11-23)
 
 ## 1. Bird names (all species, many languages, Latin)
 
