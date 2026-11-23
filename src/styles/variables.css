@@ -73,6 +73,7 @@
   --radius-full: 999px;
 
   /* ---- Sizes: controls (buttons, inputs, chips) and icons */
+  --control-xs: 32px;
   --control-sm: 40px;
   --control-md: 48px;
   --control-lg: 60px;
