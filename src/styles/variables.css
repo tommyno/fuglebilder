@@ -57,7 +57,7 @@
 
   --text-xs: 0.8rem;
   --text-sm: 0.9rem;
-  --text-base: 1.0625rem; /* 17px body text */
+  --text-base: 1rem; /* 16px body text, the browser default */
   --text-lg: 1.2rem;
   --text-xl: 1.4rem;
   --text-display: clamp(2rem, 5vw, 2.8rem);
