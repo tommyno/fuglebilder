@@ -1,9 +1,10 @@
+/** Also drawn by the lightbox, which builds its button from plain HTML. */
+export const HEART_PATH =
+  'M12 21s-7.5-4.6-9.6-9.3C.8 8 3 4 6.9 4c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3C21 4 23.2 8 21.6 11.7 19.5 16.4 12 21 12 21Z';
+
 export const HeartIcon = ({ class: className }: { class?: string }) => (
   <svg class={className} viewBox="0 0 24 24" aria-hidden="true">
-    <path
-      fill="currentColor"
-      d="M12 21s-7.5-4.6-9.6-9.3C.8 8 3 4 6.9 4c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3C21 4 23.2 8 21.6 11.7 19.5 16.4 12 21 12 21Z"
-    />
+    <path fill="currentColor" d={HEART_PATH} />
   </svg>
 );
 

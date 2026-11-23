@@ -6,12 +6,13 @@
     <title>Ingen nettforbindelse – BirdPic</title>
     <meta name="theme-color" content="#f7f6f3" />
     <style>
+      /* Standalone (shown offline, so no shared CSS). Values copied from src/styles/variables.css. */
       body {
         margin: 0;
         min-height: 100dvh;
         display: grid;
         place-items: center;
-        padding: 24px 16px;
+        padding: 24px 16px; /* --space-lg --space-md */
         box-sizing: border-box;
         background: #f7f6f3;
         color: #1b1c1e;
@@ -20,16 +21,18 @@
       }
       h1 {
         margin: 0 0 6px;
-        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        font-size: clamp(2rem, 5vw, 2.8rem); /* --text-display */
         font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
       }
       p {
-        margin: 0 0 28px;
+        margin: 8px 0 24px;
         color: #66676b;
       }
       button {
-        min-height: 44px;
-        padding: 0 20px;
+        min-height: 48px; /* --control-md */
+        padding: 0 24px;
         border: 0;
         border-radius: 12px;
         background: #23795a;

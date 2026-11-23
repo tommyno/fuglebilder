@@ -1,30 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-import SearchBox from '../components/SearchBox.tsx';
 import Favorites from '../components/Favorites.tsx';
 ---
 
-<Base title="Mine fugler – BirdPic">
-  <div class="bar">
-    <SearchBox client:load />
-  </div>
-  <h1>Mine fugler</h1>
+<Base title="Mine fugler – BirdPic" search>
+  <h1 class="page-title">Mine fugler</h1>
   <p class="note">Lagret bare på denne enheten.</p>
   <Favorites client:only="preact" />
 </Base>
 
 <style>
-  .bar {
-    padding: clamp(8px, 2vh, 20px) 0 0; /* same as the front page, so the search box doesn't jump */
-  }
   h1 {
-    margin: 28px 0 0;
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    margin-top: var(--space-lg);
   }
   .note {
-    margin: 2px 0 20px;
+    margin: var(--space-3xs) 0 var(--space-lg);
     color: var(--muted);
   }
 </style>

@@ -1,19 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import SearchBox from '../components/SearchBox.tsx';
 import RandomBirds from '../components/RandomBirds.tsx';
 ---
 
-<Base>
-  <section class="hero">
-    <h1 class="visually-hidden">Finn en fugl</h1>
-    <SearchBox client:load />
-  </section>
+<Base search>
+  <h1 class="visually-hidden">Finn en fugl</h1>
   <RandomBirds client:load />
 </Base>
-
-<style>
-  .hero {
-    padding: clamp(8px, 2vh, 20px) 0 0;
-  }
-</style>

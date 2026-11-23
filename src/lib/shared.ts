@@ -49,20 +49,32 @@ export function photoUrl(photo: string, size: PhotoSize): string {
 
 const FOLD: Record<string, string> = { ø: 'o', æ: 'ae', œ: 'oe', ß: 'ss' };
 
-/** "Svarttrost" → "svarttrost", "Blåmeis" → "blameis", "Turdus merula" → "turdus-merula" */
-export function slugify(name: string): string {
-  return name
+/** Lowercase, strip accents (å → a) and fold ø/æ: "Kjøttmeis" → "kjottmeis". Used by both slugs and search. */
+export const foldAccents = (s: string): string =>
+  s
     .toLowerCase()
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
-    .replace(/[øæœß]/g, (c) => FOLD[c])
+    .replace(/[øæœß]/g, (c) => FOLD[c]);
+
+/** "Svarttrost" → "svarttrost", "Blåmeis" → "blameis", "Turdus merula" → "turdus-merula" */
+export const slugify = (name: string): string =>
+  foldAccents(name)
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-}
+
+/** The Norwegian name, or the Latin one when there is none. */
+export const displayName = (t: Pick<Taxon, 'sci' | 'name'>) => t.name ?? t.sci;
 
 /** /fugl/12716-svarttrost (Latin name when there is no Norwegian one) */
-export const birdPath = (t: { id: number; sci: string; name: string | null }) =>
-  `/fugl/${t.id}-${slugify(t.name ?? t.sci)}`;
+export const birdPath = (t: Taxon) => `/fugl/${t.id}-${slugify(displayName(t))}`;
+
+/** Fetch JSON from our own API; rejects on HTTP errors. */
+export async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+  const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  return res.json() as Promise<T>;
+}
 
 /** Where the credit links to: the sighting, or the photo's own page on iNaturalist. */
 export const sourceUrl = (photo: Photo) =>

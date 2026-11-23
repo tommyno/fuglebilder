@@ -4,7 +4,8 @@ import 'photoswipe/style.css';
 import './lightbox.css';
 import type PhotoSwipe from 'photoswipe';
 import type { SlideData } from 'photoswipe';
-import { licenseLabel, licenseUrl, photoUrl, sourceUrl, type Photo } from './shared';
+import { displayName, licenseLabel, licenseUrl, photoUrl, sourceUrl, type Photo } from './shared';
+import { HEART_PATH } from '../components/icons';
 import { $favorites, isFavorite, toggleFavorite, type SlideTaxon } from './favorites';
 
 export interface Slide {
@@ -55,7 +56,7 @@ function link(href: string, text: string) {
 
 function renderCaption(box: HTMLElement, s: Slide) {
   box.replaceChildren();
-  box.append(el('div', 'bp-name', s.taxon.name ?? s.taxon.sci));
+  box.append(el('div', 'bp-name', displayName(s.taxon)));
   if (s.taxon.name) box.append(el('div', 'bp-sci', s.taxon.sci));
   const credit = el('div', 'bp-credit');
   credit.append(`Foto: ${s.photo.by} · `, link(licenseUrl(s.photo.lic), licenseLabel(s.photo.lic)), ' · ');
@@ -63,8 +64,7 @@ function renderCaption(box: HTMLElement, s: Slide) {
   box.append(credit);
 }
 
-const HEART =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.8 8 3 4 6.9 4c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3C21 4 23.2 8 21.6 11.7 19.5 16.4 12 21 12 21Z"/></svg>';
+const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${HEART_PATH}"/></svg>`;
 
 const photoParam = () => new URL(location.href).searchParams.get('photo');
 
@@ -105,7 +105,7 @@ export async function openLightbox({ slides, index, loadMore, onChange }: Lightb
 
   pswp.addFilter('itemData', (_data, i) => {
     const s = slides[i];
-    return s ? toSlideData(s, s.taxon.name ?? s.taxon.sci) : {};
+    return s ? toSlideData(s, displayName(s.taxon)) : {};
   });
   pswp.addFilter('numItems', () => slides.length);
 

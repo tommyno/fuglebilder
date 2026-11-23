@@ -1,13 +1,9 @@
 // "My birds": favorite photos, saved on this device only (localStorage).
 import { persistentAtom } from '@nanostores/persistent';
-import type { Photo } from './shared';
+import type { Photo, Taxon } from './shared';
 
-export interface SlideTaxon {
-  id: number;
-  sci: string;
-  /** common name in the viewer's language when saved */
-  name: string | null;
-}
+/** The bird a photo shows, as it was named when saved. */
+export type SlideTaxon = Taxon;
 
 export interface Favorite extends Photo {
   taxon: SlideTaxon;
@@ -35,6 +31,6 @@ export function toggleFavorite(photo: Photo, taxon: SlideTaxon): boolean {
     return false;
   }
   const { p, w, h, by, lic, obs } = photo;
-  $favorites.set([{ p, w, h, by, lic, ...(obs ? { obs } : {}), taxon, added: Date.now() }, ...list]);
+  $favorites.set([{ p, w, h, by, lic, obs, taxon, added: Date.now() }, ...list]); // JSON drops obs when undefined
   return true;
 }

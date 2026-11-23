@@ -17,10 +17,8 @@ const DELAY_MS = 1100; // iNat asks for ~1 req/s
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function fetchPage(idAbove) {
-  const url =
-    `${API}?taxon_id=3&rank=species&is_active=true&order_by=id&order=asc` +
-    `&per_page=${PER_PAGE}&id_above=${idAbove}&all_names=true&locale=nb`;
+/** GET JSON from iNat, retrying with back-off so one hiccup doesn't throw away a long run. */
+async function getJson(url) {
   for (let attempt = 1; ; attempt++) {
     try {
       const res = await fetch(url, { headers: { 'User-Agent': UA } });
@@ -33,6 +31,12 @@ async function fetchPage(idAbove) {
     }
   }
 }
+
+const fetchPage = (idAbove) =>
+  getJson(
+    `${API}?taxon_id=3&rank=species&is_active=true&order_by=id&order=asc` +
+      `&per_page=${PER_PAGE}&id_above=${idAbove}&all_names=true&locale=nb`,
+  );
 
 const OPEN_PHOTO = /^https:\/\/inaturalist-open-data\.s3\.amazonaws\.com\/photos\/(\d+)\/[a-z]+\.(\w+)$/;
 function toRecord(t) {
@@ -70,19 +74,7 @@ const missing = records.filter((r) => !r[3]);
 console.log(`Looking for open-licensed photos for ${missing.length} species…`);
 for (let i = 0; i < missing.length; i += 30) {
   const batch = missing.slice(i, i + 30);
-  const url = `${API}/${batch.map((r) => r[0]).join(',')}`;
-  let data;
-  for (let attempt = 1; ; attempt++) {
-    try {
-      const res = await fetch(url, { headers: { 'User-Agent': UA } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
-      break;
-    } catch (err) {
-      if (attempt >= 5) throw err;
-      await sleep(5000 * attempt);
-    }
-  }
+  const data = await getJson(`${API}/${batch.map((r) => r[0]).join(',')}`);
   const byId = new Map(data.results.map((t) => [t.id, t]));
   for (const r of batch) {
     for (const tp of byId.get(r[0])?.taxon_photos ?? []) {
@@ -102,12 +94,10 @@ for (let i = 0; i < missing.length; i += 30) {
 const NORWAY = 7016;
 const norway = new Map();
 for (let page = 1; ; page++) {
-  const url =
+  const data = await getJson(
     `https://api.inaturalist.org/v1/observations/species_counts?place_id=${NORWAY}` +
-    `&taxon_id=3&quality_grade=research&per_page=500&page=${page}`;
-  const res = await fetch(url, { headers: { 'User-Agent': UA } });
-  if (!res.ok) throw new Error(`species_counts HTTP ${res.status}`);
-  const data = await res.json();
+      `&taxon_id=3&quality_grade=research&per_page=500&page=${page}`,
+  );
   for (const r of data.results) norway.set(r.taxon.id, r.count);
   if (page * 500 >= data.total_results) break;
   await sleep(DELAY_MS);

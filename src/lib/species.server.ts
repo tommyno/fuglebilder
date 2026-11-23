@@ -2,6 +2,7 @@
 // data/species.json is built by scripts/build-index.mjs.
 
 import raw from '../../data/species.json';
+import { foldAccents } from './shared';
 
 type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number];
 
@@ -32,19 +33,10 @@ export const getSpecies = (id: number) => byId.get(id);
 
 // ---------------------------------------------------------------- normalizing
 
-const FOLD: Record<string, string> = { ø: 'o', æ: 'ae', œ: 'oe', ß: 'ss' };
 const SEPARATORS = /[\s\-‐–'’`´.,()/]+/g;
 
-/** Lowercase, strip accents, fold ø/æ (so "kjottmeis" finds "kjøttmeis"), collapse separators. */
-export function fold(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '') // å → a
-    .replace(/[øæœß]/g, (c) => FOLD[c])
-    .replace(SEPARATORS, ' ')
-    .trim();
-}
+/** foldAccents (so "kjottmeis" finds "kjøttmeis"), then collapse separators. */
+const fold = (s: string): string => foldAccents(s).replace(SEPARATORS, ' ').trim();
 
 // ---------------------------------------------------------------- search index
 
@@ -175,6 +167,9 @@ export interface RandomBird {
   photo: string;
 }
 
+/** Only called for species that have a photo. */
+const toBird = (s: Species): RandomBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
+
 function shuffled<T>(list: T[], rand: () => number): T[] {
   const out = [...list];
   for (let i = out.length - 1; i > 0; i--) {
@@ -186,8 +181,7 @@ function shuffled<T>(list: T[], rand: () => number): T[] {
 
 /** 24 random well-known birds, deterministic per seed so it can be cached. */
 export function randomBirds(seed: number): RandomBird[] {
-  const picked = shuffled(pool, mulberry32(seed)).slice(0, RANDOM_COUNT);
-  return picked.map((s) => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! }));
+  return shuffled(pool, mulberry32(seed)).slice(0, RANDOM_COUNT).map(toBird);
 }
 
 // ---------------------------------------------------------------- Norwegian birds
@@ -202,5 +196,5 @@ export function norwegianBirds(): RandomBird[] {
   return species
     .filter((s) => s.photo && s.name && s.norway >= NORWAY_MIN)
     .sort((a, b) => collator.compare(a.name!, b.name!))
-    .map((s) => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! }));
+    .map(toBird);
 }

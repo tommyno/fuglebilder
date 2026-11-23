@@ -2,7 +2,7 @@
 
 .pswp {
   --pswp-bg: #000;
-  --pswp-icon-color: #fff;
+  --pswp-icon-color: var(--on-image);
 }
 
 .pswp__bp-caption {
@@ -10,11 +10,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 48px max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-bottom));
-  background: linear-gradient(transparent, rgb(0 0 0 / 0.65));
-  color: #fff;
+  padding: var(--space-2xl) max(var(--space-lg), env(safe-area-inset-left)) max(var(--space-lg), env(safe-area-inset-bottom));
+  background: var(--scrim);
+  color: var(--on-image);
   pointer-events: none;
-  transition: opacity 0.25s;
+  transition: opacity var(--duration-normal);
   font-family: var(--font);
 }
 
@@ -23,20 +23,20 @@
 }
 
 .bp-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
 }
 
 .bp-sci {
   font-style: italic;
-  opacity: 0.85;
+  color: var(--on-image-muted);
 }
 
 .bp-credit {
-  margin-top: 6px;
-  font-size: 0.8rem;
-  opacity: 0.8;
+  margin-top: var(--space-xs);
+  font-size: var(--text-xs);
+  color: var(--on-image-muted);
 }
 
 .bp-credit a {
@@ -47,7 +47,7 @@
 /* The large image fades in over the thumbnail placeholder once loaded (see lightbox.ts) */
 .pswp__img:not(.pswp__img--placeholder) {
   opacity: 0;
-  transition: opacity 0.3s ease-out;
+  transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .pswp__img.bp-ready {
@@ -62,8 +62,8 @@
 
 /* Bigger touch targets */
 .pswp__button {
-  width: 56px;
-  height: 56px;
+  width: var(--control-lg);
+  height: var(--control-lg);
 }
 
 .pswp__button--bp-heart {
@@ -72,13 +72,13 @@
 }
 
 .pswp__button--bp-heart svg {
-  width: 30px;
-  height: 30px;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
   fill: transparent;
-  stroke: #fff;
+  stroke: var(--on-image);
   stroke-width: 2;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
-  transition: transform 0.15s;
+  filter: var(--shadow-icon);
+  transition: transform var(--duration-fast);
 }
 
 .pswp__button--bp-heart.is-on svg {

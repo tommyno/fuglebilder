@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'preact/hooks';
-import { birdPath, photoUrl, RANDOM_SEEDS } from '../lib/shared';
+import { birdPath, displayName, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
+import type { RandomBird as Bird } from '../lib/species.server';
 import { ShuffleIcon } from './icons';
 import { Thumb } from './Thumb';
+import { Skeletons, TileLabel } from './Tile';
 import styles from './Grid.module.css';
 import own from './RandomBirds.module.css';
 
-interface Bird {
-  id: number;
-  sci: string;
-  name: string | null;
-  photo: string;
-}
-
 /** Tilfeldige: 24 random birds from the whole world. Norske: every bird seen in Norway, A–Å. */
 type Mode = 'tilfeldige' | 'norske';
-
-const randomSeed = () => Math.floor(Math.random() * RANDOM_SEEDS);
 
 // Remember the viewer's choice. Storage can be missing or blocked, so never rely on it.
 const MODE_KEY = 'birdpic:front-mode';
@@ -53,7 +46,7 @@ function initialSeed(): number {
   return newSeed();
 }
 function newSeed(): number {
-  const s = randomSeed();
+  const s = Math.floor(Math.random() * RANDOM_SEEDS);
   try {
     sessionStorage.setItem(SEED_KEY, String(s));
   } catch {}
@@ -73,32 +66,20 @@ export default function RandomBirds() {
     if (m === 'tilfeldige') setSeed(initialSeed());
   }, []);
 
-  useEffect(() => {
-    if (seed === null) return;
-    let live = true;
+  /** Fetch a list of birds into `set`; an answer that arrives after cleanup is dropped. */
+  const load = (url: string, set: (b: Bird[]) => void) => {
+    const ctrl = new AbortController();
     setFailed(false);
-    fetch(`/api/random/${seed}.json`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((d) => live && setRandom(d.birds))
-      .catch(() => live && setFailed(true));
-    return () => {
-      live = false;
-    };
-  }, [seed]);
+    getJson<{ birds: Bird[] }>(url, ctrl.signal)
+      .then((d) => set(d.birds))
+      .catch(() => !ctrl.signal.aborted && setFailed(true));
+    return () => ctrl.abort();
+  };
+
+  useEffect(() => (seed === null ? undefined : load(`/api/random/${seed}.json`, setRandom)), [seed]);
 
   // The Norwegian list never changes, so fetch it once.
-  useEffect(() => {
-    if (mode !== 'norske' || norske) return;
-    let live = true;
-    setFailed(false);
-    fetch('/api/norske.json')
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((d) => live && setNorske(d.birds))
-      .catch(() => live && setFailed(true));
-    return () => {
-      live = false;
-    };
-  }, [mode]);
+  useEffect(() => (mode !== 'norske' || norske ? undefined : load('/api/norske.json', setNorske)), [mode]);
 
   const choose = (m: Mode) => {
     saveMode(m);
@@ -114,7 +95,6 @@ export default function RandomBirds() {
   };
 
   const birds = mode === 'norske' ? norske : random;
-  const buttonClass = (m: Mode) => (mode === m ? styles.button : `${styles.button} ${own.off}`);
 
   return (
     <section class={own.section} aria-labelledby="random-title">
@@ -123,7 +103,7 @@ export default function RandomBirds() {
       </h2>
       <div class={own.choices}>
         <button
-          class={buttonClass('tilfeldige')}
+          class={styles.button}
           type="button"
           aria-label="Tilfeldige fugler"
           aria-pressed={mode === 'tilfeldige'}
@@ -135,7 +115,7 @@ export default function RandomBirds() {
           </span>
         </button>
         <button
-          class={buttonClass('norske')}
+          class={styles.button}
           type="button"
           aria-label="Norske fugler"
           aria-pressed={mode === 'norske'}
@@ -160,15 +140,12 @@ export default function RandomBirds() {
           ? birds.map((b) => (
               <li key={b.id}>
                 <a class={styles.tile} href={birdPath(b)}>
-                  <Thumb src={photoUrl(b.photo, 'medium')} alt={b.name ?? b.sci} />
-                  <span class={styles.label}>
-                    <span class={styles.labelName}>{b.name ?? b.sci}</span>
-                    {b.name && <span class={styles.labelSci}>{b.sci}</span>}
-                  </span>
+                  <Thumb src={photoUrl(b.photo, 'medium')} alt={displayName(b)} />
+                  <TileLabel taxon={b} />
                 </a>
               </li>
             ))
-          : !failed && Array.from({ length: 12 }, (_, i) => <li key={i} class={styles.skeleton} />)}
+          : !failed && <Skeletons count={12} />}
       </ul>
     </section>
   );

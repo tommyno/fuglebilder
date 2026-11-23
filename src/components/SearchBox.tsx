@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { birdPath, photoUrl } from '../lib/shared';
+import { birdPath, getJson, photoUrl } from '../lib/shared';
+import type { SearchResult as Result } from '../lib/species.server';
 import { BirdIcon, SearchIcon } from './icons';
 import styles from './SearchBox.module.css';
-
-interface Result {
-  id: number;
-  sci: string;
-  name: string | null;
-  alias: string | null;
-  photo: string | null;
-}
 
 /** Same query → same URL, so the server cache is shared. */
 const cacheKey = (q: string) =>
@@ -37,15 +30,13 @@ export default function SearchBox() {
     const ctrl = new AbortController();
     const t = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search/${encodeURIComponent(key)}.json`, { signal: ctrl.signal });
-        if (!res.ok) return;
-        const data = await res.json();
+        const data = await getJson<{ results: Result[] }>(`/api/search/${encodeURIComponent(key)}.json`, ctrl.signal);
         setResults(data.results);
         setSearched(key);
         setActive(-1);
         setOpen(true);
       } catch {
-        /* avbrutt eller offline */
+        /* avbrutt, offline eller serverfeil */
       }
     }, 120);
     return () => {
@@ -98,7 +89,7 @@ export default function SearchBox() {
           autoCapitalize="none"
           spellcheck={false}
           role="combobox"
-          list={undefined}
+          list={undefined} // Preact's types require `list` on a combobox input
           aria-expanded={showList}
           aria-controls="bird-suggestions"
           aria-activedescendant={active >= 0 ? `bird-opt-${active}` : undefined}

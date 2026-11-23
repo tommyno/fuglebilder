@@ -1,11 +1,12 @@
 import { Fragment } from 'preact';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
 import { useStore } from '@nanostores/preact';
-import { PHOTO_FILTERS, isPhotoFilter, photoUrl, type Photo, type PhotoFilter, type Taxon } from '../lib/shared';
-import { $favorites, type SlideTaxon } from '../lib/favorites';
+import { PHOTO_FILTERS, displayName, getJson, isPhotoFilter, photoUrl, type Photo, type PhotoFilter, type Taxon } from '../lib/shared';
+import { $favorites } from '../lib/favorites';
 import { initialPhotoIndex, openLightbox, type Slide } from '../lib/lightbox';
 import { HeartIcon } from './icons';
 import { Thumb } from './Thumb';
+import { Skeletons } from './Tile';
 import styles from './Grid.module.css';
 import filterStyles from './PhotoGrid.module.css';
 
@@ -30,8 +31,9 @@ function writeFilter(f: Filter) {
 
 /** Alle bildene av én art, best stemte først, med uendelig rulling og filter for alder/kjønn. */
 export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
-  const slidesRef = useRef<Slide[]>([]);
-  const [count, setCount] = useState(0); // re-render trigger; slides live in the ref
+  const slidesRef = useRef<Slide[]>([]); // live array: the lightbox reads it while open
+  const seen = useRef(new Set<string>()); // photo ids in slidesRef, to drop repeats across pages
+  const [, rerender] = useReducer((n: number) => n + 1, 0);
   const [state, setState] = useState<'loading' | 'idle' | 'done' | 'error'>('loading');
   // undefined until read from the address after hydration (the page HTML is cached without it)
   const [filter, setFilter] = useState<Filter | undefined>(undefined);
@@ -45,8 +47,6 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
   const favorites = useStore($favorites);
   const favSet = useMemo(() => new Set(favorites.map((f) => f.p)), [favorites]);
 
-  const slideTaxon: SlideTaxon = useMemo(() => ({ id: taxon.id, sci: taxon.sci, name: taxon.name }), [taxon]);
-
   const loadMore = useCallback((): Promise<void> => {
     if (busy.current) return busy.current;
     if (!hasMore.current || filterRef.current === undefined) return Promise.resolve();
@@ -55,17 +55,16 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
     setState('loading');
     const job = (async () => {
       try {
-        const res = await fetch(path);
-        if (!res.ok) throw new Error(String(res.status));
-        const data: { photos: Photo[]; hasMore: boolean } = await res.json();
+        const data = await getJson<{ photos: Photo[]; hasMore: boolean }>(path);
         if (gen !== generation.current) return;
         page.current++;
         hasMore.current = data.hasMore;
-        const seen = new Set(slidesRef.current.map((s) => s.photo.p));
         for (const photo of data.photos) {
-          if (!seen.has(photo.p)) slidesRef.current.push({ photo, taxon: slideTaxon });
+          if (seen.current.has(photo.p)) continue;
+          seen.current.add(photo.p);
+          slidesRef.current.push({ photo, taxon });
         }
-        setCount(slidesRef.current.length);
+        rerender(0);
         setState(hasMore.current ? 'idle' : 'done');
       } catch {
         if (gen === generation.current) setState('error');
@@ -75,7 +74,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
     })();
     busy.current = job;
     return job;
-  }, [taxon.id, slideTaxon]);
+  }, [taxon]);
 
   const choose = useCallback(
     (f: Filter) => {
@@ -85,7 +84,8 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
       page.current = 0;
       hasMore.current = true;
       slidesRef.current = [];
-      setCount(0);
+      seen.current = new Set();
+      rerender(0);
       filterRef.current = f;
       setFilter(f);
       writeFilter(f);
@@ -99,7 +99,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
       openLightbox({
         slides: slidesRef.current,
         index,
-        loadMore: () => loadMore(),
+        loadMore,
         onChange: (i) => tiles.current?.children[i]?.scrollIntoView({ block: 'nearest' }),
       }),
     [loadMore],
@@ -135,7 +135,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
   }, [loadMore, state]);
 
   const slides = slidesRef.current;
-  const alt = slideTaxon.name ?? taxon.sci;
+  const alt = displayName(taxon);
   const active = filter ? PHOTO_FILTERS[filter] : null;
   const marked = active ? ` merket som ${active.label.toLowerCase()}` : '';
 
@@ -167,7 +167,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
         ))}
       </div>
 
-      <ul class={styles.grid} ref={tiles} data-count={count}>
+      <ul class={styles.grid} ref={tiles}>
         {slides.map((s, i) => (
           <li key={s.photo.p}>
             <button class={styles.tile} type="button" onClick={() => open(i)} aria-label={`Åpne bilde ${i + 1}`}>
@@ -176,7 +176,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
             </button>
           </li>
         ))}
-        {state === 'loading' && Array.from({ length: slides.length ? 4 : 12 }, (_, i) => <li key={`s${i}`} class={styles.skeleton} />)}
+        {state === 'loading' && <Skeletons count={slides.length ? 4 : 12} />}
       </ul>
 
       {state === 'error' && (

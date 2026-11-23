@@ -3,11 +3,11 @@
 .filters {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   /* one row that scrolls sideways on narrow screens, edge to edge */
   overflow-x: auto;
-  margin: 0 calc(-1 * var(--gutter)) 12px;
-  padding: 2px var(--gutter) 4px; /* room for the focus outline */
+  margin: 0 calc(-1 * var(--gutter)) var(--space-sm);
+  padding: var(--space-3xs) var(--gutter) var(--space-2xs); /* room for the focus outline */
   scrollbar-width: none;
 }
 
@@ -17,21 +17,21 @@
 
 .chip {
   flex: none;
-  height: 40px;
-  padding: 0 16px;
+  height: var(--control-sm);
+  padding: 0 var(--space-md);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--surface);
   color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 550;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
   white-space: nowrap;
   cursor: pointer;
 }
 
 @media (hover: hover) {
   .chip:hover {
-    border-color: rgb(0 0 0 / 0.25);
+    border-color: var(--border-strong);
   }
 }
 
@@ -44,21 +44,21 @@
 .sep {
   flex: none;
   width: 1px;
-  height: 22px;
-  margin: 0 2px;
+  height: var(--icon-md);
+  margin: 0 var(--space-3xs);
   background: var(--border);
 }
 
 .empty {
-  margin: 8px 0;
-  padding: 40px 20px;
+  margin: var(--space-xs) 0;
+  padding: var(--space-2xl) var(--space-lg);
   border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   text-align: center;
 }
 
 .emptyTitle {
-  margin: 0 0 20px;
-  font-weight: 650;
-  font-size: 1.1rem;
+  margin: 0 0 var(--space-lg);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-lg);
 }

@@ -52,11 +52,14 @@ interface ObsPage {
   results: INatObservation[];
 }
 
-const has = (o: INatObservation, attr: number, value: number) =>
+const ALIVE = [17, 18] as const;
+const DEAD = [17, 19] as const;
+
+const has = (o: INatObservation, [attr, value]: readonly [number, number]) =>
   (o.annotations ?? []).some((a) => a.controlled_attribute_id === attr && a.controlled_value_id === value);
 
 const notALiveBird = (o: INatObservation) =>
-  has(o, 17, 19) ||
+  has(o, DEAD) ||
   (o.annotations ?? []).some((a) => a.controlled_attribute_id === 22 && a.controlled_value_id !== 24) ||
   DEAD_WORDS.test(`${o.description ?? ''} ${(o.tags ?? []).join(' ')}`);
 
@@ -67,7 +70,7 @@ function toPhoto(p: INatPhoto | undefined, by: string, obs?: number): Photo | nu
   const long = Math.max(dims.width, dims.height);
   const short = Math.min(dims.width, dims.height);
   if (long < MIN_LONG_EDGE || long / short > 2.5) return null; // tiny, or panorama strips
-  return { p: `${m[1]}.${m[2]}`, w: dims.width, h: dims.height, by, lic: p!.license_code!, ...(obs ? { obs } : {}) };
+  return { p: `${m[1]}.${m[2]}`, w: dims.width, h: dims.height, by, lic: p!.license_code!, obs }; // JSON drops obs when undefined
 }
 
 async function getJson<T>(url: string): Promise<T> {
@@ -84,7 +87,8 @@ const observations = (taxon: number, page: number, term?: readonly [number, numb
       (term ? `&term_id=${term[0]}&term_value_id=${term[1]}` : ''),
   );
 
-const ALIVE = [17, 18] as const;
+/** Another page after this one? iNat stops at MAX_PAGE. */
+const morePages = (page: number, total: number) => page < MAX_PAGE && page * PER_PAGE < total;
 
 async function curatedPhotos(taxon: number): Promise<Photo[]> {
   try {
@@ -101,11 +105,11 @@ async function curatedPhotos(taxon: number): Promise<Photo[]> {
   }
 }
 
-function fromObservations(results: INatObservation[], skipAlive: boolean): Photo[] {
+function fromObservations(results: INatObservation[], skipAlive = false): Photo[] {
   const out: Photo[] = [];
   for (const o of results) {
     if (notALiveBird(o)) continue;
-    if (skipAlive && has(o, 17, 18)) continue; // already shown on the "alive" pages
+    if (skipAlive && has(o, ALIVE)) continue; // already shown on the "alive" pages
     const p = toPhoto(o.photos?.[0], o.user?.name || o.user?.login || 'ukjent', o.id);
     if (p) out.push(p);
   }
@@ -125,8 +129,8 @@ export const GET: APIRoute = async ({ params }) => {
       const { term, value } = PHOTO_FILTERS[filter];
       const res = await observations(taxon, page, [term, value]);
       return json({
-        photos: fromObservations(res.results, false),
-        hasMore: page < MAX_PAGE && page * PER_PAGE < res.total_results,
+        photos: fromObservations(res.results),
+        hasMore: morePages(page, res.total_results),
       });
     }
 
@@ -139,13 +143,13 @@ export const GET: APIRoute = async ({ params }) => {
     let photos: Photo[];
     let hasMore: boolean;
     if (page <= alivePages) {
-      photos = [...curated, ...fromObservations(alive.results, false)];
+      photos = [...curated, ...fromObservations(alive.results)];
       hasMore = true; // more "alive" pages, or the other sightings after them
     } else {
       const restPage = page - alivePages;
       const rest = restPage <= MAX_PAGE ? await observations(taxon, restPage) : { total_results: 0, results: [] };
       photos = [...curated, ...fromObservations(rest.results, true)];
-      hasMore = restPage < MAX_PAGE && restPage * PER_PAGE < rest.total_results;
+      hasMore = morePages(restPage, rest.total_results);
     }
 
     // curated photos often also appear among the sightings

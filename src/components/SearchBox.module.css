@@ -12,10 +12,10 @@
 
 .icon {
   position: absolute;
-  left: 20px;
+  left: var(--space-lg);
   top: 50%;
-  width: 24px;
-  height: 24px;
+  width: var(--icon-md);
+  height: var(--icon-md);
   transform: translateY(-50%);
   color: var(--muted);
   pointer-events: none;
@@ -23,14 +23,15 @@
 
 .input {
   width: 100%;
-  height: 60px;
-  padding: 0 22px 0 56px;
+  height: var(--control-lg);
+  /* text starts a small gap after the icon */
+  padding: 0 var(--space-lg) 0 calc(var(--space-lg) + var(--icon-md) + var(--space-sm));
   border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -50,16 +51,16 @@
 
 .list {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + var(--space-xs));
   left: 0;
   right: 0;
   max-height: min(70vh, 640px);
   overflow-y: auto;
   margin: 0;
-  padding: 6px;
+  padding: var(--space-xs);
   list-style: none;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow);
   overscroll-behavior: contain;
@@ -69,10 +70,9 @@
 .option {
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-height: 72px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
   text-decoration: none;
 }
 
@@ -82,9 +82,9 @@
 
 .thumb {
   flex: none;
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
+  width: var(--control-lg);
+  height: var(--control-lg);
+  border-radius: var(--radius-sm);
   object-fit: cover;
   background: var(--surface-2);
 }
@@ -96,8 +96,8 @@
 }
 
 .noThumb svg {
-  width: 30px;
-  height: 30px;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
 }
 
 .text {
@@ -107,17 +107,16 @@
 }
 
 .primary {
-  font-size: 1.15rem;
-  font-weight: 650;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
 }
-
 
 .secondary {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
 }
 
 .empty {
-  padding: 18px 14px;
+  padding: var(--space-md) var(--space-sm);
   color: var(--muted);
 }
