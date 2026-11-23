@@ -1,9 +1,52 @@
 ---
 import Base from '../layouts/Base.astro';
 import RandomBirds from '../components/RandomBirds.tsx';
+import { ArrowUpIcon } from '../components/icons';
 ---
 
 <Base search>
   <h1 class="visually-hidden">Finn en fugl</h1>
   <RandomBirds client:load />
+  <p class="totop">
+    <a href="#top"><ArrowUpIcon />Til toppen</a>
+  </p>
 </Base>
+
+<script>
+  // Scroll up without adding #top to the URL (so Back leaves the page), then put focus at the
+  // top like the plain link would. Without JS the link still works.
+  document.querySelector('.totop a')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
+    document.querySelector<HTMLElement>('.brand')?.focus({ preventScroll: true });
+  });
+</script>
+
+<style>
+  .totop {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-xl) 0 0;
+  }
+  .totop a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: var(--control-md);
+    padding: 0 var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: background-color var(--duration-fast);
+  }
+  @media (hover: hover) {
+    .totop a:hover {
+      background: var(--surface-2);
+    }
+  }
+  .totop :global(svg) {
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+  }
+</style>
