@@ -28,6 +28,11 @@ const others = species.names.slice(1);
     <SearchBox client:load />
   </div>
   <header class="head">
+    <a class="back" href="/" aria-label="Tilbake" data-back>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
+        ><path d="M19 12H5M11 6l-6 6 6 6"></path></svg
+      >
+    </a>
     <h1 class:list={{ latin: !species.name }}>{title}</h1>
     {species.name && <p class="sci">{species.sci}</p>}
     {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
@@ -40,7 +45,29 @@ const others = species.names.slice(1);
     padding: clamp(8px, 2vh, 20px) 0 0; /* same as the front page, so the search box doesn't jump */
   }
   .head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
     margin: 28px 0 20px;
+  }
+  .head > :not(.back) {
+    grid-column: 2;
+  }
+  .back {
+    grid-row: 1;
+    align-self: center;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .back svg {
+    width: 20px;
+    height: 20px;
   }
   h1 {
     margin: 0;
@@ -63,3 +90,15 @@ const others = species.names.slice(1);
     color: var(--muted);
   }
 </style>
+
+<script>
+  // Came here from another page on the site? Go back to it, so the front page keeps its birds and scroll position.
+  // Otherwise (shared link, new tab) the link just goes to the front page.
+  document.querySelector('[data-back]')?.addEventListener('click', (e) => {
+    const ref = document.referrer && new URL(document.referrer);
+    if (ref && ref.origin === location.origin && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+</script>
