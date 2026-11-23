@@ -1,5 +1,13 @@
 // Code shared by the server and the browser.
 
+import clashes from '../../data/slug-clashes.json';
+import { foldAccents, slugify } from './slug';
+
+export { foldAccents, slugify };
+
+/** Species whose Norwegian name slug is taken by a more observed one; see slugClashes(). */
+const CLASHES = new Set<number>(clashes);
+
 export interface Taxon {
   id: number;
   sci: string;
@@ -47,27 +55,17 @@ export function photoUrl(photo: string, size: PhotoSize): string {
   return `${PHOTO_BASE}/${photo.slice(0, dot)}/${size}.${photo.slice(dot + 1)}`;
 }
 
-const FOLD: Record<string, string> = { ø: 'o', æ: 'ae', œ: 'oe', ß: 'ss' };
-
-/** Lowercase, strip accents (å → a) and fold ø/æ: "Kjøttmeis" → "kjottmeis". Used by both slugs and search. */
-export const foldAccents = (s: string): string =>
-  s
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .replace(/[øæœß]/g, (c) => FOLD[c]);
-
-/** "Svarttrost" → "svarttrost", "Blåmeis" → "blameis", "Turdus merula" → "turdus-merula" */
-export const slugify = (name: string): string =>
-  foldAccents(name)
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-
 /** The Norwegian name, or the Latin one when there is none. */
 export const displayName = (t: Pick<Taxon, 'sci' | 'name'>) => t.name ?? t.sci;
 
-/** /fugl/12716-svarttrost (Latin name when there is no Norwegian one) */
-export const birdPath = (t: Taxon) => `/fugl/${t.id}-${slugify(displayName(t))}`;
+/** "svarttrost"; Latin name when there is no Norwegian one, or appended when the Norwegian one is taken. */
+export function birdSlug(t: Taxon): string {
+  const slug = slugify(displayName(t));
+  return CLASHES.has(t.id) ? `${slug}-${slugify(t.sci)}` : slug;
+}
+
+/** /fugl/svarttrost */
+export const birdPath = (t: Taxon) => `/fugl/${birdSlug(t)}`;
 
 /** Fetch JSON from our own API; rejects on HTTP errors. */
 export async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> {

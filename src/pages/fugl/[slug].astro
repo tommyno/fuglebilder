@@ -1,19 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
-import { getSpecies } from '../../lib/species.server';
-import { birdPath, type Taxon } from '../../lib/shared';
+import { getSpeciesBySlug } from '../../lib/species.server';
+import type { Taxon } from '../../lib/shared';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
 
-const id = Number.parseInt(Astro.params.slug ?? '', 10);
-const species = Number.isFinite(id) ? getSpecies(id) : undefined;
-if (!species) return Astro.rewrite('/404');
+const species = getSpeciesBySlug(Astro.params.slug ?? '');
+// An empty 404 makes Astro render 404.astro (rewriting to a prerendered page isn't allowed here).
+if (!species) return new Response(null, { status: 404 });
 
 const taxon: Taxon = { id: species.id, sci: species.sci, name: species.name };
-const canonical = birdPath(taxon);
-if (Astro.url.pathname !== canonical) return Astro.redirect(canonical, 301);
 
 const title = species.name ?? species.sci;
 const others = species.names.slice(1);

@@ -2,7 +2,7 @@
 // data/species.json is built by scripts/build-index.mjs.
 
 import raw from '../../data/species.json';
-import { foldAccents } from './shared';
+import { birdSlug, foldAccents } from './shared';
 
 type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number];
 
@@ -28,8 +28,12 @@ const species: Species[] = (raw as Rec[]).map(([id, sci, obs, photo, rawNames, n
   return { id, sci, obs, photo, names, name: names[0] ?? null, norway };
 });
 const byId = new Map(species.map((s) => [s.id, s]));
+const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
 
 export const getSpecies = (id: number) => byId.get(id);
+
+/** The species at /fugl/<slug>. */
+export const getSpeciesBySlug = (slug: string) => bySlug.get(slug);
 
 // ---------------------------------------------------------------- normalizing
 

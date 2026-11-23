@@ -9,6 +9,7 @@
 //   norway: research-grade observations in Norway (0 = never seen there)
 
 import { writeFile, mkdir } from 'node:fs/promises';
+import { slugClashes } from '../src/lib/slug.ts';
 
 const API = 'https://api.inaturalist.org/v1/taxa';
 const UA = 'fuglebilder index builder';
@@ -108,5 +109,8 @@ console.log(`${records.filter((r) => r[5]).length} species seen in Norway.`);
 records.sort((a, b) => b[2] - a[2]); // most observed first
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });
 await writeFile(new URL('../data/species.json', import.meta.url), JSON.stringify(records));
+// Bird URLs are /fugl/<name>; species sharing a name need the Latin one appended.
+const clashes = slugClashes(records.map((r) => ({ id: r[0], name: r[4][0] ?? r[1] })));
+await writeFile(new URL('../data/slug-clashes.json', import.meta.url), JSON.stringify(clashes));
 const withPhoto = records.filter((r) => r[3]).length;
 console.log(`Wrote ${records.length} species (${withPhoto} with open-licensed photo).`);
