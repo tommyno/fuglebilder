@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import { getSpeciesBySlug } from '../../lib/species.server';
 import { snlUrl, type Taxon } from '../../lib/shared';
+import button from '../../components/Button.module.css';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
@@ -23,7 +24,7 @@ const others = species.names.slice(1);
   search
 >
   <header class="head">
-    <a class="back" href="/" data-back>
+    <a class:list={[button.button, button.ghost, "back"]} href="/" data-back>
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
         ><path d="M19 12H5M11 6l-6 6 6 6"></path></svg
       >
@@ -44,27 +45,9 @@ const others = species.names.slice(1);
   .head {
     margin: var(--space-sm) 0 var(--space-lg);
   }
-  /* Same look as "Mine fugler" in the top bar. The negative margin keeps the arrow in line with the title. */
+  /* Pulled left by its padding so the arrow lines up with the title. */
   .back {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    min-height: var(--control-md);
     margin-left: calc(-1 * var(--space-md));
-    padding: 0 var(--space-md);
-    border-radius: var(--radius-md);
-    background: transparent;
-    text-decoration: none;
-    transition: background-color var(--duration-fast);
-  }
-  @media (hover: hover) {
-    .back:hover {
-      background: var(--surface-2);
-    }
-  }
-  .back svg {
-    width: var(--icon-sm);
-    height: var(--icon-sm);
   }
   .latin {
     font-style: italic;

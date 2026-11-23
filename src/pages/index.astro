@@ -2,13 +2,14 @@
 import Base from '../layouts/Base.astro';
 import RandomBirds from '../components/RandomBirds.tsx';
 import { ArrowUpIcon } from '../components/icons';
+import button from '../components/Button.module.css';
 ---
 
 <Base search>
   <h1 class="visually-hidden">Finn en fugl</h1>
   <RandomBirds client:load />
   <p class="totop">
-    <a href="#top"><ArrowUpIcon />Til toppen</a>
+    <a class:list={[button.button, button.ghost]} href="#top"><ArrowUpIcon />Til toppen</a>
   </p>
 </Base>
 
@@ -28,25 +29,5 @@ import { ArrowUpIcon } from '../components/icons';
     display: flex;
     justify-content: center;
     margin: var(--space-xl) 0 0;
-  }
-  .totop a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    min-height: var(--control-md);
-    padding: 0 var(--space-md);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    text-decoration: none;
-    transition: background-color var(--duration-fast);
-  }
-  @media (hover: hover) {
-    .totop a:hover {
-      background: var(--surface-2);
-    }
-  }
-  .totop :global(svg) {
-    width: var(--icon-sm);
-    height: var(--icon-sm);
   }
 </style>

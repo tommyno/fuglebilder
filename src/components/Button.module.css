@@ -1,0 +1,38 @@
+/* Shared look for buttons and button-like links. Use .button plus one variant:
+   .ghost  quiet, no background until hover ("Mine fugler", "Tilbake", "Til toppen")
+   .primary  filled with the accent colour, for the main action in a message ("Prøv igjen", "Finn en fugl") */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: var(--control-md);
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+
+.button svg {
+  flex: none;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+
+.ghost {
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .ghost:hover {
+    background: var(--surface-2);
+  }
+}
+
+.primary {
+  padding: 0 var(--space-lg);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: var(--weight-medium);
+}

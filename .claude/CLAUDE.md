@@ -28,6 +28,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/lib/species.server.ts` | Loads the index; search, random pool, Norwegian list |
 | `src/lib/slug.ts` | `foldAccents`, `slugify`, `slugClashes`. No imports, so `scripts/build-index.mjs` can import it too |
 | `src/lib/lightbox.ts` | PhotoSwipe full view: caption, credit, heart, `?photo=n` so Back closes it |
+| `src/components/Button.module.css` | Shared button look for `<a>` and `<button>`, in `.astro` and Preact alike: `.button` plus `.ghost` (quiet, grey on hover) or `.primary` (accent fill). Don't restyle buttons locally |
 | `src/lib/favorites.ts` | nanostores favorites persisted to localStorage, shared between islands |
 | `scripts/build-index.mjs` | Writes `data/species.json` and `data/slug-clashes.json` |
 

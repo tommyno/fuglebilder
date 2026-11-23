@@ -8,6 +8,7 @@ import { HeartIcon } from './icons';
 import { Thumb } from './Thumb';
 import { Skeletons } from './Tile';
 import styles from './Grid.module.css';
+import button from './Button.module.css';
 import filterStyles from './PhotoGrid.module.css';
 
 /** null = alle bilder */
@@ -182,7 +183,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
       {state === 'error' && (
         <p class={styles.status}>
           Klarte ikke å hente bildene.{' '}
-          <button class={styles.button} type="button" onClick={() => loadMore()}>
+          <button class={`${button.button} ${button.primary}`} type="button" onClick={() => loadMore()}>
             Prøv igjen
           </button>
         </p>
@@ -193,7 +194,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
       {state === 'done' && slides.length === 0 && active && (
         <div class={filterStyles.empty}>
           <p class={filterStyles.emptyTitle}>Fant ingen bilder</p>
-          <button class={styles.button} type="button" onClick={() => choose(null)}>
+          <button class={`${button.button} ${button.primary}`} type="button" onClick={() => choose(null)}>
             Vis alle bilder
           </button>
         </div>

@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Logo from '../components/Logo.astro';
 import SearchBox from '../components/SearchBox.tsx';
 import { HeartIcon } from '../components/icons';
+import button from '../components/Button.module.css';
 
 interface Props {
   title?: string;
@@ -39,7 +40,7 @@ const {
   <body>
     <header class="top" id="top">
       <a class="brand" href="/"><Logo /><span>Fuglebilder</span></a>
-      <a class="mybirds" href="/mine-fugler">
+      <a class:list={[button.button, button.ghost, "mybirds"]} href="/mine-fugler">
         <HeartIcon />
         Mine fugler
       </a>
@@ -76,25 +77,7 @@ const {
     letter-spacing: var(--tracking-tight);
     text-decoration: none;
   }
-  .mybirds {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    min-height: var(--control-md);
-    padding: 0 var(--space-md);
-    border-radius: var(--radius-md);
-    background: transparent;
-    text-decoration: none;
-    transition: background-color var(--duration-fast);
-  }
-  @media (hover: hover) {
-    .mybirds:hover {
-      background: var(--surface-2);
-    }
-  }
   .mybirds :global(svg) {
-    width: var(--icon-sm);
-    height: var(--icon-sm);
     color: var(--heart);
   }
   main {

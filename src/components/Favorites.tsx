@@ -6,6 +6,7 @@ import { HeartIcon } from './icons';
 import { Thumb } from './Thumb';
 import { TileLabel } from './Tile';
 import styles from './Grid.module.css';
+import button from './Button.module.css';
 
 /** «Mine fugler»: lagrede bilder, nyeste først. */
 export default function Favorites() {
@@ -17,7 +18,7 @@ export default function Favorites() {
         Ingen lagrede fugler ennå. Åpne et bilde og trykk på <HeartIcon class={styles.inlineHeart} /> for å lagre det her.
         <br />
         <br />
-        <a class={styles.button} href="/">
+        <a class={`${button.button} ${button.primary}`} href="/">
           Finn en fugl
         </a>
       </p>
