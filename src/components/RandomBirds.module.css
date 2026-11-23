@@ -1,0 +1,17 @@
+.section {
+  margin-top: 48px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}

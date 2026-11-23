@@ -1,0 +1,72 @@
+/* Overlay elements added to PhotoSwipe (global: PhotoSwipe builds its own DOM). */
+
+.pswp {
+  --pswp-bg: #000;
+  --pswp-icon-color: #fff;
+}
+
+.pswp__bp-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 48px max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.65));
+  color: #fff;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  font-family: var(--font);
+}
+
+.pswp:not(.pswp--ui-visible) .pswp__bp-caption {
+  opacity: 0;
+}
+
+.bp-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.bp-sci {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.bp-credit {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.bp-credit a {
+  color: inherit;
+  pointer-events: auto;
+}
+
+/* Bigger touch targets */
+.pswp__button {
+  width: 56px;
+  height: 56px;
+}
+
+.pswp__button--bp-heart {
+  display: grid;
+  place-items: center;
+}
+
+.pswp__button--bp-heart svg {
+  width: 30px;
+  height: 30px;
+  fill: transparent;
+  stroke: #fff;
+  stroke-width: 2;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+  transition: transform 0.15s;
+}
+
+.pswp__button--bp-heart.is-on svg {
+  fill: var(--heart);
+  stroke: var(--heart);
+  transform: scale(1.1);
+}

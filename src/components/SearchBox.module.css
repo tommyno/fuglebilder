@@ -1,0 +1,144 @@
+.root {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hero {
+  max-width: 760px;
+}
+
+.compact {
+  max-width: 560px;
+  margin: 0;
+}
+
+.field {
+  position: relative;
+  margin: 0;
+}
+
+.icon {
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 72px;
+  padding: 0 24px 0 62px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.45rem;
+  box-shadow: var(--shadow);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--muted);
+}
+
+.input:focus {
+  border-color: var(--accent);
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.compact .input {
+  height: 56px;
+  font-size: 1.15rem;
+  box-shadow: none;
+}
+
+.compact .icon {
+  width: 22px;
+  height: 22px;
+}
+
+.list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: min(70vh, 640px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overscroll-behavior: contain;
+  text-align: left;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.active {
+  background: var(--surface-2);
+}
+
+.thumb {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+
+.noThumb {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.noThumb svg {
+  width: 30px;
+  height: 30px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.primary {
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+
+.secondary {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.empty {
+  padding: 18px 14px;
+  color: var(--muted);
+}

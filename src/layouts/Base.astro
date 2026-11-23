@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'birdpic – bilder av alle verdens fugler',
+  description = 'Se fine bilder av alle verdens fugler. Søk på norsk eller latinsk navn.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="birdpic" />
+    <meta name="theme-color" content="#f7f6f3" />
+    <link rel="preconnect" href="https://inaturalist-open-data.s3.amazonaws.com" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/"><Logo /><span>birdpic</span></a>
+      <a class="mybirds" href="/mine-fugler">
+        <svg viewBox="0 0 24 24" aria-hidden="true"
+          ><path
+            fill="currentColor"
+            d="M12 21s-7.5-4.6-9.6-9.3C.8 8 3 4 6.9 4c2.1 0 3.6 1.2 5.1 3 1.5-1.8 3-3 5.1-3C21 4 23.2 8 21.6 11.7 19.5 16.4 12 21 12 21Z"
+          ></path></svg
+        >
+        Mine fugler
+      </a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="foot">
+      Bildene er tatt av folk på <a href="https://www.inaturalist.org">iNaturalist</a> og har Creative Commons-lisens.
+      Trykk på et bilde for å se hvem som tok det.
+    </footer>
+  </body>
+</html>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: max(14px, env(safe-area-inset-top)) var(--gutter) 6px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.35rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .mybirds {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mybirds svg {
+    width: 20px;
+    height: 20px;
+    color: var(--heart);
+  }
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter) 48px;
+  }
+  .foot {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 24px var(--gutter) max(32px, env(safe-area-inset-bottom));
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import SearchBox from '../components/SearchBox.tsx';
+---
+
+<Base title="Fant ikke siden – birdpic">
+  <section class="hero">
+    <h1>Denne fuglen har fløyet sin vei</h1>
+    <p>Vi fant ikke siden. Prøv å søke i stedet.</p>
+    <SearchBox client:load variant="hero" />
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: 72px 0 120px;
+    text-align: center;
+  }
+  h1 {
+    margin: 0 0 6px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+  }
+  p {
+    margin: 0 0 28px;
+    color: var(--muted);
+  }
+</style>
