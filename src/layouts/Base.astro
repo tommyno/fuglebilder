@@ -53,10 +53,6 @@ const {
       }
       <slot />
     </main>
-    <footer class="foot">
-      Bildene er tatt av folk på <a href="https://www.inaturalist.org">iNaturalist</a> og har Creative Commons-lisens.
-      Trykk på et bilde for å se hvem som tok det.
-    </footer>
   </body>
 </html>
 
@@ -104,17 +100,9 @@ const {
   main {
     max-width: var(--max);
     margin: 0 auto;
-    padding: 0 var(--gutter) var(--space-2xl);
+    padding: 0 var(--gutter) max(var(--space-2xl), env(safe-area-inset-bottom));
   }
   .search {
     padding-top: var(--page-top);
-  }
-  .foot {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: var(--space-lg) var(--gutter) max(var(--space-xl), env(safe-area-inset-bottom));
-    color: var(--muted);
-    font-size: var(--text-sm);
-    text-align: center;
   }
 </style>
