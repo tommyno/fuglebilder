@@ -30,6 +30,35 @@ function saveMode(mode: Mode) {
   } catch {}
 }
 
+// Keep the same random set for this tab, so going to a bird and back shows the same birds.
+// Only a browser reload (or the button) deals a new set. A new tab starts fresh.
+const SEED_KEY = 'birdpic:random-seed';
+function isReload() {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    return nav?.type === 'reload';
+  } catch {
+    return false;
+  }
+}
+function initialSeed(): number {
+  if (!isReload()) {
+    try {
+      const saved = sessionStorage.getItem(SEED_KEY);
+      const n = Number(saved);
+      if (saved !== null && Number.isInteger(n) && n >= 0 && n < RANDOM_SEEDS) return n;
+    } catch {}
+  }
+  return newSeed();
+}
+function newSeed(): number {
+  const s = randomSeed();
+  try {
+    sessionStorage.setItem(SEED_KEY, String(s));
+  } catch {}
+  return s;
+}
+
 export default function RandomBirds() {
   const [mode, setMode] = useState<Mode | null>(null);
   const [seed, setSeed] = useState<number | null>(null);
@@ -40,7 +69,7 @@ export default function RandomBirds() {
   useEffect(() => {
     const m = savedMode();
     setMode(m);
-    if (m === 'tilfeldige') setSeed(randomSeed());
+    if (m === 'tilfeldige') setSeed(initialSeed());
   }, []);
 
   useEffect(() => {
@@ -80,7 +109,7 @@ export default function RandomBirds() {
   const shuffle = () => {
     if (mode !== 'tilfeldige') setRandom(null); // don't flash the old set while the new one loads
     choose('tilfeldige');
-    setSeed(randomSeed());
+    setSeed(newSeed());
   };
 
   const birds = mode === 'norske' ? norske : random;
