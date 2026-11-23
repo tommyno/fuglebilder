@@ -88,10 +88,14 @@ export default function RandomBirds() {
     setMode(m);
   };
 
-  // "Hele verden" always deals a new set, also when it's already showing.
-  const shuffle = () => {
-    if (mode !== 'tilfeldige') setRandom(null); // don't flash the old set while the new one loads
+  // "Hele verden" shows this tab's set (a new one only if there is none yet); "Vis nye" deals a new one.
+  const showWorld = () => {
     choose('tilfeldige');
+    if (seed === null) setSeed(initialSeed());
+  };
+  const shuffle = () => {
+    setRandom(null); // don't show the old set while the new one loads
+    setFailed(false);
     setSeed(newSeed());
   };
 
@@ -115,18 +119,27 @@ export default function RandomBirds() {
           class={styles.chip}
           type="button"
           aria-pressed={mode === 'tilfeldige'}
-          onClick={shuffle}
+          onClick={() => mode !== 'tilfeldige' && showWorld()}
         >
           Hele verden
-          <ShuffleIcon />
         </button>
       </div>
+
+      {mode === 'tilfeldige' && (
+        <div class={own.info}>
+          <p>Viser {random?.length ?? 24} tilfeldige arter</p>
+          <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
+            Vis nye
+            <ShuffleIcon />
+          </button>
+        </div>
+      )}
 
       {failed && (
         <p class={styles.status}>
           {mode === 'norske'
             ? 'Klarte ikke å hente fuglene akkurat nå. Prøv igjen litt senere.'
-            : 'Klarte ikke å hente fugler akkurat nå. Prøv «Hele verden» igjen.'}
+            : 'Klarte ikke å hente fugler akkurat nå. Prøv «Vis nye».'}
         </p>
       )}
 

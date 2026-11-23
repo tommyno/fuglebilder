@@ -165,11 +165,6 @@
   color: var(--surface);
 }
 
-.chip svg {
-  width: 1.1em;
-  height: 1.1em;
-}
-
 .sentinel {
   height: 1px;
 }
