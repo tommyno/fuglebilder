@@ -112,10 +112,14 @@ export async function openLightbox({ slides, index, loadMore, onChange }: Lightb
   // Fade the large image in over the (already sharp) grid thumbnail once it's fully
   // loaded, instead of letting it paint top-to-bottom. PhotoSwipe keeps the
   // placeholder for 1 s after load, which covers the fade.
-  pswp.on('loadComplete', ({ content }) => {
+  // Hooked on contentAppend, not loadComplete: PhotoSwipe preloads images a few
+  // slides ahead before they belong to a slide, and those never fire loadComplete.
+  pswp.on('contentAppend', ({ content }) => {
     const img = content.element;
-    if (!(img instanceof HTMLImageElement)) return;
-    img.decode().catch(() => {}).finally(() => img.classList.add('bp-ready'));
+    if (!(img instanceof HTMLImageElement) || img.classList.contains('bp-ready')) return;
+    const show = () => void img.decode().catch(() => {}).finally(() => img.classList.add('bp-ready'));
+    if (img.complete && img.naturalWidth > 0) show();
+    else img.addEventListener('load', show, { once: true });
   });
 
   pswp.on('uiRegister', () => {
