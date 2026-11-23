@@ -12,8 +12,9 @@ interface Props {
 }
 
 const {
-  title = 'Fuglebilder – bilder av alle verdens fugler',
-  description = 'Se fine bilder av alle verdens fugler. Søk på norsk eller latinsk navn.',
+  // Capital B: iMessage drops the leading "Fuglebilder – " in link previews.
+  title = 'Fuglebilder – Bilder av alle verdens fugler',
+  description = 'Se store bilder av alle verdens fugler.',
   search = false,
 } = Astro.props;
 ---
