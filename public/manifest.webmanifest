@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "BirdPic",
+  "short_name": "BirdPic",
+  "description": "Se fine bilder av alle verdens fugler. Søk på norsk eller latinsk navn.",
+  "lang": "nb",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f6f3",
+  "theme_color": "#f7f6f3",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

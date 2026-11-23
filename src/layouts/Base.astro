@@ -22,8 +22,12 @@ const {
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="apple-mobile-web-app-title" content="BirdPic" />
     <meta name="theme-color" content="#f7f6f3" />
+    <script is:inline>
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+    </script>
     <link rel="preconnect" href="https://inaturalist-open-data.s3.amazonaws.com" />
   </head>
   <body>

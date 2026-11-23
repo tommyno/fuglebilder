@@ -12,7 +12,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "build:index": "node scripts/build-index.mjs",
-    "check": "astro check"
+    "check": "astro check",
+    "build:icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.6",

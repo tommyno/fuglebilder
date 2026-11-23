@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Ingen nettforbindelse – BirdPic</title>
+    <meta name="theme-color" content="#f7f6f3" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 24px 16px;
+        box-sizing: border-box;
+        background: #f7f6f3;
+        color: #1b1c1e;
+        font: 17px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        font-weight: 800;
+      }
+      p {
+        margin: 0 0 28px;
+        color: #66676b;
+      }
+      button {
+        min-height: 44px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 12px;
+        background: #23795a;
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Ingen nettforbindelse</h1>
+      <p>Fuglene trenger internett for å vise seg. Prøv igjen når du er på nett.</p>
+      <button type="button" onclick="location.reload()">Prøv igjen</button>
+    </main>
+  </body>
+</html>
