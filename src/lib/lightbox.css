@@ -10,9 +10,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: var(--space-2xl) max(var(--space-lg), env(safe-area-inset-left)) max(var(--space-lg), env(safe-area-inset-bottom));
-  background: var(--scrim);
+  padding: var(--space-lg) max(var(--space-lg), env(safe-area-inset-left)) max(var(--space-lg), env(safe-area-inset-bottom));
+  /* No gradient over the photo here; a text shadow keeps the caption readable */
   color: var(--on-image);
+  text-shadow: var(--shadow-text);
   pointer-events: none;
   transition: opacity var(--duration-normal);
   font-family: var(--font);

@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/preact';
-import { birdPath, displayName, photoUrl } from '../lib/shared';
+import { birdPath, photoUrl } from '../lib/shared';
 import { $favorites } from '../lib/favorites';
 import { openLightbox } from '../lib/lightbox';
 import { HeartIcon } from './icons';
@@ -32,7 +32,8 @@ export default function Favorites() {
       {favorites.map((f, i) => (
         <li key={f.p}>
           <button class={styles.tile} type="button" onClick={() => open(i)}>
-            <Thumb src={photoUrl(f.p, 'medium')} alt={displayName(f.taxon)} />
+            {/* empty alt: the label below already names the button */}
+            <Thumb src={photoUrl(f.p, 'medium')} alt="" />
             <TileLabel taxon={f.taxon} />
           </button>
           <a class={styles.speciesLink} href={birdPath(f.taxon)}>

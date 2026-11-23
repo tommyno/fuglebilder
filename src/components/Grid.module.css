@@ -74,6 +74,9 @@
   background: var(--scrim);
   text-align: left;
   line-height: var(--leading-tight);
+  /* long names (Madagaskarspringvaktel) wrap instead of being cut off on narrow screens */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .labelName {

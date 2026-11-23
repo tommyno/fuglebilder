@@ -26,7 +26,7 @@
   height: var(--control-lg);
   /* text starts a small gap after the icon */
   padding: 0 var(--space-lg) 0 calc(var(--space-lg) + var(--icon-md) + var(--space-sm));
-  border: 2px solid var(--border);
+  border: 2px solid var(--border-control);
   border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text);
@@ -76,8 +76,10 @@
   text-decoration: none;
 }
 
+/* The keyboard-highlighted suggestion: the accent ring makes it visible, grey alone is too faint */
 .active {
   background: var(--surface-2);
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .thumb {
@@ -117,6 +119,7 @@
 }
 
 .empty {
+  margin: 0;
   padding: var(--space-md) var(--space-sm);
   color: var(--muted);
 }

@@ -72,6 +72,13 @@ export default function SearchBox() {
   };
 
   const showList = open && searched !== '';
+  const hasOptions = showList && results.length > 0;
+  // Read out by screen readers when the suggestions change (WCAG 4.1.3)
+  const status = !showList
+    ? ''
+    : results.length === 0
+      ? `Fant ingen fugler for «${searched}»`
+      : `${results.length} ${results.length === 1 ? 'fugl' : 'fugler'} funnet`;
 
   return (
     <div class={styles.root} ref={rootRef}>
@@ -90,7 +97,7 @@ export default function SearchBox() {
           spellcheck={false}
           role="combobox"
           list={undefined} // Preact's types require `list` on a combobox input
-          aria-expanded={showList}
+          aria-expanded={hasOptions}
           aria-controls="bird-suggestions"
           aria-activedescendant={active >= 0 ? `bird-opt-${active}` : undefined}
           value={q}
@@ -103,12 +110,28 @@ export default function SearchBox() {
         />
       </form>
 
-      {showList && (
-        <ul class={styles.list} id="bird-suggestions" role="listbox">
-          {results.length === 0 && <li class={styles.empty}>Fant ingen fugler for «{searched}»</li>}
+      <p class="visually-hidden" role="status">
+        {status}
+      </p>
+
+      {/* The status above reads the "nothing found" text, so the visible copy is hidden from screen readers */}
+      {showList && results.length === 0 && (
+        <div class={styles.list} aria-hidden="true">
+          <p class={styles.empty}>Fant ingen fugler for «{searched}»</p>
+        </div>
+      )}
+
+      {hasOptions && (
+        <ul class={styles.list} id="bird-suggestions" role="listbox" aria-label="Forslag">
           {results.map((r, i) => (
-            <li key={r.id} id={`bird-opt-${i}`} role="option" aria-selected={i === active}>
+            // The link itself is the option (a link inside an option is nested-interactive).
+            // tabIndex -1: arrow keys in the input move between options, Tab leaves the search.
+            <li key={r.id} role="presentation">
               <a
+                id={`bird-opt-${i}`}
+                role="option"
+                aria-selected={i === active}
+                tabIndex={-1}
                 class={`${styles.option} ${i === active ? styles.active : ''}`}
                 href={birdPath(r)}
                 onPointerEnter={() => setActive(i)}

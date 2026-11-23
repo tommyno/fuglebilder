@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { birdPath, displayName, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
+import { birdPath, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
 import type { RandomBird as Bird } from '../lib/species.server';
 import { ShuffleIcon } from './icons';
 import { Thumb } from './Thumb';
@@ -141,7 +141,8 @@ export default function RandomBirds() {
           ? birds.map((b) => (
               <li key={b.id}>
                 <a class={styles.tile} href={birdPath(b)}>
-                  <Thumb src={photoUrl(b.photo, 'medium')} alt={displayName(b)} />
+                  {/* empty alt: the label below already names the link */}
+                  <Thumb src={photoUrl(b.photo, 'medium')} alt="" />
                   <TileLabel taxon={b} />
                 </a>
               </li>

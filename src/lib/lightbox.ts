@@ -198,6 +198,9 @@ export async function openLightbox({ slides, index, loadMore, onChange }: Lightb
   });
 
   pswp.init();
+  // PhotoSwipe's dialog has no accessible name of its own (WCAG 4.1.2)
+  pswp.element?.setAttribute('aria-label', 'Bildevisning');
+  pswp.element?.setAttribute('aria-modal', 'true');
   void maybeLoadMore();
   return pswp;
 }

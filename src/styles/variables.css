@@ -22,13 +22,17 @@
   --muted: #66676b;
   --border: rgb(0 0 0 / 0.1);
   --border-strong: rgb(0 0 0 / 0.25);
+  /* outline of text inputs: at least 3:1 against both --surface and --bg (WCAG 1.4.11) */
+  --border-control: #8c8d91;
   --accent: #23795a;
   --accent-text: #ffffff;
   --heart: #e0245e;
   /* text and icons drawn on top of photos */
   --on-image: #ffffff;
   --on-image-muted: rgb(255 255 255 / 0.85);
-  --scrim: linear-gradient(transparent, rgb(0 0 0 / 0.7));
+  /* Dark enough where the text starts (after the label's --space-xl top padding) for 4.5:1
+     white text even over a white photo (WCAG 1.4.3). */
+  --scrim: linear-gradient(rgb(0 0 0 / 0), rgb(0 0 0 / 0.6) var(--space-xl), rgb(0 0 0 / 0.75));
 
   /* ---- Spacing (4px steps, then larger jumps) */
   --space-3xs: 2px;
@@ -88,6 +92,8 @@
   /* ---- Elevation */
   --shadow: 0 8px 30px rgb(0 0 0 / 0.12);
   --shadow-icon: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+  /* halo that keeps white text readable on any photo without darkening the photo itself */
+  --shadow-text: 0 0 6px rgb(0 0 0 / 0.55), 0 1px 12px rgb(0 0 0 / 0.5), 0 0 28px rgb(0 0 0 / 0.35);
 
   /* ---- Motion */
   --duration-fast: 0.15s;
