@@ -31,7 +31,6 @@
   color: var(--text);
   font: inherit;
   font-size: 1.25rem;
-  box-shadow: var(--shadow);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
