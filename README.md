@@ -1,6 +1,8 @@
 # Fuglebilder
 
-Fuglebilder is a Norwegian website for exploring photos of a single bird species. Pick a bird and browse hundreds of photos of it, taken by people all over the world.
+Fuglebilder is a Norwegian website for exploring photos of a single bird species. Pick a bird and browse hundreds of full size photos of it, taken by people all over the world.
+
+**Try it at [fuglebilder.vercel.app](https://fuglebilder.vercel.app).**
 
 ![The Fuglebilder front page: a search box above a grid of bird photos with Norwegian and Latin names](docs/screenshot.jpg)
 
