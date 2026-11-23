@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
-import { getSpecies } from '../../../../lib/species.server';
-import { json, notFound } from '../../../../lib/http.server';
-import type { Photo } from '../../../../lib/shared';
+import { getSpecies } from '../../../../../lib/species.server';
+import { json, notFound } from '../../../../../lib/http.server';
+import { PHOTO_FILTERS, isPhotoFilter, type Photo } from '../../../../../lib/shared';
 
 export const prerender = false;
 
-// GET /api/photos/12716/1.json — photos of one species, best first, cached so
+// GET /api/photos/12716/alle/1.json — photos of one species, best first, cached so
 // visitors never hit iNaturalist's rate limit. Order:
 //   1. iNat's curated photos for the species (page 1 only; the same set the
 //      front page's photo comes from)
@@ -14,6 +14,10 @@ export const prerender = false;
 //      described as dead, and feathers/tracks/bones etc.
 // Only the first (cover) photo of each sighting is used: later ones are
 // usually worse angles of the same bird.
+//
+// GET /api/photos/12716/ungfugl/1.json (or voksen, hann, hunn) — only sightings
+// annotated with that life stage or sex, most votes first, minus dead birds etc.
+// The curated photos have no annotations, so they're left out.
 
 const API = 'https://api.inaturalist.org/v1';
 const UA = { 'User-Agent': 'birdpic.net' };
@@ -72,12 +76,15 @@ async function getJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-const observations = (taxon: number, page: number, alive: boolean) =>
+/** `term` limits to sightings with that annotation, e.g. [17, 18] for "Alive". */
+const observations = (taxon: number, page: number, term?: readonly [number, number]) =>
   getJson<ObsPage>(
     `${API}/observations?taxon_id=${taxon}&photo_license=${LICENSES}&quality_grade=research&photos=true` +
       `&order_by=votes&order=desc&per_page=${PER_PAGE}&page=${page}` +
-      (alive ? '&term_id=17&term_value_id=18' : ''),
+      (term ? `&term_id=${term[0]}&term_value_id=${term[1]}` : ''),
   );
+
+const ALIVE = [17, 18] as const;
 
 async function curatedPhotos(taxon: number): Promise<Photo[]> {
   try {
@@ -108,12 +115,24 @@ function fromObservations(results: INatObservation[], skipAlive: boolean): Photo
 export const GET: APIRoute = async ({ params }) => {
   const taxon = Number(params.taxon);
   const page = Number(params.page);
-  if (!getSpecies(taxon) || !Number.isInteger(page) || page < 1 || page > 2 * MAX_PAGE) return notFound();
+  const filter = params.filter;
+  if (filter !== 'alle' && !isPhotoFilter(filter)) return notFound();
+  if (!getSpecies(taxon) || !Number.isInteger(page) || page < 1) return notFound();
+  if (page > (filter === 'alle' ? 2 * MAX_PAGE : MAX_PAGE)) return notFound();
 
   try {
+    if (filter !== 'alle') {
+      const { term, value } = PHOTO_FILTERS[filter];
+      const res = await observations(taxon, page, [term, value]);
+      return json({
+        photos: fromObservations(res.results, false),
+        hasMore: page < MAX_PAGE && page * PER_PAGE < res.total_results,
+      });
+    }
+
     const [curated, alive] = await Promise.all([
       page === 1 ? curatedPhotos(taxon) : Promise.resolve([]),
-      observations(taxon, Math.min(page, MAX_PAGE), true),
+      observations(taxon, Math.min(page, MAX_PAGE), ALIVE),
     ]);
     const alivePages = Math.ceil(Math.min(alive.total_results, MAX_PAGE * PER_PAGE) / PER_PAGE);
 
@@ -124,7 +143,7 @@ export const GET: APIRoute = async ({ params }) => {
       hasMore = true; // more "alive" pages, or the other sightings after them
     } else {
       const restPage = page - alivePages;
-      const rest = restPage <= MAX_PAGE ? await observations(taxon, restPage, false) : { total_results: 0, results: [] };
+      const rest = restPage <= MAX_PAGE ? await observations(taxon, restPage) : { total_results: 0, results: [] };
       photos = [...curated, ...fromObservations(rest.results, true)];
       hasMore = restPage < MAX_PAGE && restPage * PER_PAGE < rest.total_results;
     }

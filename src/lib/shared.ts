@@ -21,6 +21,23 @@ export interface Photo {
   obs?: number;
 }
 
+/**
+ * Photo filters on the bird page, as they appear in ?vis= and the API path.
+ * Each one is an iNaturalist annotation (Life Stage = 1, Sex = 9). iNat can only
+ * filter on one annotation per query, so the filters can't be combined.
+ */
+export const PHOTO_FILTERS = {
+  voksen: { label: 'Voksen', kind: 'alder', term: 1, value: 2 },
+  ungfugl: { label: 'Ungfugl', kind: 'alder', term: 1, value: 8 },
+  hann: { label: 'Hann', kind: 'kjønn', term: 9, value: 11 },
+  hunn: { label: 'Hunn', kind: 'kjønn', term: 9, value: 10 },
+} as const;
+
+export type PhotoFilter = keyof typeof PHOTO_FILTERS;
+
+export const isPhotoFilter = (v: string | null | undefined): v is PhotoFilter =>
+  !!v && Object.hasOwn(PHOTO_FILTERS, v);
+
 export type PhotoSize = 'square' | 'small' | 'medium' | 'large' | 'original';
 
 const PHOTO_BASE = 'https://inaturalist-open-data.s3.amazonaws.com/photos';
