@@ -138,7 +138,6 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
   const slides = slidesRef.current;
   const alt = displayName(taxon);
   const active = filter ? PHOTO_FILTERS[filter] : null;
-  const marked = active ? ` merket som ${active.label.toLowerCase()}` : '';
 
   return (
     <>
@@ -198,11 +197,6 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
             Vis alle bilder
           </button>
         </div>
-      )}
-      {state === 'done' && slides.length > 0 && (
-        <p class={styles.status}>
-          Det var alle bildene{marked} ({slides.length}).
-        </p>
       )}
       {state === 'idle' && <div ref={sentinel} class={styles.sentinel} />}
     </>
