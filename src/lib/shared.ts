@@ -80,6 +80,9 @@ export const sourceUrl = (photo: Photo) =>
     ? `https://www.inaturalist.org/observations/${photo.obs}`
     : `https://www.inaturalist.org/photos/${photo.p.slice(0, photo.p.lastIndexOf('.'))}`;
 
+/** Store norske leksikon article: Norwegian name lowercased, spaces as "_", accents kept (snl.no/svarthvit_fluesnapper). */
+export const snlUrl = (name: string) => `https://snl.no/${encodeURIComponent(name.toLowerCase().replace(/ /g, '_'))}`;
+
 export function licenseLabel(lic: string): string {
   // "cc-by-nc" → "CC BY-NC"
   return lic === 'cc0' ? 'CC0' : lic.toUpperCase().replace(/^CC-/, 'CC ');
