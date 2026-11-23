@@ -7,7 +7,7 @@ import { Skeletons, TileLabel } from './Tile';
 import styles from './Grid.module.css';
 import own from './RandomBirds.module.css';
 
-/** Tilfeldige: 24 random birds from the whole world. Norske: every bird seen in Norway, A–Å. */
+/** Norske (default): every bird seen in Norway, A–Å. Tilfeldige: 24 random birds from the whole world. */
 type Mode = 'tilfeldige' | 'norske';
 
 // Remember the viewer's choice. Storage can be missing or blocked, so never rely on it.
@@ -15,9 +15,9 @@ const MODE_KEY = 'fuglebilder:front-mode';
 function savedMode(): Mode {
   try {
     // Fall back to the key from when the site was called BirdPic
-    if ((localStorage.getItem(MODE_KEY) ?? localStorage.getItem('birdpic:front-mode')) === 'norske') return 'norske';
+    if ((localStorage.getItem(MODE_KEY) ?? localStorage.getItem('birdpic:front-mode')) === 'tilfeldige') return 'tilfeldige';
   } catch {}
-  return 'tilfeldige';
+  return 'norske';
 }
 function saveMode(mode: Mode) {
   try {
@@ -88,7 +88,7 @@ export default function RandomBirds() {
     setMode(m);
   };
 
-  // "Tilfeldige fugler" always deals a new set, also when it's already showing.
+  // "Hele verden" always deals a new set, also when it's already showing.
   const shuffle = () => {
     if (mode !== 'tilfeldige') setRandom(null); // don't flash the old set while the new one loads
     choose('tilfeldige');
@@ -106,25 +106,19 @@ export default function RandomBirds() {
         <button
           class={styles.chip}
           type="button"
-          aria-label="Tilfeldige fugler"
-          aria-pressed={mode === 'tilfeldige'}
-          onClick={shuffle}
+          aria-pressed={mode === 'norske'}
+          onClick={() => mode !== 'norske' && choose('norske')}
         >
-          <ShuffleIcon />
-          <span>
-            Tilfeldige<span class={own.long}> fugler</span>
-          </span>
+          Sett i Norge
         </button>
         <button
           class={styles.chip}
           type="button"
-          aria-label="Norske fugler"
-          aria-pressed={mode === 'norske'}
-          onClick={() => mode !== 'norske' && choose('norske')}
+          aria-pressed={mode === 'tilfeldige'}
+          onClick={shuffle}
         >
-          <span>
-            Norske<span class={own.long}> fugler</span>
-          </span>
+          Hele verden
+          <ShuffleIcon />
         </button>
       </div>
 
@@ -132,7 +126,7 @@ export default function RandomBirds() {
         <p class={styles.status}>
           {mode === 'norske'
             ? 'Klarte ikke å hente fuglene akkurat nå. Prøv igjen litt senere.'
-            : 'Klarte ikke å hente fugler akkurat nå. Prøv «Tilfeldige fugler» igjen.'}
+            : 'Klarte ikke å hente fugler akkurat nå. Prøv «Hele verden» igjen.'}
         </p>
       )}
 
