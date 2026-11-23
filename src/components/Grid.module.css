@@ -50,7 +50,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile img {
+  .tile img,
+  .label::before {
     transition: none;
   }
   .tile:has(> img[data-state='loading']),
@@ -71,12 +72,29 @@
   right: 0;
   bottom: 0;
   padding: var(--space-xl) var(--space-sm) var(--space-xs);
-  background: var(--scrim);
+  /* keeps the scrim (z-index -1) above the photo but behind the text */
+  isolation: isolate;
   text-align: left;
   line-height: var(--leading-tight);
   /* long names (Madagaskarspringvaktel) wrap instead of being cut off on narrow screens */
   overflow-wrap: anywhere;
   hyphens: auto;
+}
+
+/* The scrim is on its own layer so it can fade in with the photo: over the empty
+   loading tile it would show as a dark band. */
+.label::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.tile img:not([data-state='loading']) ~ .label::before {
+  opacity: 1;
 }
 
 .labelName {
