@@ -27,7 +27,7 @@ npm run build:index
 | `src/pages/fugl/[slug].astro` | Species photo grid, rendered on demand and cached by Vercel ISR |
 | `src/pages/mine-fugler.astro` | Mine fugler / favorites (localStorage, client only) |
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search over the index (server only) |
-| `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first: iNat's curated species photos, then sightings marked alive, then the rest. No dead birds, carcasses or feathers. `filter` is `alle`, or `voksen`/`ungfugl`/`hann`/`hunn` for sightings annotated with that life stage or sex. |
+| `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first: iNat's curated species photos, then sightings marked alive, then the rest. No dead birds, carcasses or feathers. `filter` is `alle`, or `voksen`/`ungfugl`/`hann`/`hunn` for sightings annotated with that life stage or sex and as alive. |
 | `src/pages/api/random/[seed].json.ts` | 24 random well-known birds from anywhere in the world |
 | `src/pages/api/norske.json.ts` | Every bird seen in Norway, A–Å (static) |
 | `src/lib/lightbox.ts` | PhotoSwipe full view with caption, credit, heart and `?photo=n` history |

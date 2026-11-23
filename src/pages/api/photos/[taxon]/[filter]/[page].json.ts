@@ -16,7 +16,11 @@ export const prerender = false;
 // usually worse angles of the same bird.
 //
 // GET /api/photos/12716/ungfugl/1.json (or voksen, hann, hunn) — only sightings
-// annotated with that life stage or sex, most votes first, minus dead birds etc.
+// annotated with that life stage or sex AND annotated "Alive", most votes first.
+// Many dead birds are annotated with an age or sex but not as dead, and their
+// descriptions don't always say so ("Sad."), so unannotated ones are left out.
+// iNat can't filter on two annotations at once, so "Alive" is checked here,
+// which can leave a page short or empty; the grid just loads the next one.
 // The curated photos have no annotations, so they're left out.
 
 const API = 'https://api.inaturalist.org/v1';
@@ -105,11 +109,13 @@ async function curatedPhotos(taxon: number): Promise<Photo[]> {
   }
 }
 
-function fromObservations(results: INatObservation[], skipAlive = false): Photo[] {
+/** `alive`: "only" keeps just sightings annotated Alive, "skip" leaves them out. */
+function fromObservations(results: INatObservation[], alive?: 'only' | 'skip'): Photo[] {
   const out: Photo[] = [];
   for (const o of results) {
     if (notALiveBird(o)) continue;
-    if (skipAlive && has(o, ALIVE)) continue; // already shown on the "alive" pages
+    if (alive === 'only' && !has(o, ALIVE)) continue;
+    if (alive === 'skip' && has(o, ALIVE)) continue; // already shown on the "alive" pages
     const p = toPhoto(o.photos?.[0], o.user?.name || o.user?.login || 'ukjent', o.id);
     if (p) out.push(p);
   }
@@ -129,7 +135,7 @@ export const GET: APIRoute = async ({ params }) => {
       const { term, value } = PHOTO_FILTERS[filter];
       const res = await observations(taxon, page, [term, value]);
       return json({
-        photos: fromObservations(res.results),
+        photos: fromObservations(res.results, 'only'),
         hasMore: morePages(page, res.total_results),
       });
     }
@@ -148,7 +154,7 @@ export const GET: APIRoute = async ({ params }) => {
     } else {
       const restPage = page - alivePages;
       const rest = restPage <= MAX_PAGE ? await observations(taxon, restPage) : { total_results: 0, results: [] };
-      photos = [...curated, ...fromObservations(rest.results, true)];
+      photos = [...curated, ...fromObservations(rest.results, 'skip')];
       hasMore = morePages(restPage, rest.total_results);
     }
 
