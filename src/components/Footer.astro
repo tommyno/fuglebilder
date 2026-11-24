@@ -1,6 +1,12 @@
+---
+import { speciesCount } from '../lib/species.server';
+
+const count = speciesCount.toLocaleString('nb');
+---
+
 <footer>
   <div class="inner">
-    <p>Store bilder av verdens fugler</p>
+    <p>Se store bilder av alle verdens {count} fuglearter.</p>
     <a href="/om">Om Fuglebilder</a>
   </div>
 </footer>
@@ -24,11 +30,11 @@
     margin: 0;
   }
   a {
-    color: var(--footer-text-strong);
+    color: inherit;
     text-underline-offset: 0.15em;
   }
   /* the global --accent outline disappears on the green */
   a:focus-visible {
-    outline-color: var(--footer-text-strong);
+    outline-color: currentColor;
   }
 </style>

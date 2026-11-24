@@ -23,16 +23,20 @@ export interface Species {
 // A few iNat names are lowercase ("knoppand")
 const capitalize = (n: string) => n.charAt(0).toLocaleUpperCase('nb') + n.slice(1);
 
-const species: Species[] = (raw as Rec[]).map(([id, sci, obs, photo, rawNames, norway = 0]) => {
-  const names = rawNames.map(capitalize);
-  return { id, sci, obs, photo, names, name: names[0] ?? null, norway };
-});
+// Left out: species with no open-licensed photo and no sightings on iNat (about 300).
+// Their photo page could only ever be empty, so they get no page and no search hit.
+const species: Species[] = (raw as Rec[])
+  .filter(([, , obs, photo]) => photo || obs > 0)
+  .map(([id, sci, obs, photo, rawNames, norway = 0]) => {
+    const names = rawNames.map(capitalize);
+    return { id, sci, obs, photo, names, name: names[0] ?? null, norway };
+  });
 const byId = new Map(species.map((s) => [s.id, s]));
 const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
 
 export const getSpecies = (id: number) => byId.get(id);
 
-/** Every species in the index, i.e. everything the search can find (shown on /om). */
+/** Every species on the site, i.e. everything the search can find (shown on /om and in the footer). */
 export const speciesCount = species.length;
 
 /** The species at /fugl/<slug>. */

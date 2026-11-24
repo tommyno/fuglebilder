@@ -37,6 +37,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 ## Data
 
 - `data/species.json` (~760 KB): every active iNat species under Aves (taxon 3) with taxon id, Latin name, Norwegian names, worldwide observation count, research-grade observations in Norway (place 7016) and an open-licensed photo. Committed so builds never depend on iNat. Bundled with the server function only; never ship it to the browser.
+- Species with no open-licensed photo and no sightings (~300) are dropped when the index loads (`species.server.ts`): their photo page could only be empty, so no page, no search hit, and they're not in the species count on /om and in the footer (~11,080).
 - `data/slug-clashes.json`: ids of species whose name slug is already taken by a more observed species; their slug gets the Latin name appended (`/fugl/blavingebladfugl-chloropsis-cochinchinensis`).
 - Photos are hotlinked from `inaturalist-open-data.s3.amazonaws.com` (`medium` in the grid, `large` in full view). No Vercel image optimization.
 
