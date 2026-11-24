@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { speciesCount } from '../lib/species.server';
+
+const count = speciesCount.toLocaleString('nb');
+---
+
+<Base
+  title="Om Fuglebilder"
+  description="Hva Fuglebilder er, og hvor bildene kommer fra."
+  search
+>
+  <article>
+    <h1 class="page-title">Om Fuglebilder</h1>
+    <p>
+      Fuglebilder viser store bilder av verdens fugler, fra hagefuglene hjemme til arter du aldri har
+      hørt om. Du kan søke blant {count} fuglearter på norsk eller latin.
+    </p>
+    <p>
+      Bildene og navnene kommer fra <a href="https://www.inaturalist.org">iNaturalist</a>, der folk over
+      hele verden deler det de ser i naturen. Alle bildene har en åpen Creative Commons-lisens, og du
+      finner fotografen når du åpner et bilde.
+    </p>
+    <p>
+      Et ikke-kommersielt hobbyprosjekt. <a href="https://github.com/tommyno/fuglebilder">Kildekoden ligger på GitHub.</a>
+    </p>
+  </article>
+</Base>
+
+<style>
+  article {
+    max-width: 62ch;
+    padding-top: var(--space-lg);
+  }
+  h1 {
+    margin-bottom: var(--space-md);
+  }
+  p {
+    margin: 0 0 var(--space-md);
+  }
+  a {
+    text-underline-offset: 0.15em;
+  }
+</style>

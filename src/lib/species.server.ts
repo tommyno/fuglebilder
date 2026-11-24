@@ -32,6 +32,9 @@ const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
 
 export const getSpecies = (id: number) => byId.get(id);
 
+/** Every species in the index, i.e. everything the search can find (shown on /om). */
+export const speciesCount = species.length;
+
 /** The species at /fugl/<slug>. */
 export const getSpeciesBySlug = (slug: string) => bySlug.get(slug);
 

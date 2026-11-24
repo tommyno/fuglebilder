@@ -27,6 +27,10 @@
   --accent: #23795a;
   --accent-text: #ffffff;
   --heart: #e0245e;
+  /* footer: a deep shade of --accent with light text */
+  --footer-bg: #1f4a3a;
+  --footer-text: #c9dcd3;
+  --footer-text-strong: #ffffff;
   /* text and icons drawn on top of photos */
   --on-image: #ffffff;
   /* Dark enough where the text starts (after the label's --space-xl top padding) for 4.5:1

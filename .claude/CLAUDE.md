@@ -21,6 +21,8 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/pages/index.astro` | Front page: search + Sett i Norge (static) / Hele verden (random) |
 | `src/pages/fugl/[slug].astro` | Species photo grid, on demand + ISR (24 h). Slug = Norwegian name (Latin when there is none), accents folded, e.g. `/fugl/svarttrost`. Unknown slugs are 404. Photo filter kept in `?vis=`. |
 | `src/pages/mine-fugler.astro` | Favorites, static shell rendered on the client from localStorage |
+| `src/pages/om.astro` | About page (static): what the site is, iNaturalist and licenses, GitHub link |
+| `src/components/Footer.astro` | One-line footer on every page (forest green, `--footer-*` tokens): tagline + link to `/om` |
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search, top 12 (server only) |
 | `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first (see below). `filter` = `alle`, `voksen`, `ungfugl`, `hann` or `hunn` |
 | `src/pages/api/random/[seed].json.ts` | 24 random birds (seed in the path so each set is cached) |

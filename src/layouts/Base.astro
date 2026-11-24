@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
+import Footer from '../components/Footer.astro';
 import SearchBox from '../components/SearchBox.tsx';
 import { HeartIcon } from '../components/icons';
 import button from '../components/Button.module.css';
@@ -55,11 +56,21 @@ const {
       }
       <slot />
     </main>
+    <Footer />
   </body>
 </html>
 
 <style>
+  /* Footer at the bottom of the window even when the page is short. Not in global.css
+     because it relies on this layout's three children. */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
   .top {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -81,9 +92,11 @@ const {
     color: var(--heart);
   }
   main {
+    flex: 1;
+    width: 100%;
     max-width: var(--max);
     margin: 0 auto;
-    padding: 0 var(--gutter) max(var(--space-2xl), env(safe-area-inset-bottom));
+    padding: 0 var(--gutter) var(--space-2xl);
   }
   .search {
     padding-top: var(--page-top);
