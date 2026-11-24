@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/api/norske.json",
+      "source": "/api/norwegian-birds.json",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=2592000" }]
     }
   ]

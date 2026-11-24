@@ -80,7 +80,7 @@ export default function RandomBirds() {
   useEffect(() => (seed === null ? undefined : load(`/api/random/${seed}.json`, setRandom)), [seed]);
 
   // The Norwegian list never changes, so fetch it once.
-  useEffect(() => (mode !== 'norske' || norske ? undefined : load('/api/norske.json', setNorske)), [mode]);
+  useEffect(() => (mode !== 'norske' || norske ? undefined : load('/api/norwegian-birds.json', setNorske)), [mode]);
 
   const choose = (m: Mode) => {
     saveMode(m);

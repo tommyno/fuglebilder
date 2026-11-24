@@ -26,7 +26,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search, top 12 (server only) |
 | `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first (see below). `filter` = `alle`, `voksen`, `ungfugl`, `hann` or `hunn` |
 | `src/pages/api/random/[seed].json.ts` | 24 random birds (seed in the path so each set is cached) |
-| `src/pages/api/norske.json.ts` | Every bird seen in Norway, A–Å (static, build time) |
+| `src/pages/api/norwegian-birds.json.ts` | Every bird seen in Norway, A–Å (static, build time; browsers cache it a day via `vercel.json`) |
 | `src/lib/species.server.ts` | Loads the index; search, random pool, Norwegian list |
 | `src/lib/slug.ts` | `foldAccents`, `slugify`, `slugClashes`. No imports, so `scripts/build-index.mjs` can import it too |
 | `src/lib/lightbox.ts` | PhotoSwipe full view: caption, credit, heart, `?photo=n` so Back closes it |
