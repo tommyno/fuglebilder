@@ -19,7 +19,7 @@
   flex: none;
   width: 1px;
   height: var(--icon-sm);
-  margin: 0 var(--space-2xs);
+  /* no margin of its own: the row's gap on each side is enough, and keeps the row on a 375px phone */
   background: var(--color-black-10);
 }
 
