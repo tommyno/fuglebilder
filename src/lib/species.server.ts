@@ -36,12 +36,6 @@ const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
 
 export const getSpecies = (id: number) => byId.get(id);
 
-/** Every species on the site, i.e. everything the search can find (shown on /om and in the footer). */
-export const speciesCount = species.length;
-
-/** speciesCount rounded down to whole thousands, for "over 11 000 arter" in titles and descriptions. */
-export const speciesCountRounded = (Math.floor(speciesCount / 1000) * 1000).toLocaleString('nb');
-
 /** The species at /fugl/<slug>. */
 export const getSpeciesBySlug = (slug: string) => bySlug.get(slug);
 

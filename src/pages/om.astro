@@ -1,13 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { speciesCount, speciesCountRounded } from '../lib/species.server';
-
-const count = speciesCount.toLocaleString('nb');
 ---
 
 <Base
   title="Om Fuglebilder"
-  description={`Fuglebilder viser bilder av over ${speciesCountRounded} fuglearter, alle med åpen Creative Commons-lisens. Et ikke-kommersielt hobbyprosjekt.`}
+  description="Fuglebilder viser bilder av over 11 000 fuglearter, alle med åpen Creative Commons-lisens. Et ikke-kommersielt hobbyprosjekt."
   search
 >
   <article>
@@ -18,7 +15,7 @@ const count = speciesCount.toLocaleString('nb');
       utforske og bla seg gjennom på egenhånd.
     </p>
     <p>
-      Du kan søke blant {count} fuglearter på norsk eller latin. Bildene og navnene kommer fra <a
+      Du kan søke blant over 11&nbsp;000 fuglearter og se over 40&nbsp;millioner bilder. Bildene og navnene kommer fra <a
         href="https://www.inaturalist.org/">iNaturalist</a>, der folk over hele verden deler det de ser i
       naturen. Alle bildene har en åpen Creative Commons-lisens, og du finner fotografen når du åpner et bilde.
     </p>
