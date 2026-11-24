@@ -19,8 +19,14 @@
   flex: none;
   width: 1px;
   height: var(--icon-sm);
-  /* no margin of its own: the row's gap on each side is enough, and keeps the row on a 375px phone */
+  /* on phones only the row's gap on each side, so the row fits a 375px screen without scrolling */
   background: var(--color-black-10);
+}
+
+@media (min-width: 400px) {
+  .sep {
+    margin: 0 var(--space-2xs);
+  }
 }
 
 .empty {
