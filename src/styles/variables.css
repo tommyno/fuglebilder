@@ -62,7 +62,8 @@
   --text-base: 1rem; /* 16px body text, the browser default */
   --text-lg: 1.2rem;
   --text-xl: 1.4rem;
-  --text-display: clamp(2rem, 5vw, 2.8rem);
+  --text-title: clamp(1.6rem, 1.2rem + 1vw, 1.75rem); /* page titles: 25.6px on phones, 28px on desktop */
+  --text-display: clamp(2rem, 5vw, 2.8rem); /* the species name on its photo page */
 
   /* Kept light so the photos carry the page; headings stand out by size, not weight.
      Segoe UI (Windows) has no 500, so medium shows as 400 there. */

@@ -34,7 +34,7 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
       >
       Tilbake
     </a>
-    <h1 class:list={["page-title", { latin: !species.name }]}>{title}</h1>
+    <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
     {species.name && (
       <p class="sci">
         <a href={snlUrl(species.name)} target="_blank" rel="noopener" title="Les om fuglen i Store norske leksikon">{species.sci}</a>
@@ -58,6 +58,10 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
   .back svg {
     width: 1.1em;
     height: 1.1em;
+  }
+  /* The species name stays bigger than other page titles */
+  .name {
+    font-size: var(--text-display);
   }
   .latin {
     font-style: italic;
