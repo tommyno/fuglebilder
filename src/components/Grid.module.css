@@ -186,4 +186,9 @@
   color: var(--muted);
   font-size: var(--text-sm);
   text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+
+.speciesLink:hover {
+  text-decoration: underline;
 }
