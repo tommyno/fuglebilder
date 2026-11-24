@@ -22,7 +22,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/pages/fugl/[slug].astro` | Species photo grid, on demand + ISR (24 h). Slug = Norwegian name (Latin when there is none), accents folded, e.g. `/fugl/svarttrost`. Unknown slugs are 404. Photo filter kept in `?vis=`. |
 | `src/pages/mine-fugler.astro` | Favorites, static shell rendered on the client from localStorage |
 | `src/pages/om.astro` | About page (static): what the site is, iNaturalist and licenses, GitHub link |
-| `src/components/Footer.astro` | One-line footer on every page (forest green, `--footer-*` tokens): tagline + link to `/om` |
+| `src/components/Footer.astro` | One-line footer on every page (forest green, `--color-green-dark`): tagline + link to `/om` |
 | `src/pages/api/search/[q].json.ts` | Norwegian + Latin search, top 12 (server only) |
 | `src/pages/api/photos/[taxon]/[filter]/[page].json.ts` | Photos best first (see below). `filter` = `alle`, `voksen`, `ungfugl`, `hann` or `hunn` |
 | `src/pages/api/random/[seed].json.ts` | 24 random birds (seed in the path so each set is cached) |
@@ -50,7 +50,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 - **Photo order** (`alle`): iNat's curated taxon photos, then sightings annotated "Alive" by votes, then other sightings by votes. Research grade only, cover photo of each sighting only, at least 800 px long edge, no panoramas (aspect > 2.5). Skip sightings annotated dead or feathers/tracks/bones, and ones whose description says dead/roadkill/carcass (several languages).
 - **Age/sex filters require "Alive" too,** and skip curated photos. Many dead birds carry an age or sex annotation with no dead annotation or telling description. iNat's API can't combine two annotation filters, so "Alive" is checked server side and a filtered page can come back short. One filter at a time.
 - **Sett i Norge** (Norske fugler): species seen in Norway at least 3 times (research grade), ~280, A–Å. The minimum drops one-off strays and escapes. **Hele verden** (Tilfeldige fugler): 24 picked uniformly from every species with a photo, a Norwegian name and at least 50 sightings worldwide (~7,600; fewer sightings means a nearly empty photo page); 100,000 possible sets, each cached by its seed. The "Hele verden" chip keeps the tab's current set; only "Vis nye" in the line above the grid ("Viser 24 tilfeldige arter") deals a new one. Sett i Norge is the default; the front-page choice is remembered per browser.
-- **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. System font at light weights (body 400 by default, headings 500, labels 500, bird names on photos and chips 600): headings stand out by size, not weight. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. No Tailwind.
+- **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. System font at light weights (body 400 by default, headings 500, labels 500, bird names on photos and chips 600): headings stand out by size, not weight. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. Colours are a plain palette named by look (`--color-white`, `--color-green`, `--color-red` …) used directly; only composite values like `--scrim` and the shadows get their own names. No Tailwind.
 - **No database, no login.** Fits the free Vercel plan.
 
 ## Not done yet

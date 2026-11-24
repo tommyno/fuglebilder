@@ -1,8 +1,8 @@
 /* Overlay elements added to PhotoSwipe (global: PhotoSwipe builds its own DOM). */
 
 .pswp {
-  --pswp-bg: #000;
-  --pswp-icon-color: var(--on-image);
+  --pswp-bg: var(--color-black);
+  --pswp-icon-color: var(--color-white);
 }
 
 .pswp__bp-caption {
@@ -12,7 +12,7 @@
   bottom: 0;
   padding: var(--space-lg) max(var(--space-lg), env(safe-area-inset-left)) max(var(--space-lg), env(safe-area-inset-bottom));
   /* No gradient over the photo here; a text shadow keeps the caption readable */
-  color: var(--on-image);
+  color: var(--color-white);
   text-shadow: var(--shadow-text);
   pointer-events: none;
   transition: opacity var(--duration-normal);
@@ -31,13 +31,13 @@
 
 .bp-sci {
   font-style: italic;
-  color: var(--on-image);
+  color: var(--color-white);
 }
 
 .bp-credit {
   margin-top: var(--space-xs);
   font-size: var(--text-xs);
-  color: var(--on-image);
+  color: var(--color-white);
 }
 
 .bp-credit a {
@@ -76,14 +76,14 @@
   width: var(--icon-lg);
   height: var(--icon-lg);
   fill: transparent;
-  stroke: var(--on-image);
+  stroke: var(--color-white);
   stroke-width: 2;
   filter: var(--shadow-icon);
   transition: transform var(--duration-fast);
 }
 
 .pswp__button--bp-heart.is-on svg {
-  fill: var(--heart);
-  stroke: var(--heart);
+  fill: var(--color-red);
+  stroke: var(--color-red);
   transform: scale(1.1);
 }

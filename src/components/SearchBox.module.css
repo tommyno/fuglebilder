@@ -17,7 +17,7 @@
   width: var(--icon-md);
   height: var(--icon-md);
   transform: translateY(-50%);
-  color: var(--muted);
+  color: var(--color-gray);
   pointer-events: none;
 }
 
@@ -26,10 +26,10 @@
   height: var(--control-lg);
   /* text starts a small gap after the icon */
   padding: 0 var(--space-lg) 0 calc(var(--space-lg) + var(--icon-md) + var(--space-sm));
-  border: 2px solid var(--border-control);
+  border: 2px solid var(--color-gray-light);
   border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--color-white);
+  color: var(--color-charcoal);
   font: inherit;
   font-size: var(--text-lg);
   outline: none;
@@ -38,11 +38,11 @@
 }
 
 .input::placeholder {
-  color: var(--muted);
+  color: var(--color-gray);
 }
 
 .input:focus {
-  border-color: var(--accent);
+  border-color: var(--color-green);
 }
 
 .input::-webkit-search-cancel-button {
@@ -59,9 +59,9 @@
   margin: 0;
   padding: var(--space-xs);
   list-style: none;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-black-10);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--color-white);
   box-shadow: var(--shadow);
   overscroll-behavior: contain;
   text-align: left;
@@ -78,8 +78,8 @@
 
 /* The keyboard-highlighted suggestion: the accent ring makes it visible, grey alone is too faint */
 .active {
-  background: var(--surface-2);
-  box-shadow: inset 0 0 0 2px var(--accent);
+  background: var(--color-sand);
+  box-shadow: inset 0 0 0 2px var(--color-green);
 }
 
 .thumb {
@@ -88,13 +88,13 @@
   height: var(--control-lg);
   border-radius: var(--radius-sm);
   object-fit: cover;
-  background: var(--surface-2);
+  background: var(--color-sand);
 }
 
 .noThumb {
   display: grid;
   place-items: center;
-  color: var(--muted);
+  color: var(--color-gray);
 }
 
 .noThumb svg {
@@ -114,12 +114,12 @@
 }
 
 .secondary {
-  color: var(--muted);
+  color: var(--color-gray);
   font-size: var(--text-sm);
 }
 
 .empty {
   margin: 0;
   padding: var(--space-md) var(--space-sm);
-  color: var(--muted);
+  color: var(--color-gray);
 }

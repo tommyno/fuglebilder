@@ -19,10 +19,10 @@
   border: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--surface-2);
+  background: var(--color-sand);
   cursor: pointer;
   text-decoration: none;
-  color: var(--on-image);
+  color: var(--color-white);
 }
 
 .tile img {
@@ -48,7 +48,7 @@
 
 @keyframes tilePulse {
   50% {
-    background: color-mix(in srgb, var(--surface-2) 55%, var(--bg));
+    background: color-mix(in srgb, var(--color-sand) 55%, var(--color-sand-light));
   }
 }
 
@@ -111,7 +111,7 @@
   display: block;
   font-style: italic;
   font-size: var(--text-xs);
-  color: var(--on-image);
+  color: var(--color-white);
 }
 
 .heart {
@@ -120,20 +120,20 @@
   right: var(--space-xs);
   width: var(--icon-md);
   height: var(--icon-md);
-  color: var(--heart);
+  color: var(--color-red);
   filter: var(--shadow-icon);
 }
 
 .skeleton {
   aspect-ratio: 1;
   border-radius: var(--radius-md);
-  background: var(--surface-2);
+  background: var(--color-sand);
 }
 
 .status {
   padding: var(--space-xl) 0;
   text-align: center;
-  color: var(--muted);
+  color: var(--color-gray);
 }
 
 /* Compact pill for choosing what to show: a soft grey button, the chosen one is filled with the text colour */
@@ -146,8 +146,8 @@
   padding: 0 var(--space-sm);
   border: none;
   border-radius: var(--radius-full);
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--color-sand);
+  color: var(--color-charcoal);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   white-space: nowrap;
@@ -159,13 +159,13 @@
 
 @media (hover: hover) {
   .chip:hover {
-    background: var(--surface-3);
+    background: var(--color-sand-dark);
   }
 }
 
 .chip[aria-pressed='true'] {
-  background: var(--text);
-  color: var(--surface);
+  background: var(--color-charcoal);
+  color: var(--color-white);
 }
 
 .sentinel {
@@ -177,13 +177,13 @@
   width: 1.1em;
   height: 1.1em;
   vertical-align: -0.2em;
-  color: var(--heart);
+  color: var(--color-red);
 }
 
 .speciesLink {
   display: inline-block;
   padding: var(--space-xs) var(--space-3xs);
-  color: var(--muted);
+  color: var(--color-gray);
   font-size: var(--text-sm);
   text-decoration: none;
   text-underline-offset: 0.2em;

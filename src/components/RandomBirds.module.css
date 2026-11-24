@@ -19,7 +19,7 @@
   margin-bottom: var(--space-sm);
   padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-md);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: var(--color-white);
 }
 
 .info p {
@@ -28,13 +28,13 @@
 
 /* .info raises the specificity above the chip's own background and hover */
 .info .shuffle {
-  background: var(--accent);
-  color: var(--accent-text);
+  background: var(--color-green);
+  color: var(--color-white);
 }
 
 @media (hover: hover) {
   .info .shuffle:hover {
-    background: color-mix(in srgb, var(--accent), black 15%);
+    background: color-mix(in srgb, var(--color-green), var(--color-black) 15%);
   }
 }
 

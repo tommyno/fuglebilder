@@ -20,13 +20,13 @@
   width: 1px;
   height: var(--icon-sm);
   margin: 0 var(--space-2xs);
-  background: var(--border);
+  background: var(--color-black-10);
 }
 
 .empty {
   margin: var(--space-xs) 0;
   padding: var(--space-2xl) var(--space-lg);
-  border: 1px dashed var(--border);
+  border: 1px dashed var(--color-black-10);
   border-radius: var(--radius-md);
   text-align: center;
 }

@@ -26,13 +26,13 @@
 
 @media (hover: hover) {
   .ghost:hover {
-    background: var(--surface-2);
+    background: var(--color-sand);
   }
 }
 
 .primary {
   padding: 0 var(--space-lg);
-  background: var(--accent);
-  color: var(--accent-text);
+  background: var(--color-green);
+  color: var(--color-white);
   font-weight: var(--weight-medium);
 }

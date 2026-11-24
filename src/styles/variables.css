@@ -5,7 +5,7 @@
  *
  * Can't be used here (CSS variables don't work there), so keep them in sync by hand:
  *   - <meta name="theme-color"> in src/layouts/Base.astro and public/offline.html,
- *     and theme_color/background_color in public/manifest.webmanifest  → --bg
+ *     and theme_color/background_color in public/manifest.webmanifest  → --color-sand-light
  *   - the colours in public/offline.html and the logo (Logo.astro / favicon.svg)
  *   - the 420px breakpoint in RandomBirds.module.css (media queries)
  */
@@ -13,25 +13,23 @@
 :root {
   color-scheme: light;
 
-  /* ---- Colour */
-  --bg: #f7f6f3;
-  --surface: #ffffff;
-  --surface-2: #efede8;
-  --surface-3: #e3e0d9;
-  --text: #1b1c1e;
-  --muted: #66676b;
-  --border: rgb(0 0 0 / 0.1);
-  --border-strong: rgb(0 0 0 / 0.25);
-  /* outline of text inputs: at least 3:1 against both --surface and --bg (WCAG 1.4.11) */
-  --border-control: #8c8d91;
-  --accent: #23795a;
-  --accent-text: #ffffff;
-  --heart: #e0245e;
-  /* footer: a deep shade of --accent with light text */
-  --footer-bg: #1f4a3a;
-  --footer-text: #ffffff;
-  /* text and icons drawn on top of photos */
-  --on-image: #ffffff;
+  /* ---- Colour: one variable per colour, named after what it looks like.
+     Page background --color-sand-light, cards and inputs --color-white, text --color-charcoal,
+     secondary text --color-gray, accent --color-green, hearts --color-red. */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-black-10: rgb(0 0 0 / 0.1); /* hairlines and empty photo tiles */
+  --color-charcoal: #1b1c1e;
+  --color-gray: #66676b;
+  /* text input outlines: at least 3:1 against white and sand-light (WCAG 1.4.11) */
+  --color-gray-light: #8c8d91;
+  --color-sand-light: #f7f6f3;
+  --color-sand: #efede8;
+  --color-sand-dark: #e3e0d9;
+  --color-green: #23795a;
+  --color-green-dark: #1f4a3a;
+  --color-red: #e0245e;
+
   /* Dark enough where the text starts (after the label's --space-xl top padding) for 4.5:1
      white text even over a white photo (WCAG 1.4.3). */
   --scrim: linear-gradient(rgb(0 0 0 / 0), rgb(0 0 0 / 0.6) var(--space-xl), rgb(0 0 0 / 0.75));

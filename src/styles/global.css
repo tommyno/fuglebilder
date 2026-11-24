@@ -14,8 +14,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
+  background: var(--color-sand-light);
+  color: var(--color-charcoal);
   font-family: var(--font);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
@@ -37,7 +37,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--color-green);
   outline-offset: var(--space-3xs);
 }
 
