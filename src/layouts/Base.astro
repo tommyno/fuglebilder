@@ -9,16 +9,26 @@ import button from '../components/Button.module.css';
 interface Props {
   title?: string;
   description?: string;
+  /** Link preview image (og:image), absolute URL. Defaults to the logo card, public/og-image.png. */
+  image?: string;
+  /** What the image shows, for og:image:alt. */
+  imageAlt?: string;
   /** Show the search box at the top. Always in the same spot, so it doesn't jump between pages. */
   search?: boolean;
 }
 
 const {
-  // Capital B: iMessage drops the leading "Fuglebilder – " in link previews.
-  title = 'Fuglebilder – Bilder av alle verdens fugler',
+  title = 'Fuglebilder',
   description = 'Se store bilder av alle verdens fugler.',
+  image,
+  imageAlt,
   search = false,
 } = Astro.props;
+
+// Query left out: ?vis= and ?photo= are client state, and ISR caches the path only.
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = image ?? new URL('/og-image.png', Astro.site).href;
+const ogImageAlt = image ? imageAlt : 'Fuglebilder-logoen: en dompap';
 ---
 
 <!doctype html>
@@ -28,6 +38,18 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fuglebilder" />
+    <meta property="og:locale" content="nb_NO" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    {!image && <meta property="og:image:width" content="1200" />}
+    {!image && <meta property="og:image:height" content="630" />}
+    {ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />

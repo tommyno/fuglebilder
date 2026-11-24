@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import { getSpeciesBySlug } from '../../lib/species.server';
-import { snlUrl, type Taxon } from '../../lib/shared';
+import { photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 import grid from '../../components/Grid.module.css';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
@@ -16,11 +16,15 @@ const taxon: Taxon = { id: species.id, sci: species.sci, name: species.name };
 
 const title = species.name ?? species.sci;
 const others = species.names.slice(1);
+// Lower case mid-sentence ("Bilder av dompap"); Latin names keep their capital.
+const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
 ---
 
 <Base
-  title={`${title} – Fuglebilder`}
-  description={`Bilder av ${species.name ? `${species.name} (${species.sci})` : species.sci}.`}
+  title={`Bilder av ${inText}`}
+  description={`Se store bilder av ${species.name ? `${inText} (${species.sci})` : inText}.`}
+  image={species.photo ? photoUrl(species.photo, 'large') : undefined}
+  imageAlt={title}
   search
 >
   <header class="head">

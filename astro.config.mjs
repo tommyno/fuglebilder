@@ -5,6 +5,8 @@ import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
+  // Absolute URLs for canonical and og:url / og:image.
+  site: 'https://fuglebilder.net',
   // Pages are static unless they say `export const prerender = false`.
   // Those are rendered on the first request, then cached by Vercel (ISR) for a day.
   adapter: vercel({ isr: { expiration: 60 * 60 * 24 } }),

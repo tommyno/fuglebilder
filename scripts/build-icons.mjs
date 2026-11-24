@@ -1,5 +1,5 @@
-// Renders the PNG app icons from public/favicon.svg. Run after changing the logo:
-// `pnpm build:icons`.
+// Renders the PNG app icons and the default share image (og:image) from
+// public/favicon.svg. Run after changing the logo: `pnpm build:icons`.
 //
 // The favicon has rounded corners; the app icons are full-bleed squares because
 // iOS and Android round or mask them themselves. The maskable icon shrinks the
@@ -29,3 +29,14 @@ for (const [file, source, size] of icons) {
     .toFile(file);
   console.log(file);
 }
+
+// Default link preview image (og:image) for pages without a bird photo of their own:
+// logo and name on the page background, 1200×630 as Facebook and others want.
+const inner = svg.trim().replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+const share = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f6f3"/>
+  <svg x="160" y="195" width="240" height="240" viewBox="0 0 64 64">${inner}</svg>
+  <text x="450" y="352" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="110" font-weight="600" letter-spacing="-2" fill="#1b1c1e">Fuglebilder</text>
+</svg>`;
+await sharp(Buffer.from(share)).png({ compressionLevel: 9 }).toFile('public/og-image.png');
+console.log('public/og-image.png');

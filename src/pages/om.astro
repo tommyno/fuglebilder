@@ -1,13 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
-import { speciesCount } from '../lib/species.server';
+import { speciesCount, speciesCountRounded } from '../lib/species.server';
 
 const count = speciesCount.toLocaleString('nb');
 ---
 
 <Base
   title="Om Fuglebilder"
-  description="Hva Fuglebilder er, og hvor bildene kommer fra."
+  description={`Fuglebilder viser bilder av over ${speciesCountRounded} fuglearter, alle med åpen Creative Commons-lisens. Et ikke-kommersielt hobbyprosjekt.`}
   search
 >
   <article>

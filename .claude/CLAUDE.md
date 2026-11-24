@@ -9,7 +9,7 @@ pnpm dev          # http://localhost:4321 (launch config "fuglebilder")
 pnpm check        # type check, run after changes
 pnpm build        # production build (Vercel output in .vercel/output)
 pnpm build:index  # refresh data/ from iNaturalist (~4 min, ~1 req/s)
-pnpm build:icons  # re-render PNG app icons from public/favicon.svg
+pnpm build:icons  # re-render PNG app icons and the og:image card (public/og-image.png) from public/favicon.svg
 ```
 
 Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHub → Vercel (framework preset Astro), every push to `main` goes live and PRs get preview deploys.
@@ -51,6 +51,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 - **Age/sex filters require "Alive" too,** and skip curated photos. Many dead birds carry an age or sex annotation with no dead annotation or telling description. iNat's API can't combine two annotation filters, so "Alive" is checked server side and a filtered page can come back short. One filter at a time.
 - **Sett i Norge** (Norske fugler): species seen in Norway at least 3 times (research grade), ~280, A–Å. The minimum drops one-off strays and escapes. **Hele verden** (Tilfeldige fugler): 24 picked uniformly from every species with a photo, a Norwegian name and at least 50 sightings worldwide (~7,600; fewer sightings means a nearly empty photo page); 100,000 possible sets, each cached by its seed. The "Hele verden" chip keeps the tab's current set; only "Vis nye" in the line above the grid ("Viser 24 tilfeldige arter") deals a new one. Sett i Norge is the default; the front-page choice is remembered per browser.
 - **Look:** photo first, light theme only (no dark mode), big touch targets for tablets. System font at light weights (body 400 by default, headings 500, labels 500, bird names on photos and chips 600): headings stand out by size, not weight. CSS Modules / Astro scoped styles + custom properties in `src/styles/variables.css`. Colours are a plain palette named by look (`--color-white`, `--color-green`, `--color-red` …) used directly; only composite values like `--scrim` and the shadows get their own names. No Tailwind.
+- **Link previews:** `Base.astro` writes canonical, og:* and twitter:card on every page, with absolute URLs from `site` in `astro.config.mjs` (path only, no query). Species pages use their iNat photo (`large`) as og:image; other pages use the logo card `public/og-image.png`. Facebook wants og:image explicit on every page.
 - **No database, no login.** Fits the free Vercel plan.
 
 ## Not done yet
