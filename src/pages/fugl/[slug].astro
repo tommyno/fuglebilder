@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
+import RedList from '../../components/RedList.astro';
 import { getSpeciesBySlug } from '../../lib/species.server';
 import { photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 import grid from '../../components/Grid.module.css';
@@ -41,6 +42,7 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
       </p>
     )}
     {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
+    <RedList redList={species.redList} />
   </header>
   <PhotoGrid client:load taxon={taxon} />
 </Base>

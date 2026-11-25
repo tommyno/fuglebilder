@@ -2,11 +2,13 @@
 // Norwegian (bokmål) names. Run occasionally: `pnpm build:index`.
 //
 // Record format (compact, array per species):
-//   [taxonId, latinName, observationsCount, photo, names]
+//   [taxonId, latinName, observationsCount, photo, names, norway, status?]
 //   photo: "<photoId>.<ext>" on the inaturalist-open-data bucket, only when the
 //          photo has an open (CC/CC0) license, otherwise null
 //   names: Norwegian names, preferred first (empty if it has none)
 //   norway: research-grade observations in Norway (0 = never seen there)
+//   status: red list "<Norway>/<world>", e.g. "CR/NT", "/LC" (Norway's list, then IUCN);
+//           left out when the species has neither
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { slugClashes } from '../src/lib/slug.ts';
@@ -105,6 +107,48 @@ for (let page = 1; ; page++) {
 }
 for (const r of records) r[5] = norway.get(r[0]) ?? 0;
 console.log(`${records.filter((r) => r[5]).length} species seen in Norway.`);
+
+// Fourth pass: red-list status, in Norway (Artsdatabanken) and in the world (IUCN).
+// The IUCN filter on species_counts gives the global status only. iNat caps paging at
+// 10,000 results; LC is the biggest group (~8,600), so this holds for now.
+const IUCN_CODES = ['EX', 'EW', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD'];
+const iucn = new Map();
+for (const code of IUCN_CODES) {
+  for (let page = 1; ; page++) {
+    const data = await getJson(
+      `https://api.inaturalist.org/v1/observations/species_counts?taxon_id=3&csi=${code}&per_page=500&page=${page}`,
+    );
+    for (const r of data.results) if (!iucn.has(r.taxon.id)) iucn.set(r.taxon.id, code);
+    await sleep(DELAY_MS);
+    if (page * 500 >= data.total_results) break;
+  }
+}
+// Norway's list needs each taxon's own statuses: the place filter on species_counts also
+// matches Svalbard's list and the global one. Only birds seen in Norway can be on it.
+const NORWAY_CODES = new Set(['RE', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD']);
+const norwayStatus = new Map();
+const seen = records.filter((r) => r[5] > 0);
+console.log(`Red-list status for ${seen.length} Norwegian species…`);
+for (let i = 0; i < seen.length; i += 30) {
+  const ids = seen.slice(i, i + 30).map((r) => r[0]);
+  const data = await getJson(`${API}/${ids.join(',')}`);
+  for (const t of data.results) {
+    // Newest list first (the URL holds the year: …/rodlisteforarter/2021/27698)
+    const year = (c) => Number(c.url?.match(/\/(\d{4})\//)?.[1] ?? 0);
+    const best = (t.conservation_statuses ?? [])
+      .filter((c) => c.authority === 'Artsdatabanken' && c.place?.id === NORWAY)
+      .sort((a, b) => year(b) - year(a))[0];
+    const code = best?.status?.toUpperCase();
+    if (NORWAY_CODES.has(code)) norwayStatus.set(t.id, code);
+  }
+  await sleep(DELAY_MS);
+}
+for (const r of records) {
+  const no = norwayStatus.get(r[0]) ?? '';
+  const world = iucn.get(r[0]) ?? '';
+  if (no || world) r[6] = `${no}/${world}`;
+}
+console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status.`);
 
 records.sort((a, b) => b[2] - a[2]); // most observed first
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });

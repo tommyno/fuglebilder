@@ -1,0 +1,84 @@
+---
+// Red-list status on a species page: Norway's list first, then IUCN's worldwide one.
+// Shows nothing when iNaturalist has neither.
+import type { RedList } from '../lib/species.server';
+
+interface Props {
+  redList: RedList;
+}
+const { redList } = Astro.props;
+
+const WORDS: Record<string, string> = {
+  EX: 'Utdødd',
+  EW: 'Utdødd i det fri',
+  RE: 'Utdødd',
+  CR: 'Kritisk truet',
+  EN: 'Sterkt truet',
+  VU: 'Sårbar',
+  NT: 'Nær truet',
+  LC: 'Livskraftig',
+  DD: 'Datamangel',
+};
+// EX and EW already say where
+const label = (code: string, where: string) => (code === 'EX' || code === 'EW' ? WORDS[code] : `${WORDS[code]} ${where}`);
+
+const items = [
+  redList.norway && { code: redList.norway, text: label(redList.norway, 'i Norge'), source: 'Norsk rødliste for arter (Artsdatabanken)' },
+  redList.world && { code: redList.world, text: label(redList.world, 'i verden'), source: 'IUCNs rødliste' },
+].filter((i) => i && WORDS[i.code]) as { code: string; text: string; source: string }[];
+---
+
+{items.length > 0 && (
+  <ul class="redlist" aria-label="Rødlistestatus">
+    {items.map((i) => (
+      <li class="pill" title={i.source}>
+        <span class:list={['code', i.code.toLowerCase()]} aria-hidden="true">{i.code}</span>
+        {i.text}
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .redlist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: var(--control-xs);
+    padding: 0 var(--space-sm) 0 var(--space-2xs);
+    border: 1px solid var(--color-black-10);
+    border-radius: var(--radius-full);
+    background: var(--color-white);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+  .code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-md);
+    height: var(--icon-md);
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+  }
+  /* IUCN's category colours; white text on the dark ones */
+  .ex { background: var(--redlist-ex); color: var(--color-white); }
+  .ew { background: var(--redlist-ew); color: var(--color-white); }
+  .re { background: var(--redlist-re); color: var(--color-white); }
+  .cr { background: var(--redlist-cr); color: var(--color-white); }
+  .en { background: var(--redlist-en); }
+  .vu { background: var(--redlist-vu); }
+  .nt { background: var(--redlist-nt); }
+  .lc { background: var(--redlist-lc); }
+  .dd { background: var(--redlist-dd); }
+</style>
