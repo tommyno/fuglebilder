@@ -3,8 +3,7 @@
 
 import raw from '../../data/families.json';
 import { displayName, slugify } from './shared';
-import type { BrowseCounts } from '../components/BrowseNav';
-import { capitalize, getSpecies, isNorwegian, norwegianBirds, type Species } from './species.server';
+import { capitalize, getSpecies, isNorwegian, type Species } from './species.server';
 
 type RawFamily = [id: number, sci: string, names: string[], species: number[]];
 
@@ -72,10 +71,3 @@ export const coverSpecies = (f: Family, norway: boolean) =>
   norway
     ? f.norwegian.reduce((a, b) => (b.norway > a.norway ? b : a))
     : (f.species.length ? f.species : f.extinct).reduce((a, b) => (b.obs > a.obs ? b : a));
-
-/** The numbers on the Arter | Familier tabs (front page and /familier). */
-export const browseCounts = (): BrowseCounts => ({
-  norgeArter: norwegianBirds().length,
-  norgeFamilier: families.filter((f) => f.norwegian.length).length,
-  verdenFamilier: families.length,
-});

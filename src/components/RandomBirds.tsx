@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { birdPath, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
 import type { RandomBird as Bird } from '../lib/species.server';
 import { useArea } from './AreaSwitch';
-import BrowseNav, { type BrowseCounts } from './BrowseNav';
+import BrowseNav from './BrowseNav';
 import browse from './BrowseNav.module.css';
 import { ShuffleIcon } from './icons';
 import { Thumb } from './Thumb';
@@ -40,7 +40,7 @@ function newSeed(): number {
 }
 
 /** Front page, Arter: every bird seen in Norway A–Å, or 24 random birds from the whole world. */
-export default function RandomBirds({ counts }: { counts: BrowseCounts }) {
+export default function RandomBirds({ norwegianCount }: { norwegianCount: number }) {
   const area = useArea();
   const [seed, setSeed] = useState<number | null>(null);
   const [random, setRandom] = useState<Bird[] | null>(null);
@@ -81,12 +81,12 @@ export default function RandomBirds({ counts }: { counts: BrowseCounts }) {
       <h2 id="random-title" class="visually-hidden">
         {area === 'verden' ? 'Tilfeldige fugler' : 'Norske fugler fra A til Å'}
       </h2>
-      <BrowseNav tab="arter" area={area} counts={counts} />
+      <BrowseNav tab="arter" area={area} />
 
-      {area === 'norge' && <p class={browse.lead}>Sett i Norge, A–Å</p>}
+      {area === 'norge' && <p class={browse.lead}>{norwegianCount} arter sett i Norge</p>}
       {area === 'verden' && (
         <div class={own.info}>
-          <p>{random?.length ?? 24} tilfeldige av over 11 000 arter</p>
+          <p>{random?.length ?? 24} tilfeldige arter fra hele verden</p>
           <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
             Vis nye
             <ShuffleIcon />

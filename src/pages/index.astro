@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import RandomBirds from '../components/RandomBirds.tsx';
-import { browseCounts } from '../lib/families.server';
+import { norwegianBirds } from '../lib/species.server';
 import { ArrowUpIcon } from '../components/icons';
 import button from '../components/Button.module.css';
 ---
@@ -12,7 +12,7 @@ import button from '../components/Button.module.css';
   search
 >
   <h1 class="visually-hidden">Finn en fugl</h1>
-  <RandomBirds client:load counts={browseCounts()} />
+  <RandomBirds client:load norwegianCount={norwegianBirds().length} />
   <p class="totop">
     <a class:list={[button.button, button.ghost]} href="#top"><ArrowUpIcon />Til toppen</a>
   </p>

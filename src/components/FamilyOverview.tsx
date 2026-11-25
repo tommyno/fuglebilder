@@ -2,7 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { takeAreaFromUrl } from '../lib/area';
 import { photoUrl } from '../lib/shared';
 import { useArea } from './AreaSwitch';
-import BrowseNav, { type BrowseCounts } from './BrowseNav';
+import BrowseNav from './BrowseNav';
 import browse from './BrowseNav.module.css';
 import { Thumb } from './Thumb';
 import styles from './Grid.module.css';
@@ -26,7 +26,7 @@ export interface OverviewFamily {
 const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
 
 /** /familier, the Familier tab: every family as a tile, A–Å, the ones with birds seen in Norway or the whole world. */
-export default function FamilyOverview({ families, counts }: { families: OverviewFamily[]; counts: BrowseCounts }) {
+export default function FamilyOverview({ families }: { families: OverviewFamily[] }) {
   useEffect(takeAreaFromUrl, []);
   const chosen = useArea();
   // The server renders Sett i Norge, so show that until the viewer's choice is known
@@ -35,8 +35,8 @@ export default function FamilyOverview({ families, counts }: { families: Overvie
 
   return (
     <section class={browse.section} aria-label="Familier">
-      <BrowseNav tab="familier" area={chosen} counts={counts} />
-      <p class={browse.lead}>{norway ? 'Familier med fugler sett i Norge, A–Å' : 'Alle verdens fuglefamilier, A–Å'}</p>
+      <BrowseNav tab="familier" area={chosen} />
+      <p class={browse.lead}>{norway ? `${shown.length} familier sett i Norge` : `${shown.length} familier i hele verden`}</p>
       <ul class={styles.grid}>
         {shown.map((f) => (
           <li key={f.href}>

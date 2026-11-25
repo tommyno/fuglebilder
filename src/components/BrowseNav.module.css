@@ -42,13 +42,7 @@
   font-weight: var(--weight-medium);
 }
 
-.count {
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--color-gray);
-}
-
-/* One quiet line under the tabs saying what the grid shows: "Sett i Norge, A–Å" */
+/* One quiet line under the tabs saying what the grid shows: "280 arter sett i Norge" */
 .lead {
   margin: 0 0 var(--space-sm);
   color: var(--color-gray);
