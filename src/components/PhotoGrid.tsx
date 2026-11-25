@@ -10,11 +10,15 @@ import { Skeletons } from './Tile';
 import styles from './Grid.module.css';
 import button from './Button.module.css';
 import filterStyles from './PhotoGrid.module.css';
+import seg from './Segmented.module.css';
 
 /** null = alle bilder */
 type Filter = PhotoFilter | null;
 
 const FILTER_KEYS = Object.keys(PHOTO_FILTERS) as PhotoFilter[];
+/** "alder", "kjønn": the groups in the phone menu */
+const KINDS = [...new Set(FILTER_KEYS.map((k) => PHOTO_FILTERS[k].kind))];
+const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase('nb') + s.slice(1);
 
 /** ?vis=ungfugl i adressen */
 function readFilter(): Filter {
@@ -141,30 +145,53 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
 
   return (
     <>
-      <div class={filterStyles.filters} role="group" aria-label="Vis bilder">
-        <button
-          class={styles.chip}
-          type="button"
-          aria-pressed={filter === null}
-          onClick={() => choose(null)}
-        >
-          Alle
-        </button>
-        {FILTER_KEYS.map((key, i) => (
-          <Fragment key={key}>
-            {(i === 0 || PHOTO_FILTERS[key].kind !== PHOTO_FILTERS[FILTER_KEYS[i - 1]].kind) && (
-              <span class={filterStyles.sep} aria-hidden="true" />
-            )}
-            <button
-              class={styles.chip}
-              type="button"
-              aria-pressed={filter === key}
-              onClick={() => choose(filter === key ? null : key)}
-            >
-              {PHOTO_FILTERS[key].label}
-            </button>
-          </Fragment>
-        ))}
+      <div class={filterStyles.head}>
+        <h2 class={filterStyles.title}>Bilder</h2>
+        {/* Wide screens: one row of choices. Phones: a menu, as five choices don't fit. */}
+        <div class={`${seg.group} ${filterStyles.choices}`} role="group" aria-label="Vis bilder av">
+          <button class={seg.option} type="button" aria-pressed={filter === null} onClick={() => choose(null)}>
+            Alle
+          </button>
+          {FILTER_KEYS.map((key, i) => (
+            <Fragment key={key}>
+              {(i === 0 || PHOTO_FILTERS[key].kind !== PHOTO_FILTERS[FILTER_KEYS[i - 1]].kind) && (
+                <span class={seg.sep} aria-hidden="true" />
+              )}
+              <button
+                class={seg.option}
+                type="button"
+                aria-pressed={filter === key}
+                onClick={() => choose(filter === key ? null : key)}
+              >
+                {PHOTO_FILTERS[key].label}
+              </button>
+            </Fragment>
+          ))}
+        </div>
+        <label class={filterStyles.menu}>
+          <span class={filterStyles.menuLabel}>Vis:</span>
+          <select
+            value={filter ?? ''}
+            onChange={(e) => {
+              const v = e.currentTarget.value;
+              choose(isPhotoFilter(v) ? v : null);
+            }}
+          >
+            <option value="">Alle</option>
+            {KINDS.map((kind) => (
+              <optgroup key={kind} label={capitalize(kind)}>
+                {FILTER_KEYS.filter((k) => PHOTO_FILTERS[k].kind === kind).map((k) => (
+                  <option key={k} value={k}>
+                    {PHOTO_FILTERS[k].label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </label>
       </div>
 
       <ul class={styles.grid} ref={tiles}>

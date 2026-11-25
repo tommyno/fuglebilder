@@ -1,0 +1,66 @@
+/* One control made of a few choices side by side: Norge | Hele verden, and the photo filters on a
+   bird page. A sand pill holding the choices; the chosen one is filled with the text colour. */
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  max-width: 100%;
+  padding: var(--space-2xs);
+  border-radius: var(--radius-full);
+  background: var(--color-sand);
+}
+
+/* Equal halves, full width on phones (Norge | Hele verden) */
+.wide {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  width: min(100%, 24rem);
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  height: var(--control-sm);
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-charcoal);
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .option:hover {
+    background: var(--color-sand-dark);
+  }
+}
+
+.option[aria-pressed='true'] {
+  background: var(--color-charcoal);
+  color: var(--color-white);
+}
+
+/* How many, after the choice: "Norge 6" */
+.count {
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+/* Hairline between kinds of choice (Alle | Voksen Ungfugl | Hann Hunn) */
+.sep {
+  flex: none;
+  width: 1px;
+  height: var(--icon-sm);
+  margin: 0 var(--space-2xs);
+  background: var(--color-black-10);
+}

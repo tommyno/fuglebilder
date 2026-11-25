@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect } from 'preact/hooks';
+import { takeAreaFromUrl } from '../lib/area';
 import { photoUrl } from '../lib/shared';
-import { modeFromUrl, saveModeInUrl, type Mode } from './FamilyGrid';
+import { useArea } from './AreaSwitch';
+import BrowseNav, { type BrowseCounts } from './BrowseNav';
+import browse from './BrowseNav.module.css';
 import { Thumb } from './Thumb';
 import styles from './Grid.module.css';
 import own from './Families.module.css';
@@ -22,37 +25,22 @@ export interface OverviewFamily {
 
 const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
 
-/** Every family as a tile, A–Å: the ones with birds seen in Norway, or the whole world. */
-export default function FamilyOverview({ families }: { families: OverviewFamily[] }) {
-  const [mode, setMode] = useState<Mode>('norge');
-  const norwegian = families.filter((f) => f.norway);
-
-  useEffect(() => {
-    if (modeFromUrl() === 'verden') setMode('verden');
-  }, []);
-
-  const choose = (m: Mode) => {
-    setMode(m);
-    saveModeInUrl(m);
-  };
-
-  const norway = mode === 'norge';
-  const shown = norway ? norwegian : families;
+/** /familier, the Familier tab: every family as a tile, A–Å, the ones with birds seen in Norway or the whole world. */
+export default function FamilyOverview({ families, counts }: { families: OverviewFamily[]; counts: BrowseCounts }) {
+  useEffect(takeAreaFromUrl, []);
+  const chosen = useArea();
+  // The server renders Sett i Norge, so show that until the viewer's choice is known
+  const norway = chosen !== 'verden';
+  const shown = norway ? families.filter((f) => f.norway) : families;
 
   return (
-    <>
-      <div class={own.choices}>
-        <button class={styles.chip} type="button" aria-pressed={norway} onClick={() => choose('norge')}>
-          Sett i Norge <span class={own.chipCount}>{norwegian.length}</span>
-        </button>
-        <button class={styles.chip} type="button" aria-pressed={!norway} onClick={() => choose('verden')}>
-          Hele verden <span class={own.chipCount}>{families.length}</span>
-        </button>
-      </div>
+    <section class={browse.section} aria-label="Familier">
+      <BrowseNav tab="familier" area={chosen} counts={counts} />
+      <p class={browse.lead}>{norway ? 'Familier med fugler sett i Norge, A–Å' : 'Alle verdens fuglefamilier, A–Å'}</p>
       <ul class={styles.grid}>
         {shown.map((f) => (
           <li key={f.href}>
-            <a class={styles.tile} href={norway ? f.href : `${f.href}?vis=verden`}>
+            <a class={styles.tile} href={f.href}>
               <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
               <span class={styles.label}>
                 <span class={styles.labelName}>{f.label}</span>
@@ -65,6 +53,6 @@ export default function FamilyOverview({ families }: { families: OverviewFamily[
           </li>
         ))}
       </ul>
-    </>
+    </section>
   );
 }

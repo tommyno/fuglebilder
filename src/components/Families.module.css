@@ -7,12 +7,6 @@
   margin-bottom: var(--space-sm);
 }
 
-/* How many, after the chip text: "Sett i Norge 25" */
-.chipCount {
-  font-weight: 400;
-  opacity: 0.75;
-}
-
 /* "25 arter" under a family name on its tile */
 .tileCount {
   display: block;

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import FamilyOverview, { type OverviewFamily } from '../components/FamilyOverview.tsx';
-import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../lib/families.server';
+import { allFamilies, browseCounts, coverSpecies, familyPath, isExtinctFamily } from '../lib/families.server';
 import { displayName } from '../lib/shared';
 
 // Static: the families only change when the index is rebuilt.
@@ -23,14 +23,7 @@ const families: OverviewFamily[] = allFamilies().map((f) => ({
   description="Alle verdens fuglefamilier fra A til Å. Se hvilke arter som hører til hver familie."
   search
 >
-  <header class="head">
-    <h1 class="page-title">Fuglefamilier</h1>
-  </header>
-  <FamilyOverview client:load families={families} />
+  <!-- The Familier tab of the front page: same switch and tabs, so no back link or visible title -->
+  <h1 class="visually-hidden">Fuglefamilier</h1>
+  <FamilyOverview client:load families={families} counts={browseCounts()} />
 </Base>
-
-<style>
-  .head {
-    margin: var(--space-sm) 0 var(--space-sm);
-  }
-</style>

@@ -1,29 +1,14 @@
 import { useEffect, useState } from 'preact/hooks';
 import { birdPath, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
 import type { RandomBird as Bird } from '../lib/species.server';
+import { useArea } from './AreaSwitch';
+import BrowseNav, { type BrowseCounts } from './BrowseNav';
+import browse from './BrowseNav.module.css';
 import { ShuffleIcon } from './icons';
 import { Thumb } from './Thumb';
 import { Skeletons, TileLabel } from './Tile';
 import styles from './Grid.module.css';
 import own from './RandomBirds.module.css';
-
-/** Norske (default): every bird seen in Norway, A–Å. Tilfeldige: 24 random birds from the whole world. */
-type Mode = 'tilfeldige' | 'norske';
-
-// Remember the viewer's choice. Storage can be missing or blocked, so never rely on it.
-const MODE_KEY = 'fuglebilder:front-mode';
-function savedMode(): Mode {
-  try {
-    // Fall back to the key from when the site was called BirdPic
-    if ((localStorage.getItem(MODE_KEY) ?? localStorage.getItem('birdpic:front-mode')) === 'tilfeldige') return 'tilfeldige';
-  } catch {}
-  return 'norske';
-}
-function saveMode(mode: Mode) {
-  try {
-    localStorage.setItem(MODE_KEY, mode);
-  } catch {}
-}
 
 // Keep the same random set for this tab, so going to a bird and back shows the same birds.
 // Only a browser reload (or the button) deals a new set. A new tab starts fresh.
@@ -54,18 +39,13 @@ function newSeed(): number {
   return s;
 }
 
-export default function RandomBirds() {
-  const [mode, setMode] = useState<Mode | null>(null);
+/** Front page, Arter: every bird seen in Norway A–Å, or 24 random birds from the whole world. */
+export default function RandomBirds({ counts }: { counts: BrowseCounts }) {
+  const area = useArea();
   const [seed, setSeed] = useState<number | null>(null);
   const [random, setRandom] = useState<Bird[] | null>(null);
   const [norske, setNorske] = useState<Bird[] | null>(null);
   const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    const m = savedMode();
-    setMode(m);
-    if (m === 'tilfeldige') setSeed(initialSeed());
-  }, []);
 
   /** Fetch a list of birds into `set`; an answer that arrives after cleanup is dropped. */
   const load = (url: string, set: (b: Bird[]) => void) => {
@@ -77,60 +57,36 @@ export default function RandomBirds() {
     return () => ctrl.abort();
   };
 
+  // Hele verden shows this tab's set (a new one only if there is none yet); "Vis nye" deals a new one.
+  useEffect(() => {
+    setFailed(false);
+    if (area === 'verden' && seed === null) setSeed(initialSeed());
+  }, [area]);
+
   useEffect(() => (seed === null ? undefined : load(`/api/random/${seed}.json`, setRandom)), [seed]);
 
   // The Norwegian list never changes, so fetch it once.
-  useEffect(() => (mode !== 'norske' || norske ? undefined : load('/api/norwegian-birds.json', setNorske)), [mode]);
+  useEffect(() => (area !== 'norge' || norske ? undefined : load('/api/norwegian-birds.json', setNorske)), [area]);
 
-  const choose = (m: Mode) => {
-    saveMode(m);
-    setFailed(false);
-    setMode(m);
-  };
-
-  // "Hele verden" shows this tab's set (a new one only if there is none yet); "Vis nye" deals a new one.
-  const showWorld = () => {
-    choose('tilfeldige');
-    if (seed === null) setSeed(initialSeed());
-  };
   const shuffle = () => {
     setRandom(null); // don't show the old set while the new one loads
     setFailed(false);
     setSeed(newSeed());
   };
 
-  const birds = mode === 'norske' ? norske : random;
+  const birds = area === 'norge' ? norske : area === 'verden' ? random : null;
 
   return (
-    <section class={own.section} aria-labelledby="random-title">
+    <section class={browse.section} aria-labelledby="random-title">
       <h2 id="random-title" class="visually-hidden">
-        {mode === 'norske' ? 'Norske fugler fra A til Å' : 'Tilfeldige fugler'}
+        {area === 'verden' ? 'Tilfeldige fugler' : 'Norske fugler fra A til Å'}
       </h2>
-      <div class={own.choices}>
-        <button
-          class={styles.chip}
-          type="button"
-          aria-pressed={mode === 'norske'}
-          onClick={() => mode !== 'norske' && choose('norske')}
-        >
-          Sett i Norge
-        </button>
-        <button
-          class={styles.chip}
-          type="button"
-          aria-pressed={mode === 'tilfeldige'}
-          onClick={() => mode !== 'tilfeldige' && showWorld()}
-        >
-          Hele verden
-        </button>
-        <a class={`${styles.chip} ${own.families}`} href="/familier">
-          Familier
-        </a>
-      </div>
+      <BrowseNav tab="arter" area={area} counts={counts} />
 
-      {mode === 'tilfeldige' && (
+      {area === 'norge' && <p class={browse.lead}>Sett i Norge, A–Å</p>}
+      {area === 'verden' && (
         <div class={own.info}>
-          <p>Viser {random?.length ?? 24} tilfeldige arter</p>
+          <p>{random?.length ?? 24} tilfeldige av over 11 000 arter</p>
           <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
             Vis nye
             <ShuffleIcon />
@@ -140,7 +96,7 @@ export default function RandomBirds() {
 
       {failed && (
         <p class={styles.status}>
-          {mode === 'norske'
+          {area === 'norge'
             ? 'Klarte ikke å hente fuglene akkurat nå. Prøv igjen litt senere.'
             : 'Klarte ikke å hente fugler akkurat nå. Prøv «Vis nye».'}
         </p>
