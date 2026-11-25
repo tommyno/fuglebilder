@@ -2,13 +2,14 @@
 // Norwegian (bokmål) names. Run occasionally: `pnpm build:index`.
 //
 // Record format (compact, array per species):
-//   [taxonId, latinName, observationsCount, photo, names, norway, status?]
+//   [taxonId, latinName, observationsCount, photo, names, norway, status?, introduced?]
 //   photo: "<photoId>.<ext>" on the inaturalist-open-data bucket, only when the
 //          photo has an open (CC/CC0) license, otherwise null
 //   names: Norwegian names, preferred first (empty if it has none)
 //   norway: research-grade observations in Norway (0 = never seen there)
 //   status: red list "<Norway>/<world>", e.g. "CR/NT", "/LC" (Norway's list, then IUCN);
-//           left out when the species has neither
+//           left out when the species has neither ("" when only `introduced` follows)
+//   introduced: 1 when iNat lists the species as introduced in Norway, otherwise left out
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { slugClashes } from '../src/lib/slug.ts';
@@ -42,7 +43,13 @@ const fetchPage = (idAbove) =>
   );
 
 const OPEN_PHOTO = /^https:\/\/inaturalist-open-data\.s3\.amazonaws\.com\/photos\/(\d+)\/[a-z]+\.(\w+)$/;
+// IUCN's worldwide status, from the taxon list itself. iNat only fills it in for
+// threatened species (NT and up, and EX/EW); LC and DD come in the fourth pass.
+const iucn = new Map();
 function toRecord(t) {
+  const cs = t.conservation_status;
+  if (cs?.authority === 'IUCN Red List' && !cs.place_id && cs.status) iucn.set(t.id, cs.status.toUpperCase());
+
   const names = [];
   for (const n of t.names ?? []) {
     // iNat uses "nb" for bokmål; "no" appears on a few older names
@@ -109,11 +116,12 @@ for (const r of records) r[5] = norway.get(r[0]) ?? 0;
 console.log(`${records.filter((r) => r[5]).length} species seen in Norway.`);
 
 // Fourth pass: red-list status, in Norway (Artsdatabanken) and in the world (IUCN).
-// The IUCN filter on species_counts gives the global status only. iNat caps paging at
-// 10,000 results; LC is the biggest group (~8,600), so this holds for now.
-const IUCN_CODES = ['EX', 'EW', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD'];
-const iucn = new Map();
-for (const code of IUCN_CODES) {
+// LC and DD for the world: species_counts?csi= matches any list whose status maps to that
+// IUCN category, regional ones too (kanadagås came back VU), so it only fills in species
+// the taxon list gave no threatened status. LC first: a regional DD shouldn't beat it.
+const IUCN_CODES = new Set(['EX', 'EW', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD']);
+for (const [id, code] of iucn) if (!IUCN_CODES.has(code)) iucn.delete(id);
+for (const code of ['LC', 'DD']) {
   for (let page = 1; ; page++) {
     const data = await getJson(
       `https://api.inaturalist.org/v1/observations/species_counts?taxon_id=3&csi=${code}&per_page=500&page=${page}`,
@@ -127,8 +135,10 @@ for (const code of IUCN_CODES) {
 // matches Svalbard's list and the global one. Only birds seen in Norway can be on it.
 const NORWAY_CODES = new Set(['RE', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD']);
 const norwayStatus = new Map();
+// The same records say whether the species is native or introduced in Norway (iNat's checklist).
+const introduced = new Set();
 const seen = records.filter((r) => r[5] > 0);
-console.log(`Red-list status for ${seen.length} Norwegian species…`);
+console.log(`Red-list and introduced status for ${seen.length} Norwegian species…`);
 for (let i = 0; i < seen.length; i += 30) {
   const ids = seen.slice(i, i + 30).map((r) => r[0]);
   const data = await getJson(`${API}/${ids.join(',')}`);
@@ -140,6 +150,7 @@ for (let i = 0; i < seen.length; i += 30) {
       .sort((a, b) => year(b) - year(a))[0];
     const code = best?.status?.toUpperCase();
     if (NORWAY_CODES.has(code)) norwayStatus.set(t.id, code);
+    if ((t.listed_taxa ?? []).some((l) => l.place?.id === NORWAY && l.establishment_means === 'introduced')) introduced.add(t.id);
   }
   await sleep(DELAY_MS);
 }
@@ -147,8 +158,12 @@ for (const r of records) {
   const no = norwayStatus.get(r[0]) ?? '';
   const world = iucn.get(r[0]) ?? '';
   if (no || world) r[6] = `${no}/${world}`;
+  if (introduced.has(r[0])) {
+    r[6] ??= '';
+    r[7] = 1;
+  }
 }
-console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status.`);
+console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status, ${introduced.size} introduced in Norway.`);
 
 records.sort((a, b) => b[2] - a[2]); // most observed first
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });

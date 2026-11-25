@@ -42,7 +42,7 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
       </p>
     )}
     {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
-    <RedList redList={species.redList} />
+    <RedList redList={species.redList} introduced={species.introduced} />
   </header>
   <PhotoGrid client:load taxon={taxon} />
 </Base>

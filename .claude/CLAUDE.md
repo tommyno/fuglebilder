@@ -31,16 +31,17 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/lib/slug.ts` | `foldAccents`, `slugify`, `slugClashes`. No imports, so `scripts/build-index.mjs` can import it too |
 | `src/lib/lightbox.ts` | PhotoSwipe full view: caption, credit, heart, `?photo=n` so Back closes it |
 | `src/components/Button.module.css` | Shared button look for `<a>` and `<button>`, in `.astro` and Preact alike: `.button` plus `.ghost` (quiet, grey on hover) or `.primary` (accent fill). Don't restyle buttons locally |
-| `src/components/RedList.astro` | Red-list pills under the species name: "Kritisk truet i Norge", "Nær truet i verden" |
+| `src/components/RedList.astro` | Status pills under the species name: "Innført i Norge", "Kritisk truet i Norge", "Nær truet i verden" |
 | `src/lib/favorites.ts` | nanostores favorites persisted to localStorage, shared between islands |
 | `scripts/build-index.mjs` | Writes `data/species.json` and `data/slug-clashes.json` |
 
 ## Data
 
-- `data/species.json` (~760 KB): every active iNat species under Aves (taxon 3) with taxon id, Latin name, Norwegian names, worldwide observation count, research-grade observations in Norway (place 7016), an open-licensed photo and red-list status (see below). Committed so builds never depend on iNat. Bundled with the server function only; never ship it to the browser.
+- `data/species.json` (~760 KB): every active iNat species under Aves (taxon 3) with taxon id, Latin name, Norwegian names, worldwide observation count, research-grade observations in Norway (place 7016), an open-licensed photo, red-list status and whether it's introduced in Norway (see below). Committed so builds never depend on iNat. Bundled with the server function only; never ship it to the browser.
 - Species with no open-licensed photo and no sightings (~300) are dropped when the index loads (`species.server.ts`): their photo page could only be empty, so no page, no search hit, and ~11,080 remain. The site says "over 11 000 fuglearter" as plain text (footer, /om, titles), not computed.
 - `data/slug-clashes.json`: ids of species whose name slug is already taken by a more observed species; their slug gets the Latin name appended (`/fugl/blavingebladfugl-chloropsis-cochinchinensis`).
-- **Red-list status** ("CR/NT": Norway's list, then IUCN's worldwide one). IUCN comes from `observations/species_counts?csi=`, which is global only. Norway's (Artsdatabanken, place 7016, newest list year) comes from each Norwegian bird's own taxon record, because the `cs=&place_id=7016` filter also matches Svalbard's list and global statuses. Shown only on the species page (`RedList.astro`) as pills in IUCN's own colours (`--redlist-*`), never on grid tiles (too noisy). LC is shown too, so you can compare Norway with the world.
+- **Red-list status** ("CR/NT": Norway's list, then IUCN's worldwide one). IUCN's threatened statuses (NT and up, EX, EW) come from `conservation_status` on the taxon list (authority "IUCN Red List", no place). iNat leaves LC/DD out there, so those come from `observations/species_counts?csi=`, which also matches regional lists that map to the category (kanadagås came back VU), so it only fills in species with no threatened status. Norway's (Artsdatabanken, place 7016, newest list year) comes from each Norwegian bird's own taxon record, because the `cs=&place_id=7016` filter also matches Svalbard's list and global statuses. Shown only on the species page (`RedList.astro`) as pills in IUCN's own colours (`--redlist-*`), never on grid tiles (too noisy). LC is shown too, so you can compare Norway with the world.
+- **Introduced in Norway** (kanadagås, fasan …): from the same taxon records, `listed_taxa` for place 7016 with `establishment_means: "introduced"` (iNat's Norway checklist). Shown as a grey "Innført i Norge" pill before the red-list ones, species page only.
 - Photos are hotlinked from `inaturalist-open-data.s3.amazonaws.com` (`medium` in the grid, `large` in full view). No Vercel image optimization.
 
 ## Rules and why

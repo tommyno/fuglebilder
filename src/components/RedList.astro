@@ -1,12 +1,14 @@
 ---
-// Red-list status on a species page: Norway's list first, then IUCN's worldwide one.
-// Shows nothing when iNaturalist has neither.
+// Status pills on a species page: introduced in Norway, Norway's red list, then IUCN's
+// worldwide one. Shows nothing when iNaturalist has none of them.
 import type { RedList } from '../lib/species.server';
 
 interface Props {
   redList: RedList;
+  /** introduced in Norway (iNat's checklist) */
+  introduced: boolean;
 }
-const { redList } = Astro.props;
+const { redList, introduced } = Astro.props;
 
 const WORDS: Record<string, string> = {
   EX: 'Utdødd',
@@ -18,21 +20,23 @@ const WORDS: Record<string, string> = {
   NT: 'Nær truet',
   LC: 'Livskraftig',
   DD: 'Datamangel',
+  IN: 'Innført',
 };
 // EX and EW already say where
 const label = (code: string, where: string) => (code === 'EX' || code === 'EW' ? WORDS[code] : `${WORDS[code]} ${where}`);
 
 const items = [
+  introduced && { code: 'IN', text: 'Innført i Norge', source: 'Ikke naturlig hjemmehørende i Norge (iNaturalist)' },
   redList.norway && { code: redList.norway, text: label(redList.norway, 'i Norge'), source: 'Norsk rødliste for arter (Artsdatabanken)' },
   redList.world && { code: redList.world, text: label(redList.world, 'i verden'), source: 'IUCNs rødliste' },
 ].filter((i) => i && WORDS[i.code]) as { code: string; text: string; source: string }[];
 ---
 
 {items.length > 0 && (
-  <ul class="redlist" aria-label="Rødlistestatus">
+  <ul class="redlist" aria-label="Status">
     {items.map((i) => (
       <li class="pill" title={i.source}>
-        <span class:list={['code', i.code.toLowerCase()]} aria-hidden="true">{i.code}</span>
+        <span class:list={['code', i.code.toLowerCase()]} aria-hidden="true">{i.code === 'IN' ? '↘' : i.code}</span>
         {i.text}
       </li>
     ))}
@@ -81,4 +85,6 @@ const items = [
   .nt { background: var(--redlist-nt); }
   .lc { background: var(--redlist-lc); }
   .dd { background: var(--redlist-dd); }
+  /* Introduced: not a red-list category, so plain grey from our own palette */
+  .in { background: var(--color-gray); color: var(--color-white); font-size: var(--text-sm); }
 </style>

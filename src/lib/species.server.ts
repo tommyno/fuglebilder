@@ -4,7 +4,7 @@
 import raw from '../../data/species.json';
 import { birdSlug, foldAccents } from './shared';
 
-type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number, status?: string];
+type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number, status?: string, introduced?: 1];
 
 /** Red-list category code: RE/CR/EN/VU/NT/LC/DD on Norway's list, EX/EW/CR/EN/VU/NT/LC/DD on IUCN's. */
 export interface RedList {
@@ -26,6 +26,8 @@ export interface Species {
   /** research-grade observations in Norway (0 = never seen there) */
   norway: number;
   redList: RedList;
+  /** iNat lists the species as introduced in Norway (kanadagås, fasan …) */
+  introduced: boolean;
 }
 
 // sorted by observation count, most observed first
@@ -36,11 +38,11 @@ const capitalize = (n: string) => n.charAt(0).toLocaleUpperCase('nb') + n.slice(
 // Their photo page could only ever be empty, so they get no page and no search hit.
 const species: Species[] = (raw as Rec[])
   .filter(([, , obs, photo]) => photo || obs > 0)
-  .map(([id, sci, obs, photo, rawNames, norway = 0, status = '/']) => {
+  .map(([id, sci, obs, photo, rawNames, norway = 0, status = '/', introduced]) => {
     const names = rawNames.map(capitalize);
     const [no, world] = status.split('/');
     const redList = { norway: no || null, world: world || null };
-    return { id, sci, obs, photo, names, name: names[0] ?? null, norway, redList };
+    return { id, sci, obs, photo, names, name: names[0] ?? null, norway, redList, introduced: introduced === 1 };
   });
 const byId = new Map(species.map((s) => [s.id, s]));
 const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
