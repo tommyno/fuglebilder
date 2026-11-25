@@ -20,6 +20,11 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 |---|---|
 | `src/pages/index.astro` | Front page: search + Sett i Norge (static) / Hele verden (random) |
 | `src/pages/fugl/[slug].astro` | Species photo grid, on demand + ISR (24 h). Slug = Norwegian name (Latin when there is none), accents folded, e.g. `/fugl/svarttrost`. Unknown slugs are 404. Photo filter kept in `?vis=`. |
+| `src/pages/familie/[slug].astro` | A family's species grid, on demand + ISR. Sett i Norge / Hele verden chips (`?vis=verden`), breadcrumb to its order. Slug = Norwegian family name, e.g. `/familie/snipefamilien` |
+| `src/pages/familier.astro` | Every order as a heading with its families as tiles (static). Orders have no page of their own: breadcrumbs link to `/familier#<order>` |
+| `src/lib/families.server.ts` | Loads `data/families.json`: families and orders with slugs, species A–Å, cover photo |
+| `src/components/Breadcrumbs.astro` | "Fugler › Vade-, måke- og alkefugler › Snipefamilien" on species and family pages |
+| `src/components/BackLink.astro` | "Tilbake" pill: history back when you came from the site, else the front page |
 | `src/pages/mine-fugler.astro` | Favorites, static shell rendered on the client from localStorage |
 | `src/pages/om.astro` | About page (static): what the site is, iNaturalist and licenses, GitHub link |
 | `src/components/Footer.astro` | One-line footer on every page (forest green, `--color-green-dark`): tagline + link to `/om` |
@@ -33,12 +38,14 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/components/Button.module.css` | Shared button look for `<a>` and `<button>`, in `.astro` and Preact alike: `.button` plus `.ghost` (quiet, grey on hover) or `.primary` (accent fill). Don't restyle buttons locally |
 | `src/components/RedList.astro` | Status pills under the species name: "Innført i Norge", "Kritisk truet i Norge", "Nær truet i verden" |
 | `src/lib/favorites.ts` | nanostores favorites persisted to localStorage, shared between islands |
-| `scripts/build-index.mjs` | Writes `data/species.json` and `data/slug-clashes.json` |
+| `scripts/build-index.mjs` | Writes `data/species.json`, `data/slug-clashes.json` and `data/families.json` |
 
 ## Data
 
 - `data/species.json` (~760 KB): every active iNat species under Aves (taxon 3) with taxon id, Latin name, Norwegian names, worldwide observation count, research-grade observations in Norway (place 7016), an open-licensed photo, red-list status and whether it's introduced in Norway (see below). Committed so builds never depend on iNat. Bundled with the server function only; never ship it to the browser.
 - Species with no open-licensed photo and no sightings (~300) are dropped when the index loads (`species.server.ts`): their photo page could only be empty, so no page, no search hit, and ~11,080 remain. The site says "over 11 000 fuglearter" as plain text (footer, /om, titles), not computed.
+- `data/families.json`: iNat's bird orders and families (Norwegian names where iNat has them, ~250 of 258 families) and each family's species ids, from `ancestor_ids` on the taxon list. A family page shows species with a photo; Sett i Norge uses the same rule as the front page (seen at least 3 times). iNat's "&" in order names is shown as "og".
+- **Extinct species** (iNat's `extinct` flag, ~150 with a photo; unlike IUCN's EX it also covers birds gone before 1500, like the moas): their photos are mostly skeletons and museum specimens, so a family page shows them in their own "Utdødde arter" row under Hele verden, and wholly extinct families and orders come last on `/familier`, marked "utdødd". The species page gets an "Utdødd" pill when IUCN doesn't already say EX/EW.
 - `data/slug-clashes.json`: ids of species whose name slug is already taken by a more observed species; their slug gets the Latin name appended (`/fugl/blavingebladfugl-chloropsis-cochinchinensis`).
 - **Red-list status** ("CR/NT": Norway's list, then IUCN's worldwide one). IUCN's threatened statuses (NT and up, EX, EW) come from `conservation_status` on the taxon list (authority "IUCN Red List", no place). iNat leaves LC/DD out there, so those come from `observations/species_counts?csi=`, which also matches regional lists that map to the category (kanadagås came back VU), so it only fills in species with no threatened status. Norway's (Artsdatabanken, place 7016, newest list year) comes from each Norwegian bird's own taxon record, because the `cs=&place_id=7016` filter also matches Svalbard's list and global statuses. Shown only on the species page (`RedList.astro`) as pills in IUCN's own colours (`--redlist-*`), never on grid tiles (too noisy). LC is shown too, so you can compare Norway with the world.
 - **Introduced in Norway** (kanadagås, fasan …): from the same taxon records, `listed_taxa` for place 7016 with `establishment_means: "introduced"` (iNat's Norway checklist). Shown as a grey "Innført i Norge" pill before the red-list ones, species page only.

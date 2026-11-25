@@ -1,0 +1,58 @@
+/* Shared by FamilyGrid (a family's species) and FamilyOverview (/familier) */
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-sm);
+}
+
+/* How many, after the chip text: "Sett i Norge 25" */
+.chipCount {
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.note {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-gray);
+}
+
+/* "25 arter" under a family name on its tile */
+.tileCount {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-white);
+}
+
+.extinctTitle {
+  margin: var(--space-xl) 0 var(--space-2xs);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+}
+
+.order {
+  margin-top: var(--space-xl);
+  /* clear the page top when jumped to from a breadcrumb (/familier#spurvefugler) */
+  scroll-margin-top: var(--space-md);
+}
+
+.order:first-of-type {
+  margin-top: 0;
+}
+
+.orderTitle {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.orderSci {
+  display: block;
+  margin-top: var(--space-3xs);
+  font-size: var(--text-sm);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-gray);
+}

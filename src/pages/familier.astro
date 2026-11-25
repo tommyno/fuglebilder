@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import FamilyOverview, { type OverviewOrder } from '../components/FamilyOverview.tsx';
+import { allOrders, coverSpecies, familyPath, isExtinctFamily, isExtinctOrder } from '../lib/families.server';
+import { displayName } from '../lib/shared';
+
+// Static: the families only change when the index is rebuilt.
+export const prerender = true;
+
+const orders: OverviewOrder[] = allOrders().map((o) => ({
+  slug: o.slug,
+  label: displayName(o),
+  sci: o.name ? o.sci : null,
+  families: o.families.map((f) => ({
+    href: familyPath(f),
+    label: displayName(f),
+    world: f.species.length + f.extinct.length,
+    norway: f.norwegian.length,
+    photo: coverSpecies(f, false).photo!,
+    photoNo: f.norwegian.length ? coverSpecies(f, true).photo! : null,
+    extinct: isExtinctFamily(f),
+  })),
+  extinct: isExtinctOrder(o),
+}));
+---
+
+<Base
+  title="Fuglefamilier"
+  description="Alle verdens fuglefamilier, ordnet etter orden. Se hvilke arter som hører til hver familie."
+  search
+>
+  <header class="head">
+    <h1 class="page-title">Fuglefamilier</h1>
+  </header>
+  <FamilyOverview client:load orders={orders} />
+</Base>
+
+<style>
+  .head {
+    margin: var(--space-sm) 0 var(--space-sm);
+  }
+</style>

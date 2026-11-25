@@ -1,15 +1,20 @@
 // Builds data/species.json: every active bird species on iNaturalist with its
-// Norwegian (bokmål) names. Run occasionally: `pnpm build:index`.
+// Norwegian (bokmål) names, and data/families.json: the families and orders they
+// belong to. Run occasionally: `pnpm build:index`.
 //
 // Record format (compact, array per species):
-//   [taxonId, latinName, observationsCount, photo, names, norway, status?, introduced?]
+//   [taxonId, latinName, observationsCount, photo, names, norway, status?, flags?]
 //   photo: "<photoId>.<ext>" on the inaturalist-open-data bucket, only when the
 //          photo has an open (CC/CC0) license, otherwise null
 //   names: Norwegian names, preferred first (empty if it has none)
 //   norway: research-grade observations in Norway (0 = never seen there)
 //   status: red list "<Norway>/<world>", e.g. "CR/NT", "/LC" (Norway's list, then IUCN);
-//           left out when the species has neither ("" when only `introduced` follows)
-//   introduced: 1 when iNat lists the species as introduced in Norway, otherwise left out
+//           left out when the species has neither ("" when only `flags` follows)
+//   flags: 1 = introduced in Norway (iNat's checklist), 2 = extinct (iNat's flag, which unlike
+//          IUCN also covers birds gone before 1500, like the moas); left out when 0
+//
+// families.json: { orders: [[id, latinName, names]],
+//                  families: [[id, latinName, names, orderId, speciesIds]] }
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { slugClashes } from '../src/lib/slug.ts';
@@ -46,15 +51,25 @@ const OPEN_PHOTO = /^https:\/\/inaturalist-open-data\.s3\.amazonaws\.com\/photos
 // IUCN's worldwide status, from the taxon list itself. iNat only fills it in for
 // threatened species (NT and up, and EX/EW); LC and DD come in the fourth pass.
 const iucn = new Map();
+// Ancestor ids per species, to find its family and order
+const ancestors = new Map();
+/** Norwegian names, preferred first. iNat uses "nb" for bokmål; "no" appears on a few older names. */
+function norwegianNames(t) {
+  const names = [];
+  for (const n of t.names ?? []) {
+    if (n.is_valid && (n.locale === 'nb' || n.locale === 'no') && !names.includes(n.name)) names.push(n.name);
+  }
+  return names;
+}
+// Extinct species, from iNat's own flag
+const extinct = new Set();
 function toRecord(t) {
+  ancestors.set(t.id, t.ancestor_ids ?? []);
+  if (t.extinct) extinct.add(t.id);
   const cs = t.conservation_status;
   if (cs?.authority === 'IUCN Red List' && !cs.place_id && cs.status) iucn.set(t.id, cs.status.toUpperCase());
 
-  const names = [];
-  for (const n of t.names ?? []) {
-    // iNat uses "nb" for bokmål; "no" appears on a few older names
-    if (n.is_valid && (n.locale === 'nb' || n.locale === 'no') && !names.includes(n.name)) names.push(n.name);
-  }
+  const names = norwegianNames(t);
 
   let photo = null;
   const dp = t.default_photo;
@@ -158,12 +173,46 @@ for (const r of records) {
   const no = norwayStatus.get(r[0]) ?? '';
   const world = iucn.get(r[0]) ?? '';
   if (no || world) r[6] = `${no}/${world}`;
-  if (introduced.has(r[0])) {
+  const flags = (introduced.has(r[0]) ? 1 : 0) | (extinct.has(r[0]) ? 2 : 0);
+  if (flags) {
     r[6] ??= '';
-    r[7] = 1;
+    r[7] = flags;
   }
 }
-console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status, ${introduced.size} introduced in Norway.`);
+console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status, ${introduced.size} introduced in Norway, ${extinct.size} extinct.`);
+
+// Fifth pass: the families and orders, with their Norwegian names (~300 taxa, two calls each).
+const ranks = { order: new Map(), family: new Map() };
+for (const rank of Object.keys(ranks)) {
+  for (let page = 1; ; page++) {
+    const data = await getJson(
+      `${API}?taxon_id=3&rank=${rank}&is_active=true&per_page=200&page=${page}&all_names=true&locale=nb`,
+    );
+    for (const t of data.results) ranks[rank].set(t.id, t);
+    await sleep(DELAY_MS);
+    if (page * 200 >= data.total_results) break;
+  }
+}
+const members = new Map(); // family id → species ids
+const familyOrder = new Map(); // family id → order id
+for (const r of records) {
+  const ids = ancestors.get(r[0]) ?? [];
+  const family = ids.find((id) => ranks.family.has(id));
+  if (!family) continue;
+  if (!members.has(family)) members.set(family, []);
+  members.get(family).push(r[0]);
+  familyOrder.set(family, ids.find((id) => ranks.order.has(id)) ?? null);
+}
+const usedOrders = new Set(familyOrder.values());
+const families = {
+  orders: [...ranks.order.values()].filter((t) => usedOrders.has(t.id)).map((t) => [t.id, t.name, norwegianNames(t)]),
+  families: [...members].map(([id, ids]) => {
+    const t = ranks.family.get(id);
+    return [id, t.name, norwegianNames(t), familyOrder.get(id), ids];
+  }),
+};
+const withoutFamily = records.length - [...members.values()].reduce((n, ids) => n + ids.length, 0);
+console.log(`${families.families.length} families in ${families.orders.length} orders (${withoutFamily} species without a family).`);
 
 records.sort((a, b) => b[2] - a[2]); // most observed first
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });
@@ -171,5 +220,6 @@ await writeFile(new URL('../data/species.json', import.meta.url), JSON.stringify
 // Bird URLs are /fugl/<name>; species sharing a name need the Latin one appended.
 const clashes = slugClashes(records.map((r) => ({ id: r[0], name: r[4][0] ?? r[1] })));
 await writeFile(new URL('../data/slug-clashes.json', import.meta.url), JSON.stringify(clashes));
+await writeFile(new URL('../data/families.json', import.meta.url), JSON.stringify(families));
 const withPhoto = records.filter((r) => r[3]).length;
 console.log(`Wrote ${records.length} species (${withPhoto} with open-licensed photo).`);

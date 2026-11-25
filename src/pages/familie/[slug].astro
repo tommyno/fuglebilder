@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import BackLink from '../../components/BackLink.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FamilyGrid, { type FamilyBird } from '../../components/FamilyGrid.tsx';
+import { coverSpecies, getFamilyBySlug, orderPath } from '../../lib/families.server';
+import { displayName, photoUrl } from '../../lib/shared';
+import { isNorwegian } from '../../lib/species.server';
+
+// Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
+export const prerender = false;
+
+const family = getFamilyBySlug(Astro.params.slug ?? '');
+if (!family) return new Response(null, { status: 404 });
+
+const title = displayName(family);
+// "snipefamilien" mid-sentence; Latin names keep their capital
+const inText = family.name?.toLocaleLowerCase('nb') ?? family.sci;
+const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
+const description =
+  `Se bilder av ${count(family.species.length + family.extinct.length)} i ${inText}` +
+  (family.norwegian.length ? `, ${family.norwegian.length} av dem sett i Norge.` : '.');
+
+const birds: FamilyBird[] = [...family.species, ...family.extinct].map((s) => ({
+  id: s.id,
+  sci: s.sci,
+  name: s.name,
+  photo: s.photo!,
+  no: isNorwegian(s),
+  ex: s.extinct,
+}));
+const cover = coverSpecies(family, family.norwegian.length > 0);
+const crumbs = [
+  { label: 'Fugler', href: '/familier' },
+  { label: displayName(family.order), href: orderPath(family.order) },
+];
+---
+
+<Base
+  title={family.name ? `Fugler i ${inText}` : `Fugler i familien ${family.sci}`}
+  description={description}
+  image={photoUrl(cover.photo!, 'large')}
+  imageAlt={displayName(cover)}
+  search
+>
+  <header class="head">
+    <BackLink />
+    <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
+    {family.name && <p class="sci">{family.sci}</p>}
+    <Breadcrumbs items={crumbs} />
+  </header>
+  <FamilyGrid client:load birds={birds} />
+</Base>
+
+<style>
+  .head {
+    margin: var(--space-sm) 0 var(--space-lg);
+  }
+  .latin {
+    font-style: italic;
+  }
+  .sci {
+    margin: var(--space-2xs) 0 0;
+    color: var(--color-gray);
+    font-style: italic;
+  }
+</style>

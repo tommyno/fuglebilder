@@ -1,0 +1,35 @@
+---
+// "Fugler › Vade-, måke- og alkefugler › Snipefamilien": where a species or family sits in iNat's taxonomy.
+interface Props {
+  items: { label: string; href: string }[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="crumbs" aria-label="Familie">
+  <ol>
+    {items.map((i) => (
+      <li><a href={i.href}>{i.label}</a></li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+    color: var(--color-gray);
+  }
+  .crumbs li + li::before {
+    content: '›';
+    margin: 0 var(--space-2xs);
+  }
+  .crumbs a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
+</style>

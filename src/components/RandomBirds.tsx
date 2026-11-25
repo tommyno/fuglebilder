@@ -123,6 +123,9 @@ export default function RandomBirds() {
         >
           Hele verden
         </button>
+        <a class={`${styles.chip} ${own.families}`} href="/familier">
+          Familier
+        </a>
       </div>
 
       {mode === 'tilfeldige' && (
