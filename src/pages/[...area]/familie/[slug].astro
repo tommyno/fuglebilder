@@ -1,16 +1,19 @@
 ---
-import Base from '../../layouts/Base.astro';
-import BackLink from '../../components/BackLink.astro';
-import FamilyGrid, { type FamilyBird } from '../../components/FamilyGrid.tsx';
-import { coverSpecies, getFamilyBySlug } from '../../lib/families.server';
-import { displayName, photoUrl } from '../../lib/shared';
-import { isNorwegian } from '../../lib/species.server';
+import Base from '../../../layouts/Base.astro';
+import BackLink from '../../../components/BackLink.astro';
+import FamilyGrid, { type FamilyBird } from '../../../components/FamilyGrid.tsx';
+import { coverSpecies, familyPath, getFamilyBySlug } from '../../../lib/families.server';
+import { areaFromParam } from '../../../lib/area';
+import { displayName, photoUrl } from '../../../lib/shared';
+import { isNorwegian } from '../../../lib/species.server';
 
+// /familie/<slug> for Norge, /verden/familie/<slug> for the whole world.
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
 
+const area = areaFromParam(Astro.params.area);
 const family = getFamilyBySlug(Astro.params.slug ?? '');
-if (!family) return new Response(null, { status: 404 });
+if (!family || !area) return new Response(null, { status: 404 });
 
 const title = displayName(family);
 // "snipefamilien" mid-sentence; Latin names keep their capital
@@ -43,7 +46,7 @@ const cover = coverSpecies(family, family.norwegian.length > 0);
     <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
     {family.name && <p class="sci">{family.sci}</p>}
   </header>
-  <FamilyGrid client:load birds={birds} />
+  <FamilyGrid client:load birds={birds} initialArea={area} path={familyPath(family)} />
 </Base>
 
 <style>

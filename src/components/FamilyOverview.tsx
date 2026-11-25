@@ -1,5 +1,4 @@
-import { useEffect } from 'preact/hooks';
-import { takeAreaFromUrl } from '../lib/area';
+import { areaPath, type Area } from '../lib/area';
 import { photoUrl } from '../lib/shared';
 import { useArea } from './AreaSwitch';
 import BrowseNav from './BrowseNav';
@@ -25,22 +24,20 @@ export interface OverviewFamily {
 
 const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
 
-/** /familier, the Familier tab: every family as a tile, A–Å, the ones with birds seen in Norway or the whole world. */
-export default function FamilyOverview({ families }: { families: OverviewFamily[] }) {
-  useEffect(takeAreaFromUrl, []);
-  const chosen = useArea();
-  // The server renders Sett i Norge, so show that until the viewer's choice is known
-  const norway = chosen !== 'verden';
+/** /familier and /verden/familier, the Familier tab: every family as a tile, A–Å, the ones with birds seen in Norway or the whole world. */
+export default function FamilyOverview({ initialArea, families }: { initialArea: Area; families: OverviewFamily[] }) {
+  const [area, choose] = useArea(initialArea);
+  const norway = area === 'norge';
   const shown = norway ? families.filter((f) => f.norway) : families;
 
   return (
     <section class={browse.section} aria-label="Familier">
-      <BrowseNav tab="familier" area={chosen} />
+      <BrowseNav tab="familier" area={area} choose={choose} />
       <p class={browse.lead}>{norway ? `${shown.length} familier sett i Norge` : `${shown.length} familier i hele verden`}</p>
       <ul class={styles.grid}>
         {shown.map((f) => (
           <li key={f.href}>
-            <a class={styles.tile} href={f.href}>
+            <a class={styles.tile} href={areaPath(f.href, area)}>
               <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
               <span class={styles.label}>
                 <span class={styles.labelName}>{f.label}</span>

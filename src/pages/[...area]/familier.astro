@@ -1,11 +1,19 @@
 ---
-import Base from '../layouts/Base.astro';
-import FamilyOverview, { type OverviewFamily } from '../components/FamilyOverview.tsx';
-import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../lib/families.server';
-import { displayName } from '../lib/shared';
+import Base from '../../layouts/Base.astro';
+import FamilyOverview, { type OverviewFamily } from '../../components/FamilyOverview.tsx';
+import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../../lib/families.server';
+import { displayName } from '../../lib/shared';
+import { areaFromParam } from '../../lib/area';
 
+// The Familier tab: /familier for Norge, /verden/familier for the whole world.
 // Static: the families only change when the index is rebuilt.
 export const prerender = true;
+
+export function getStaticPaths() {
+  return [{ params: { area: undefined } }, { params: { area: 'verden' } }];
+}
+
+const area = areaFromParam(Astro.params.area)!;
 
 const families: OverviewFamily[] = allFamilies().map((f) => ({
   href: familyPath(f),
@@ -25,5 +33,5 @@ const families: OverviewFamily[] = allFamilies().map((f) => ({
 >
   <!-- The Familier tab of the front page: same switch and tabs, so no back link or visible title -->
   <h1 class="visually-hidden">Fuglefamilier</h1>
-  <FamilyOverview client:load families={families} />
+  <FamilyOverview client:load initialArea={area} families={families} />
 </Base>

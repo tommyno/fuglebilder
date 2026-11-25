@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import type { Area } from '../lib/area';
 import { birdPath, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
 import type { RandomBird as Bird } from '../lib/species.server';
 import { useArea } from './AreaSwitch';
@@ -40,8 +41,8 @@ function newSeed(): number {
 }
 
 /** Front page, Arter: every bird seen in Norway A–Å, or 24 random birds from the whole world. */
-export default function RandomBirds({ norwegianCount }: { norwegianCount: number }) {
-  const area = useArea();
+export default function RandomBirds({ initialArea, norwegianCount }: { initialArea: Area; norwegianCount: number }) {
+  const [area, choose] = useArea(initialArea);
   const [seed, setSeed] = useState<number | null>(null);
   const [random, setRandom] = useState<Bird[] | null>(null);
   const [norske, setNorske] = useState<Bird[] | null>(null);
@@ -74,14 +75,14 @@ export default function RandomBirds({ norwegianCount }: { norwegianCount: number
     setSeed(newSeed());
   };
 
-  const birds = area === 'norge' ? norske : area === 'verden' ? random : null;
+  const birds = area === 'norge' ? norske : random;
 
   return (
     <section class={browse.section} aria-labelledby="random-title">
       <h2 id="random-title" class="visually-hidden">
         {area === 'verden' ? 'Tilfeldige fugler' : 'Norske fugler fra A til Å'}
       </h2>
-      <BrowseNav tab="arter" area={area} />
+      <BrowseNav tab="arter" area={area} choose={choose} />
 
       {area === 'norge' && <p class={browse.lead}>{norwegianCount} arter sett i Norge</p>}
       {area === 'verden' && (

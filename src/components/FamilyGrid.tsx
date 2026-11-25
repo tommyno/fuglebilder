@@ -1,5 +1,4 @@
-import { useEffect } from 'preact/hooks';
-import { takeAreaFromUrl } from '../lib/area';
+import type { Area } from '../lib/area';
 import { birdPath, photoUrl } from '../lib/shared';
 import { Thumb } from './Thumb';
 import { TileLabel } from './Tile';
@@ -33,26 +32,25 @@ const Tiles = ({ birds }: { birds: FamilyBird[] }) => (
 );
 
 /**
- * A family's species, A–Å: the ones seen in Norway, or the whole world with the extinct ones last.
- * Which one follows the site-wide Norge | Hele verden choice.
+ * A family's species, A–Å: the ones seen in Norway (/familie/…), or the whole world with the
+ * extinct ones last (/verden/familie/…).
  */
-export default function FamilyGrid({ birds }: { birds: FamilyBird[] }) {
+export default function FamilyGrid({ birds, initialArea, path }: { birds: FamilyBird[]; initialArea: Area; path: string }) {
   const norway = birds.filter((b) => b.no);
   const living = birds.filter((b) => !b.ex);
   const extinct = birds.filter((b) => b.ex);
   // Only a choice when it changes something
   const choice = norway.length > 0 && norway.length < birds.length;
-  useEffect(takeAreaFromUrl, []);
-  const area = useArea();
+  const [area, choose] = useArea(initialArea);
 
-  // The server renders Sett i Norge; a family with no birds seen in Norway always shows the world
-  const world = !norway.length || (choice && area === 'verden');
+  // A family with no birds seen in Norway shows the world either way
+  const world = !norway.length || area === 'verden';
 
   return (
     <section aria-label="Arter">
       {choice && (
         <div class={own.choices}>
-          <AreaSwitch area={area} counts={{ norge: norway.length, verden: birds.length }} />
+          <AreaSwitch area={area} choose={choose} path={path} counts={{ norge: norway.length, verden: birds.length }} />
         </div>
       )}
       <Tiles birds={world ? living : norway} />

@@ -1,40 +1,64 @@
 import { useEffect, useState } from 'preact/hooks';
-import { $area, type Area } from '../lib/area';
+import { areaOfPath, areaPath, norgePath, type Area } from '../lib/area';
 import seg from './Segmented.module.css';
 
 /**
- * The site-wide Norge / Hele verden choice. null until the page has started in the browser:
- * the server can't know the viewer's choice, so reading it during hydration would mismatch.
+ * Norge | Hele verden on a page that has both: starts from the area the server rendered (from the
+ * path), and switching shows the other one in place and moves the address to it (/familier ↔
+ * /verden/familier), so it feels like a toggle and not a new page. Back and Forward switch too.
  */
-export function useArea(): Area | null {
-  const [area, setArea] = useState<Area | null>(null);
-  useEffect(() => $area.subscribe(setArea), []);
-  return area;
+export function useArea(initial: Area): [Area, (a: Area) => void] {
+  const [area, setArea] = useState(initial);
+
+  useEffect(() => {
+    const onPop = () => setArea(areaOfPath(location.pathname));
+    addEventListener('popstate', onPop);
+    return () => removeEventListener('popstate', onPop);
+  }, []);
+
+  const choose = (a: Area) => {
+    if (a === areaOfPath(location.pathname)) return;
+    history.pushState(null, '', areaPath(norgePath(location.pathname), a) + location.search);
+    setArea(a);
+  };
+  return [area, choose];
 }
 
 interface Props {
-  area: Area | null;
+  area: Area;
+  choose: (a: Area) => void;
+  /** this page's Norge path ("/familier"), for the links */
+  path: string;
   /** how many in each, after the label: "Norge 6", "Hele verden 26" */
   counts?: Record<Area, number>;
 }
 
-/** Norge | Hele verden, the same control on the front page, /familier and family pages. */
-export default function AreaSwitch({ area, counts }: Props) {
+/**
+ * Norge | Hele verden, the same control on the front page, /familier and family pages.
+ * Real links to the page in the other area, so it works before (or without) JavaScript;
+ * a plain click switches in place instead.
+ */
+export default function AreaSwitch({ area, choose, path, counts }: Props) {
   const option = (value: Area, label: string) => (
-    <button
+    <a
       class={seg.option}
-      type="button"
-      aria-pressed={area === value}
-      onClick={() => area !== value && $area.set(value)}
+      href={areaPath(path, value)}
+      aria-current={area === value ? 'page' : undefined}
+      onClick={(e) => {
+        // A new tab or window (Ctrl/Cmd/Shift-click, middle click) is left to the browser
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        choose(value);
+      }}
     >
       {label}
       {counts && <span class={seg.count}>{counts[value]}</span>}
-    </button>
+    </a>
   );
   return (
-    <div class={`${seg.group} ${seg.wide}`} role="group" aria-label="Område">
+    <nav class={`${seg.group} ${seg.wide}`} aria-label="Område">
       {option('norge', 'Norge')}
       {option('verden', 'Hele verden')}
-    </div>
+    </nav>
   );
 }

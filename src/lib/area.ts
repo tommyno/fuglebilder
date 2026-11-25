@@ -1,35 +1,20 @@
-// Norge or Hele verden: one choice for the whole site (front page, /familier, family pages),
-// remembered on this device. Client only; the server always renders Norge.
-import { persistentAtom } from '@nanostores/persistent';
+// Norge or Hele verden, kept in the path: Norge has no prefix (/, /familier, /familie/alkefamilien),
+// the whole world lives under /verden (/verden, /verden/familier, /verden/familie/alkefamilien).
+// The server renders the right one from the path; no import here, so pages and islands share it.
 
 export type Area = 'norge' | 'verden';
 
-const KEY = 'fuglebilder:area';
-
-// Carry over the front page's old choice ("tilfeldige" was Hele verden) once.
-// Must run before the atom below reads storage.
-try {
-  const old = localStorage.getItem('fuglebilder:front-mode') ?? localStorage.getItem('birdpic:front-mode');
-  if (old !== null) {
-    if (localStorage.getItem(KEY) === null) localStorage.setItem(KEY, old === 'tilfeldige' ? 'verden' : 'norge');
-    localStorage.removeItem('fuglebilder:front-mode');
-    localStorage.removeItem('birdpic:front-mode');
-  }
-} catch {}
-
-export const $area = persistentAtom<Area>(KEY, 'norge', {
-  encode: (a) => a,
-  decode: (s) => (s === 'verden' ? 'verden' : 'norge'),
-});
-
-/**
- * Links from before the choice was site-wide carry ?vis=verden on family pages and /familier.
- * Take it as the choice and drop it from the address.
- */
-export function takeAreaFromUrl() {
-  const url = new URL(location.href);
-  if (url.searchParams.get('vis') !== 'verden') return;
-  $area.set('verden');
-  url.searchParams.delete('vis');
-  history.replaceState(history.state, '', url);
+/** The `area` rest param of a page under src/pages/[...area]: none for Norge, "verden", else no such page. */
+export function areaFromParam(param: string | undefined): Area | null {
+  if (param === undefined) return 'norge';
+  return param === 'verden' ? 'verden' : null;
 }
+
+/** The area a path is in: /verden/… or not. */
+export const areaOfPath = (path: string): Area => (/^\/verden(\/|$)/.test(path) ? 'verden' : 'norge');
+
+/** A page's path in an area, from its Norge path: ("/familier", "verden") → "/verden/familier", ("/", "verden") → "/verden". */
+export const areaPath = (path: string, area: Area) => (area === 'norge' ? path : path === '/' ? '/verden' : `/verden${path}`);
+
+/** The area-free (Norge) path of a path: "/verden/familier" → "/familier", "/verden" → "/". */
+export const norgePath = (path: string) => path.replace(/^\/verden(?=\/|$)/, '') || '/';

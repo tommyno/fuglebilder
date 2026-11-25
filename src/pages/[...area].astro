@@ -4,6 +4,14 @@ import RandomBirds from '../components/RandomBirds.tsx';
 import { norwegianBirds } from '../lib/species.server';
 import { ArrowUpIcon } from '../components/icons';
 import button from '../components/Button.module.css';
+import { areaFromParam } from '../lib/area';
+
+// The front page, Arter tab: / for Norge, /verden for the whole world. Static.
+export function getStaticPaths() {
+  return [{ params: { area: undefined } }, { params: { area: 'verden' } }];
+}
+
+const area = areaFromParam(Astro.params.area)!;
 ---
 
 <Base
@@ -12,7 +20,7 @@ import button from '../components/Button.module.css';
   search
 >
   <h1 class="visually-hidden">Finn en fugl</h1>
-  <RandomBirds client:load norwegianCount={norwegianBirds().length} />
+  <RandomBirds client:load initialArea={area} norwegianCount={norwegianBirds().length} />
   <p class="totop">
     <a class:list={[button.button, button.ghost]} href="#top"><ArrowUpIcon />Til toppen</a>
   </p>
