@@ -1,6 +1,5 @@
 // Builds data/species.json: every active bird species on iNaturalist with its
-// Norwegian (bokmål) names, and data/families.json: the families and orders they
-// belong to. Run occasionally: `pnpm build:index`.
+// Norwegian (bokmål) names, and data/families.json: the families they belong to. Run occasionally: `pnpm build:index`.
 //
 // Record format (compact, array per species):
 //   [taxonId, latinName, observationsCount, photo, names, norway, status?, flags?]
@@ -13,8 +12,7 @@
 //   flags: 1 = introduced in Norway (iNat's checklist), 2 = extinct (iNat's flag, which unlike
 //          IUCN also covers birds gone before 1500, like the moas); left out when 0
 //
-// families.json: { orders: [[id, latinName, names]],
-//                  families: [[id, latinName, names, orderId, speciesIds]] }
+// families.json: [[id, latinName, names, speciesIds]], one per family
 
 import { writeFile, mkdir } from 'node:fs/promises';
 import { slugClashes } from '../src/lib/slug.ts';
@@ -51,7 +49,7 @@ const OPEN_PHOTO = /^https:\/\/inaturalist-open-data\.s3\.amazonaws\.com\/photos
 // IUCN's worldwide status, from the taxon list itself. iNat only fills it in for
 // threatened species (NT and up, and EX/EW); LC and DD come in the fourth pass.
 const iucn = new Map();
-// Ancestor ids per species, to find its family and order
+// Ancestor ids per species, to find its family
 const ancestors = new Map();
 /** Norwegian names, preferred first. iNat uses "nb" for bokmål; "no" appears on a few older names. */
 function norwegianNames(t) {
@@ -181,38 +179,29 @@ for (const r of records) {
 }
 console.log(`${norwayStatus.size} with Norwegian status, ${records.filter((r) => iucn.has(r[0])).length} with IUCN status, ${introduced.size} introduced in Norway, ${extinct.size} extinct.`);
 
-// Fifth pass: the families and orders, with their Norwegian names (~300 taxa, two calls each).
-const ranks = { order: new Map(), family: new Map() };
-for (const rank of Object.keys(ranks)) {
-  for (let page = 1; ; page++) {
-    const data = await getJson(
-      `${API}?taxon_id=3&rank=${rank}&is_active=true&per_page=200&page=${page}&all_names=true&locale=nb`,
-    );
-    for (const t of data.results) ranks[rank].set(t.id, t);
-    await sleep(DELAY_MS);
-    if (page * 200 >= data.total_results) break;
-  }
+// Fifth pass: the families, with their Norwegian names (258 taxa, two calls).
+const familyTaxa = new Map();
+for (let page = 1; ; page++) {
+  const data = await getJson(
+    `${API}?taxon_id=3&rank=family&is_active=true&per_page=200&page=${page}&all_names=true&locale=nb`,
+  );
+  for (const t of data.results) familyTaxa.set(t.id, t);
+  await sleep(DELAY_MS);
+  if (page * 200 >= data.total_results) break;
 }
 const members = new Map(); // family id → species ids
-const familyOrder = new Map(); // family id → order id
 for (const r of records) {
-  const ids = ancestors.get(r[0]) ?? [];
-  const family = ids.find((id) => ranks.family.has(id));
+  const family = (ancestors.get(r[0]) ?? []).find((id) => familyTaxa.has(id));
   if (!family) continue;
   if (!members.has(family)) members.set(family, []);
   members.get(family).push(r[0]);
-  familyOrder.set(family, ids.find((id) => ranks.order.has(id)) ?? null);
 }
-const usedOrders = new Set(familyOrder.values());
-const families = {
-  orders: [...ranks.order.values()].filter((t) => usedOrders.has(t.id)).map((t) => [t.id, t.name, norwegianNames(t)]),
-  families: [...members].map(([id, ids]) => {
-    const t = ranks.family.get(id);
-    return [id, t.name, norwegianNames(t), familyOrder.get(id), ids];
-  }),
-};
+const families = [...members].map(([id, ids]) => {
+  const t = familyTaxa.get(id);
+  return [id, t.name, norwegianNames(t), ids];
+});
 const withoutFamily = records.length - [...members.values()].reduce((n, ids) => n + ids.length, 0);
-console.log(`${families.families.length} families in ${families.orders.length} orders (${withoutFamily} species without a family).`);
+console.log(`${families.length} families (${withoutFamily} species without a family).`);
 
 records.sort((a, b) => b[2] - a[2]); // most observed first
 await mkdir(new URL('../data/', import.meta.url), { recursive: true });

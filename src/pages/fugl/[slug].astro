@@ -3,9 +3,8 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import RedList from '../../components/RedList.astro';
 import BackLink from '../../components/BackLink.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { getSpeciesBySlug } from '../../lib/species.server';
-import { familyPath, getFamilyOf, orderPath } from '../../lib/families.server';
+import { familyPath, getFamilyOf } from '../../lib/families.server';
 import { displayName, photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
@@ -23,11 +22,7 @@ const others = species.names.slice(1);
 const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
 
 const family = getFamilyOf(species.id);
-const crumbs = family && [
-  { label: 'Fugler', href: '/familier' },
-  { label: displayName(family.order), href: orderPath(family.order) },
-  { label: displayName(family), href: familyPath(family) },
-];
+
 ---
 
 <Base
@@ -39,6 +34,9 @@ const crumbs = family && [
 >
   <header class="head">
     <BackLink />
+    {family && (
+      <p class="family"><a href={familyPath(family)}>{displayName(family)}</a></p>
+    )}
     <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
     {species.name && (
       <p class="sci">
@@ -46,7 +44,6 @@ const crumbs = family && [
       </p>
     )}
     {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
-    {crumbs && <Breadcrumbs items={crumbs} />}
     <RedList redList={species.redList} introduced={species.introduced} extinct={species.extinct} />
   </header>
   <PhotoGrid client:load taxon={taxon} />
@@ -71,5 +68,15 @@ const crumbs = family && [
   .aka {
     margin: var(--space-3xs) 0 0;
     color: var(--color-gray);
+  }
+  /* Above the name, like a kicker */
+  .family {
+    margin: 0 0 var(--space-2xs);
+    font-size: var(--text-sm);
+    color: var(--color-gray);
+  }
+  .family a {
+    color: inherit;
+    text-underline-offset: 0.2em;
   }
 </style>

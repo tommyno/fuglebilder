@@ -29,8 +29,6 @@ export function saveModeInUrl(mode: Mode) {
   history.replaceState(history.state, '', url);
 }
 
-const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
-
 const Tiles = ({ birds }: { birds: FamilyBird[] }) => (
   <ul class={styles.grid}>
     {birds.map((b) => (
@@ -67,7 +65,7 @@ export default function FamilyGrid({ birds }: { birds: FamilyBird[] }) {
 
   return (
     <section aria-label="Arter">
-      {choice ? (
+      {choice && (
         <div class={own.choices}>
           <button class={styles.chip} type="button" aria-pressed={mode === 'norge'} onClick={() => choose('norge')}>
             Sett i Norge <span class={own.chipCount}>{norway.length}</span>
@@ -76,17 +74,11 @@ export default function FamilyGrid({ birds }: { birds: FamilyBird[] }) {
             Hele verden <span class={own.chipCount}>{birds.length}</span>
           </button>
         </div>
-      ) : (
-        <p class={own.note}>
-          {count(birds.length)}
-          {!living.length ? ', alle utdødd' : norway.length ? ', alle sett i Norge' : ', ingen av dem sett i Norge'}
-        </p>
       )}
       <Tiles birds={world ? living : norway} />
       {world && extinct.length > 0 && (
         <>
           {living.length > 0 && <h2 class={own.extinctTitle}>Utdødde arter</h2>}
-          <p class={own.note}>Bildene er stort sett av skjeletter og utstoppede fugler på museum.</p>
           <Tiles birds={extinct} />
         </>
       )}

@@ -1,9 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import BackLink from '../../components/BackLink.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FamilyGrid, { type FamilyBird } from '../../components/FamilyGrid.tsx';
-import { coverSpecies, getFamilyBySlug, orderPath } from '../../lib/families.server';
+import { coverSpecies, getFamilyBySlug } from '../../lib/families.server';
 import { displayName, photoUrl } from '../../lib/shared';
 import { isNorwegian } from '../../lib/species.server';
 
@@ -30,10 +29,6 @@ const birds: FamilyBird[] = [...family.species, ...family.extinct].map((s) => ({
   ex: s.extinct,
 }));
 const cover = coverSpecies(family, family.norwegian.length > 0);
-const crumbs = [
-  { label: 'Fugler', href: '/familier' },
-  { label: displayName(family.order), href: orderPath(family.order) },
-];
 ---
 
 <Base
@@ -47,7 +42,6 @@ const crumbs = [
     <BackLink />
     <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
     {family.name && <p class="sci">{family.sci}</p>}
-    <Breadcrumbs items={crumbs} />
   </header>
   <FamilyGrid client:load birds={birds} />
 </Base>
