@@ -1,12 +1,10 @@
-import { photoUrl } from '../lib/shared';
+import { photoUrl, speciesCount, type Taxon } from '../lib/shared';
 import { Thumb } from './Thumb';
+import { TileLabel } from './Tile';
 import styles from './Grid.module.css';
-import own from './Families.module.css';
 
-export interface OverviewFamily {
+export interface OverviewFamily extends Pick<Taxon, 'sci' | 'name'> {
   href: string;
-  /** display name: Norwegian, or Latin when there is none */
-  label: string;
   /** species with a photo, extinct ones too */
   world: number;
   /** species on the Sett i Norge list */
@@ -18,8 +16,6 @@ export interface OverviewFamily {
   extinct: boolean;
 }
 
-const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
-
 function Families({ families, norway }: { families: OverviewFamily[]; norway: boolean }) {
   return (
     <ul class={styles.grid}>
@@ -28,13 +24,7 @@ function Families({ families, norway }: { families: OverviewFamily[]; norway: bo
           {/* From the world view to the family page's world view */}
           <a class={styles.tile} href={norway ? f.href : `${f.href}#verden`}>
             <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
-            <span class={styles.label}>
-              <span class={styles.labelName}>{f.label}</span>
-              <span class={own.tileCount}>
-                {count(norway ? f.norway : f.world)}
-                {f.extinct && ', utdødd'}
-              </span>
-            </span>
+            <TileLabel taxon={f} sub={speciesCount(norway ? f.norway : f.world) + (f.extinct ? ', utdødd' : '')} />
           </a>
         </li>
       ))}

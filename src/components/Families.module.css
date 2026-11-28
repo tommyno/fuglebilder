@@ -1,12 +1,3 @@
-/* Shared by FamilyGrid (a family's species) and FamilyOverview (/familier) */
-
-/* "25 arter" under a family name on its tile */
-.tileCount {
-  display: block;
-  font-size: var(--text-xs);
-  color: var(--color-white);
-}
-
 /* A family page's parts: the living species, then Utdødde arter */
 .section + .section {
   margin-top: var(--space-xl);

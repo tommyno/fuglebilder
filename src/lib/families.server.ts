@@ -2,7 +2,8 @@
 // data/families.json is built by scripts/build-index.mjs.
 
 import raw from '../../data/families.json';
-import { displayName, slugify } from './shared';
+import { byName, displayName, taxonSlug } from './shared';
+import { slugClashes } from './slug';
 import { capitalize, getSpecies, isNorwegian, type Species } from './species.server';
 
 type RawFamily = [id: number, sci: string, names: string[], species: number[]];
@@ -22,14 +23,10 @@ export interface Family {
 }
 
 /** Every species in the family is extinct (the moas, the Hawaiian honeyeaters) */
-export const isExtinctFamily = (f: Family) => !f.species.length;
+export const isExtinctFamily = (f: Pick<Family, 'species'>) => !f.species.length;
 
-const collator = new Intl.Collator('nb');
-const byName = (a: { name: string | null; sci: string }, b: { name: string | null; sci: string }) =>
-  collator.compare(displayName(a), displayName(b));
-
-const taken = new Set<string>();
-const families: Family[] = (raw as RawFamily[])
+// A–Å, wholly extinct families last
+const sorted = (raw as RawFamily[])
   .flatMap(([id, sci, names, ids]) => {
     // Species without a photo would be empty tiles; those left out of the index have no page
     const all = ids
@@ -41,22 +38,13 @@ const families: Family[] = (raw as RawFamily[])
     const name = names[0] ? capitalize(names[0]) : null;
     return [{ id, sci, name, species, norwegian: species.filter(isNorwegian), extinct: all.filter((s) => s.extinct) }];
   })
-  .sort(byName)
-  // A–Å, wholly extinct families last
-  .sort((a, b) => Number(!a.species.length) - Number(!b.species.length))
-  .map((f) => {
-    // Slug from the display name; a clash gets the Latin name appended, like species slugs
-    let slug = slugify(displayName(f));
-    if (taken.has(slug)) slug = `${slug}-${slugify(f.sci)}`;
-    taken.add(slug);
-    return { ...f, slug };
-  });
+  .sort((a, b) => Number(isExtinctFamily(a)) - Number(isExtinctFamily(b)) || byName(a, b));
 
-const familyBySlug = new Map(families.map((f) => [f.slug, f]));
+// Slug from the display name; a clash gets the Latin name appended, like species slugs
+const clashes = new Set(slugClashes(sorted.map((f) => ({ id: f.id, name: displayName(f) }))));
+const families: Family[] = sorted.map((f) => ({ ...f, slug: taxonSlug(f, clashes) }));
+
 const familyBySpecies = new Map(families.flatMap((f) => [...f.species, ...f.extinct].map((s) => [s.id, f] as const)));
-
-/** The family at /familie/<slug>. */
-export const getFamilyBySlug = (slug: string) => familyBySlug.get(slug);
 
 /** The family a species belongs to (none for a few species iNat hasn't placed in one). */
 export const getFamilyOf = (speciesId: number) => familyBySpecies.get(speciesId);

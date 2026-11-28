@@ -1,40 +1,35 @@
-import BirdGrid, { type GridBird } from './BirdGrid';
+import type { GridBird } from '../lib/shared';
+import { speciesCount } from '../lib/shared';
+import BirdGrid from './BirdGrid';
 import own from './Families.module.css';
 
-export interface FamilyBird extends GridBird {
-  /** on the Sett i Norge list */
-  no: boolean;
-  /** extinct: its own section at the bottom, as the photos are mostly skeletons and museum birds */
-  ex: boolean;
+interface Props {
+  /** living species, A–Å */
+  living: GridBird[];
+  /** the living ones on the Sett i Norge list */
+  norwegian: GridBird[];
+  /** extinct species: their own part at the bottom, as the photos are mostly skeletons and museum birds */
+  extinct: GridBird[];
+  /** Norge and Verden views, under the area switch (BrowseNav.astro). Without it only the world view. */
+  split: boolean;
 }
 
-const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
-
-/**
- * A family's species, A–Å, under the area switch (BrowseNav.astro) when `split`: the Norge view
- * has the living species seen in Norway, the world view (#verden) every living species in one
- * list, then Utdødde arter under their own heading. Without `split` (no species seen in Norway,
- * or all of them) only the world view, as the other would be empty or the same.
- */
-export default function FamilyGrid({ birds, split }: { birds: FamilyBird[]; split: boolean }) {
-  if (!split) return <World birds={birds} />;
+/** A family's species: Norge has the ones seen in Norway, Verden every living one, then Utdødde arter. */
+export default function FamilyGrid({ living, norwegian, extinct, split }: Props) {
+  const world = <World living={living} extinct={extinct} />;
+  if (!split) return world;
   return (
     <>
       <div data-area="norge">
-        <BirdGrid birds={birds.filter((b) => b.no && !b.ex)} />
+        <BirdGrid birds={norwegian} />
       </div>
-      <div data-area="verden">
-        <World birds={birds} />
-      </div>
+      <div data-area="verden">{world}</div>
     </>
   );
 }
 
-function World({ birds }: { birds: FamilyBird[] }) {
-  const living = birds.filter((b) => !b.ex);
-  const extinct = birds.filter((b) => b.ex);
-  if (!extinct.length || !living.length) return <BirdGrid birds={birds} />;
-
+function World({ living, extinct }: Pick<Props, 'living' | 'extinct'>) {
+  if (!extinct.length || !living.length) return <BirdGrid birds={[...living, ...extinct]} />;
   return (
     <>
       <section class={own.section} aria-label="Levende arter">
@@ -42,7 +37,7 @@ function World({ birds }: { birds: FamilyBird[] }) {
       </section>
       <section class={own.section} aria-label="Utdødde arter">
         <h2 class={own.sectionTitle}>
-          Utdødde arter <span class={own.sectionCount}>{count(extinct.length)}</span>
+          Utdødde arter <span class={own.sectionCount}>{speciesCount(extinct.length)}</span>
         </h2>
         <BirdGrid birds={extinct} />
       </section>

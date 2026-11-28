@@ -25,7 +25,8 @@ const norwegian = norwegianBirds();
       <BirdGrid birds={norwegian} />
     </div>
     <div data-area="verden">
-      <RandomBirds client:load />
+      <!-- client:visible: hidden in the Norge view, so it loads and fetches once Verden shows -->
+      <RandomBirds client:visible />
     </div>
   </section>
   <p class="totop">

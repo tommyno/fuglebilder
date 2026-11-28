@@ -107,11 +107,15 @@
   font-size: var(--text-base);
 }
 
-.labelSci {
+/* The line under the name: the Latin name (.labelSci), or "25 arter" on a family */
+.labelSub {
   display: block;
-  font-style: italic;
   font-size: var(--text-xs);
   color: var(--color-white);
+}
+
+.labelSci {
+  font-style: italic;
 }
 
 .heart {
@@ -136,7 +140,7 @@
   color: var(--color-gray);
 }
 
-/* Compact pill for choosing what to show: a soft grey button, the chosen one is filled with the text colour */
+/* Compact pill button or link: Vis nye, Tilbake, the family on a species page */
 .chip {
   flex: none;
   display: inline-flex;
@@ -163,10 +167,6 @@
   }
 }
 
-.chip[aria-pressed='true'] {
-  background: var(--color-charcoal);
-  color: var(--color-white);
-}
 
 .sentinel {
   height: 1px;

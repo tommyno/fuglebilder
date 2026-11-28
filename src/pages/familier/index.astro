@@ -3,14 +3,14 @@ import Base from '../../layouts/Base.astro';
 import BrowseNav from '../../components/BrowseNav.astro';
 import FamilyOverview, { type OverviewFamily } from '../../components/FamilyOverview.tsx';
 import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../../lib/families.server';
-import { displayName } from '../../lib/shared';
 import browse from '../../components/BrowseNav.module.css';
 
 // The Familier tab. Static: the families only change when the index is rebuilt.
 // Both views are in the page: families seen in Norway, and (with #verden) all of them.
 const families: OverviewFamily[] = allFamilies().map((f) => ({
   href: familyPath(f),
-  label: displayName(f),
+  sci: f.sci,
+  name: f.name,
   world: f.species.length + f.extinct.length,
   norway: f.norwegian.length,
   photo: coverSpecies(f, false).photo!,

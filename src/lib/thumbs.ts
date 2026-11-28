@@ -1,9 +1,8 @@
-// Thumb's fade-in (Thumb.tsx) for grids rendered as plain HTML, not islands: the front page's
-// Sett i Norge, /familier and family pages. Hydrating them only for this put their whole list
-// in the page twice (markup and island props). Images inside islands run Thumb's own code.
+// Thumb's fade-in (Thumb.tsx), for every grid image: plain HTML grids and islands alike. One
+// listener on the document catches images added later (more photos, a new random set) too.
 
 const waiting = (el: EventTarget | null): el is HTMLImageElement =>
-  el instanceof HTMLImageElement && el.dataset.state === 'loading' && !el.closest('astro-island');
+  el instanceof HTMLImageElement && el.dataset.state === 'loading';
 
 /** Show it once decoded, so the fade starts with the whole picture, not a half-drawn one. */
 function show(img: HTMLImageElement) {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { getJson, RANDOM_SEEDS } from '../lib/shared';
-import type { RandomBird as Bird } from '../lib/species.server';
+import { getJson, RANDOM_SEEDS, type GridBird as Bird } from '../lib/shared';
 import BirdGrid from './BirdGrid';
 import { ShuffleIcon } from './icons';
 import { Skeletons } from './Tile';
@@ -36,25 +35,17 @@ function newSeed(): number {
   return s;
 }
 
-// The world view shows when the address ends in #verden (BrowseNav.astro, global.css)
-const worldShown = () => location.hash === '#verden';
-
 /**
- * Front page, Hele verden: 24 random birds from the whole world, with "Vis nye". Sits in the
- * page's world view, so it fetches its birds only once that view is shown.
+ * Front page, Hele verden: 24 random birds from the whole world, with "Vis nye". Hydrated with
+ * client:visible in the page's (hidden) world view, so it only runs once that view is shown.
  */
 export default function RandomBirds() {
+  // This tab's set; null while rendered on the server
   const [seed, setSeed] = useState<number | null>(null);
   const [random, setRandom] = useState<Bird[] | null>(null);
   const [failed, setFailed] = useState(false);
 
-  // This tab's set (a new one only if there is none yet), once the world view is shown
-  useEffect(() => {
-    const start = () => worldShown() && setSeed((s) => s ?? initialSeed());
-    start();
-    addEventListener('hashchange', start);
-    return () => removeEventListener('hashchange', start);
-  }, []);
+  useEffect(() => setSeed(initialSeed()), []);
 
   useEffect(() => {
     if (seed === null) return;

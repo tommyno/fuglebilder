@@ -2,7 +2,7 @@
 // data/species.json is built by scripts/build-index.mjs.
 
 import raw from '../../data/species.json';
-import { birdSlug, foldAccents } from './shared';
+import { birdSlug, byName, foldAccents, type GridBird } from './shared';
 
 type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number, status?: string, flags?: number];
 
@@ -184,15 +184,8 @@ function mulberry32(seed: number) {
   };
 }
 
-export interface RandomBird {
-  id: number;
-  sci: string;
-  name: string | null;
-  photo: string;
-}
-
-/** Only called for species that have a photo. */
-const toBird = (s: Species): RandomBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
+/** A species as a grid tile. Only called for species that have a photo. */
+export const toBird = (s: Species): GridBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
 
 /** `count` items picked uniformly without repeats (the first steps of a Fisher–Yates shuffle). */
 function pick<T>(list: T[], count: number, rand: () => number): T[] {
@@ -206,7 +199,7 @@ function pick<T>(list: T[], count: number, rand: () => number): T[] {
 }
 
 /** 24 random birds, deterministic per seed so it can be cached. */
-export function randomBirds(seed: number): RandomBird[] {
+export function randomBirds(seed: number): GridBird[] {
   return pick(pool, RANDOM_COUNT, mulberry32(seed)).map(toBird);
 }
 
@@ -220,10 +213,6 @@ const NORWAY_MIN = 3;
 export const isNorwegian = (s: Species) => !!(s.photo && s.name && s.norway >= NORWAY_MIN);
 
 /** Birds seen in Norway with a photo and a Norwegian name, sorted A–Å (Norwegian order). */
-export function norwegianBirds(): RandomBird[] {
-  const collator = new Intl.Collator('nb');
-  return species
-    .filter(isNorwegian)
-    .sort((a, b) => collator.compare(a.name!, b.name!))
-    .map(toBird);
+export function norwegianBirds(): GridBird[] {
+  return species.filter(isNorwegian).sort(byName).map(toBird);
 }

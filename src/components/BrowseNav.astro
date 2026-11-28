@@ -3,9 +3,12 @@
 // pill), and at the right a Familier switch (on at /familier, off at /). The switch is a link
 // to the other page, so it works without JavaScript and Back turns it off again.
 // A family page has the pill alone (no tab), under its title.
-// Both views are in the page, marked data-area="norge" / "verden". #verden in the address shows
-// the world one: a script in Base.astro's <head> marks it before the first paint, with :target in
-// global.css as the fallback without JavaScript. Back and Forward switch too, like any #link.
+//
+// How the views work, once for the whole site: both are in the page, marked data-area="norge" /
+// "verden", and global.css hides one. #verden in the address shows the world one through
+// :target, which works without JavaScript and with Back and Forward. :target only matches once
+// a new page has loaded, though, so Base.astro's <head> sets data-view="verden" before the first
+// paint and drops it on the first hash change, leaving the rest to :target.
 import seg from './Segmented.module.css';
 import styles from './BrowseNav.module.css';
 
@@ -19,12 +22,12 @@ const on = tab === 'familier';
 const target = on ? '/' : '/familier';
 ---
 
-<!-- What #norge and #verden point at: the very top of the page, so switching doesn't scroll -->
-<span id="norge" class="area-target"></span>
+<!-- What #verden points at (for :target): the very top of the page, so switching doesn't scroll.
+     #norge needs none: a link to a missing id doesn't scroll. -->
 <span id="verden" class="area-target"></span>
 
 <div class={styles.nav}>
-  <nav class:list={[seg.group, seg.small]} aria-label="Område">
+  <nav class={seg.group} aria-label="Område">
     <a class:list={[seg.option, styles.area]} data-option="norge" href="#norge">
       Sett i Norge<span class="visually-hidden" data-area="norge"> (valgt)</span>
     </a>

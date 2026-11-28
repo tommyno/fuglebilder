@@ -4,7 +4,8 @@ import PhotoGrid from '../../components/PhotoGrid.tsx';
 import RedList from '../../components/RedList.astro';
 import BackLink from '../../components/BackLink.astro';
 import grid from '../../components/Grid.module.css';
-import { getSpeciesBySlug } from '../../lib/species.server';
+import { getSpeciesBySlug, isNorwegian } from '../../lib/species.server';
+import { ChevronRightIcon } from '../../components/icons';
 import { familyPath, getFamilyOf } from '../../lib/families.server';
 import { displayName, photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 
@@ -24,7 +25,7 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
 
 const family = getFamilyOf(species.id);
 // A bird not seen in Norway is only in the family page's world view
-const familyHref = family && familyPath(family) + (family.norwegian.some((s) => s.id === species.id) ? '' : '#verden');
+const familyHref = family && familyPath(family) + (isNorwegian(species) ? '' : '#verden');
 
 ---
 
@@ -44,9 +45,7 @@ const familyHref = family && familyPath(family) + (family.norwegian.some((s) => 
       {family && (
         <a class:list={[grid.chip, 'family']} href={familyHref}>
           {displayName(family)}
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
-            ><path d="m9 6 6 6-6 6"></path></svg
-          >
+          <ChevronRightIcon />
         </a>
       )}
     </div>
@@ -113,7 +112,7 @@ const familyHref = family && familyPath(family) + (family.norwegian.some((s) => 
     padding-right: var(--space-xs);
     text-decoration: none;
   }
-  .family svg {
+  .family :global(svg) {
     width: 1.1em;
     height: 1.1em;
   }

@@ -13,12 +13,9 @@
   margin-bottom: var(--space-sm);
 }
 
-/* Sett i Norge | Hele verden: chosen by #verden in the address (data-view, or :target without JS:
-   global.css) */
-:global(:root[data-view='norge']) .nav .area[data-option='norge'],
-:global(:root[data-view='verden']) .nav .area[data-option='verden'],
-:global(:root:not([data-view]):not(:has(#verden:target))) .nav .area[data-option='norge'],
-:global(:root:not([data-view]):has(#verden:target)) .nav .area[data-option='verden'] {
+/* The chosen area, same condition as in global.css */
+:global(:root:not([data-view='verden'], :has(#verden:target))) .area[data-option='norge'],
+:global(:root:is([data-view='verden'], :has(#verden:target))) .area[data-option='verden'] {
   background: var(--color-charcoal);
   color: var(--color-white);
 }

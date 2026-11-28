@@ -2,36 +2,29 @@
 import Base from '../../layouts/Base.astro';
 import BackLink from '../../components/BackLink.astro';
 import BrowseNav from '../../components/BrowseNav.astro';
-import FamilyGrid, { type FamilyBird } from '../../components/FamilyGrid.tsx';
-import { coverSpecies, getFamilyBySlug } from '../../lib/families.server';
-import { displayName, photoUrl } from '../../lib/shared';
-import { isNorwegian } from '../../lib/species.server';
+import FamilyGrid from '../../components/FamilyGrid.tsx';
+import { allFamilies, coverSpecies, type Family } from '../../lib/families.server';
+import { displayName, photoUrl, speciesCount } from '../../lib/shared';
+import { toBird } from '../../lib/species.server';
 
 // /familier/<slug>: the family's species seen in Norway, and with #verden all of them.
-// Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
-export const prerender = false;
+// Static: the families only change when the index is rebuilt.
+export function getStaticPaths() {
+  return allFamilies().map((family) => ({ params: { slug: family.slug }, props: { family } }));
+}
 
-const family = getFamilyBySlug(Astro.params.slug ?? '');
-if (!family) return new Response(null, { status: 404 });
+const { family } = Astro.props as { family: Family };
 
 const title = displayName(family);
 // "snipefamilien" mid-sentence; Latin names keep their capital
 const inText = family.name?.toLocaleLowerCase('nb') ?? family.sci;
-const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
+const total = family.species.length + family.extinct.length;
 const description =
-  `Se bilder av ${count(family.species.length + family.extinct.length)} i ${inText}` +
+  `Se bilder av ${speciesCount(total)} i ${inText}` +
   (family.norwegian.length ? `, ${family.norwegian.length} av dem sett i Norge.` : '.');
 
-const birds: FamilyBird[] = [...family.species, ...family.extinct].map((s) => ({
-  id: s.id,
-  sci: s.sci,
-  name: s.name,
-  photo: s.photo!,
-  no: isNorwegian(s),
-  ex: s.extinct,
-}));
 // The Norge | Verden switch only when the views differ: some species seen in Norway, not all
-const split = family.norwegian.length > 0 && family.norwegian.length < birds.length;
+const split = family.norwegian.length > 0 && family.norwegian.length < total;
 const cover = coverSpecies(family, family.norwegian.length > 0);
 ---
 
@@ -48,7 +41,12 @@ const cover = coverSpecies(family, family.norwegian.length > 0);
     {family.name && <p class="sci">{family.sci}</p>}
   </header>
   {split && <BrowseNav />}
-  <FamilyGrid birds={birds} split={split} />
+  <FamilyGrid
+    living={family.species.map(toBird)}
+    norwegian={family.norwegian.map(toBird)}
+    extinct={family.extinct.map(toBird)}
+    split={split}
+  />
 </Base>
 
 <style>

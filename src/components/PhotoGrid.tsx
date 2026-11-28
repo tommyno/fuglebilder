@@ -144,7 +144,7 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
     <>
       {/* Alle | Voksen Ungfugl | Hann Hunn: the small pill from the front page, scrolls sideways if too wide */}
       <div class={filterStyles.filters}>
-        <div class={`${seg.group} ${seg.small}`} role="group" aria-label="Vis bilder av">
+        <div class={seg.group} role="group" aria-label="Vis bilder av">
           <button class={seg.option} type="button" aria-pressed={filter === null} onClick={() => choose(null)}>
             Alle
           </button>
