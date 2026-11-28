@@ -48,7 +48,7 @@ const cover = coverSpecies(family, family.norwegian.length > 0);
     {family.name && <p class="sci">{family.sci}</p>}
   </header>
   {split && <BrowseNav />}
-  <FamilyGrid client:load birds={birds} split={split} />
+  <FamilyGrid birds={birds} split={split} />
 </Base>
 
 <style>

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 /**
  * A grid image that stays hidden until it has fully loaded and decoded, then fades in,
  * so it never paints top-to-bottom like a curtain. The tile behind it pulses meanwhile.
+ * Rendered without an island (plain HTML grids), src/lib/thumbs.ts does the same.
  */
 export function Thumb({ src, alt }: { src: string; alt: string }) {
   const img = useRef<HTMLImageElement>(null);

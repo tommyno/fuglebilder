@@ -35,6 +35,7 @@ Use pnpm, never npm or yarn (version pinned in `packageManager`). Deploys: GitHu
 | `src/lib/species.server.ts` | Loads the index; search, random pool, Norwegian list |
 | `src/lib/slug.ts` | `foldAccents`, `slugify`, `slugClashes`. No imports, so `scripts/build-index.mjs` can import it too |
 | `src/lib/lightbox.ts` | PhotoSwipe full view: caption, credit, heart, `?photo=n` so Back closes it |
+| `src/lib/thumbs.ts` | Thumb's fade-in for grids rendered as plain HTML (front page Sett i Norge, `/familier`, family pages). Those aren't islands: hydrating them only for the fade put the whole list in the page twice |
 | `src/components/Button.module.css` | Shared button look for `<a>` and `<button>`, in `.astro` and Preact alike: `.button` plus `.ghost` or `.primary`. Don't restyle buttons locally |
 | `src/components/RedList.astro` | Small status pills under the species name: introduced in Norway, Norway's red list, IUCN's, extinct. The header stays compact: family name above the species name, the Latin name links to Store norske leksikon |
 | `src/lib/favorites.ts` | nanostores favorites persisted to localStorage, shared between islands |
