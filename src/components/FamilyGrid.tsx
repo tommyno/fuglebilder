@@ -11,28 +11,41 @@ export interface FamilyBird extends GridBird {
 const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
 
 /**
- * A family's species, A–Å, all on one page: Sett i Norge first, then Ellers i verden, then
- * Utdødde arter. Headings only when there is more than one part.
+ * A family's species, A–Å, under the area switch (BrowseNav.astro) when `split`: the Norge view
+ * has the living species seen in Norway, the world view (#verden) every living species in one
+ * list, then Utdødde arter under their own heading. Without `split` (no species seen in Norway,
+ * or all of them) only the world view, as the other would be empty or the same.
  */
-export default function FamilyGrid({ birds }: { birds: FamilyBird[] }) {
-  const sections = [
-    { title: 'Sett i Norge', birds: birds.filter((b) => b.no) },
-    { title: 'Ellers i verden', birds: birds.filter((b) => !b.no && !b.ex) },
-    { title: 'Utdødde arter', birds: birds.filter((b) => b.ex) },
-  ].filter((s) => s.birds.length);
+export default function FamilyGrid({ birds, split }: { birds: FamilyBird[]; split: boolean }) {
+  if (!split) return <World birds={birds} />;
+  return (
+    <>
+      <div data-area="norge">
+        <BirdGrid birds={birds.filter((b) => b.no && !b.ex)} />
+      </div>
+      <div data-area="verden">
+        <World birds={birds} />
+      </div>
+    </>
+  );
+}
 
-  if (sections.length === 1) return <BirdGrid birds={sections[0].birds} />;
+function World({ birds }: { birds: FamilyBird[] }) {
+  const living = birds.filter((b) => !b.ex);
+  const extinct = birds.filter((b) => b.ex);
+  if (!extinct.length || !living.length) return <BirdGrid birds={birds} />;
 
   return (
     <>
-      {sections.map((s) => (
-        <section key={s.title} class={own.section} aria-label={s.title}>
-          <h2 class={own.sectionTitle}>
-            {s.title} <span class={own.sectionCount}>{count(s.birds.length)}</span>
-          </h2>
-          <BirdGrid birds={s.birds} />
-        </section>
-      ))}
+      <section class={own.section} aria-label="Levende arter">
+        <BirdGrid birds={living} />
+      </section>
+      <section class={own.section} aria-label="Utdødde arter">
+        <h2 class={own.sectionTitle}>
+          Utdødde arter <span class={own.sectionCount}>{count(extinct.length)}</span>
+        </h2>
+        <BirdGrid birds={extinct} />
+      </section>
     </>
   );
 }

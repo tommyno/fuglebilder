@@ -1,11 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
-import SpeciesFacts from '../../components/SpeciesFacts.astro';
+import RedList from '../../components/RedList.astro';
 import BackLink from '../../components/BackLink.astro';
 import { getSpeciesBySlug } from '../../lib/species.server';
 import { familyPath, getFamilyOf } from '../../lib/families.server';
-import { displayName, photoUrl, type Taxon } from '../../lib/shared';
+import { displayName, photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
@@ -22,6 +22,8 @@ const others = species.names.slice(1);
 const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
 
 const family = getFamilyOf(species.id);
+// A bird not seen in Norway is only in the family page's world view
+const familyHref = family && familyPath(family) + (family.norwegian.some((s) => s.id === species.id) ? '' : '#verden');
 
 ---
 
@@ -32,24 +34,24 @@ const family = getFamilyOf(species.id);
   imageAlt={title}
   search
 >
-  <!-- Three parts: the way back; who the bird is (name beside a fact box on wide screens); the photos -->
+  <!-- Compact: family, name, Latin name (to Store norske leksikon), with the status pills at the
+       right; then the photos -->
   <header class="head">
     <BackLink />
     <div class="intro">
-      <div class="who">
+      <div>
         {family && (
-          <p class="family"><a href={familyPath(family)}>{displayName(family)}</a></p>
+          <p class="family"><a href={familyHref}>{displayName(family)}</a></p>
         )}
         <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
-        {species.name && <p class="sci">{species.sci}</p>}
+        {species.name && (
+          <p class="sci">
+            <a href={snlUrl(species.name)} target="_blank" rel="noopener" title="Les om fuglen i Store norske leksikon">{species.sci}</a>
+          </p>
+        )}
         {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
       </div>
-      <SpeciesFacts
-        redList={species.redList}
-        introduced={species.introduced}
-        extinct={species.extinct}
-        name={species.name}
-      />
+      <RedList redList={species.redList} introduced={species.introduced} extinct={species.extinct} />
     </div>
   </header>
   <PhotoGrid client:load taxon={taxon} />
@@ -59,23 +61,13 @@ const family = getFamilyOf(species.id);
   .head {
     margin: var(--space-sm) 0 var(--space-lg);
   }
+  /* Status pills at the right, level with the last line; under the name when there's no room */
   .intro {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-  /* Fact box to the right of the name, lined up with its last line */
-  @media (min-width: 900px) {
-    .intro {
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: var(--space-2xl);
-    }
-    .intro > :global(.facts) {
-      flex: none;
-      width: 26rem;
-    }
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
   }
   /* The species name stays bigger than other page titles */
   .name {
@@ -88,10 +80,13 @@ const family = getFamilyOf(species.id);
     margin: var(--space-2xs) 0 0;
     color: var(--color-gray);
     font-style: italic;
-    font-size: var(--text-lg);
+  }
+  .sci a {
+    color: inherit;
+    text-underline-offset: 0.2em;
   }
   .aka {
-    margin: var(--space-2xs) 0 0;
+    margin: var(--space-3xs) 0 0;
     color: var(--color-gray);
   }
   /* Above the name, like a kicker */

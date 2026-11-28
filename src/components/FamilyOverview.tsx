@@ -25,7 +25,8 @@ function Families({ families, norway }: { families: OverviewFamily[]; norway: bo
     <ul class={styles.grid}>
       {families.map((f) => (
         <li key={f.href}>
-          <a class={styles.tile} href={f.href}>
+          {/* From the world view to the family page's world view */}
+          <a class={styles.tile} href={norway ? f.href : `${f.href}#verden`}>
             <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
             <span class={styles.label}>
               <span class={styles.labelName}>{f.label}</span>

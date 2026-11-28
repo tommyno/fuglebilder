@@ -1,75 +1,19 @@
-/* "Bilder" with the filter at the right, above the photos on a bird page. The hairline above
-   sets the photos apart from the name and fact box. */
-.head {
+/* The filter above the photos on a bird page (the pill is Segmented.module.css). One row that
+   scrolls sideways on screens too narrow for it, edge to edge. */
+.filters {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-black-10);
+  overflow-x: auto;
+  margin: 0 calc(-1 * var(--gutter)) var(--space-sm);
+  padding: var(--space-3xs) var(--gutter); /* room for the focus outline */
+  scrollbar-width: none;
 }
 
-.title {
-  margin: 0;
-  font-size: var(--text-xl);
-  font-weight: var(--weight-medium);
-}
-
-/* Five choices in a row on wide screens (the look is in Segmented.module.css)…
-   (.head makes these win over the group's own display) */
-.head .choices {
+.filters::-webkit-scrollbar {
   display: none;
 }
 
-/* …a menu on phones: "Vis: Alle ⌄" */
-.menu {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: var(--control-sm);
-  border: 1px solid var(--color-gray-light);
-  border-radius: var(--radius-full);
-  background: var(--color-white);
-}
-
-.menuLabel {
-  padding-left: var(--space-md);
-  color: var(--color-gray);
-  pointer-events: none;
-}
-
-/* The select fills the pill so a tap anywhere on it opens the menu */
-.menu select {
-  appearance: none;
-  height: 100%;
-  margin-left: calc(-1 * var(--space-2xl));
-  padding: 0 calc(var(--space-md) + var(--icon-sm)) 0 calc(var(--space-2xl) + var(--space-2xs));
-  border: 0;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-charcoal);
-  font: inherit;
-  font-weight: var(--weight-semibold);
-  cursor: pointer;
-}
-
-.menu svg {
-  position: absolute;
-  right: var(--space-sm);
-  width: var(--icon-sm);
-  height: var(--icon-sm);
-  pointer-events: none;
-}
-
-@media (min-width: 640px) {
-  .head .choices {
-    display: inline-flex;
-  }
-  .menu {
-    display: none;
-  }
+.filters > * {
+  flex: none;
 }
 
 .empty {

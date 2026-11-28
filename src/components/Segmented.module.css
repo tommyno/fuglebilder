@@ -1,5 +1,5 @@
-/* One control made of a few choices side by side: the photo filters on a bird page, and (made
-   small in BrowseNav.module.css) Sett i Norge | Hele verden. A sand pill holding the choices; the
+/* One control made of a few choices side by side: Sett i Norge | Hele verden and the photo
+   filters on a bird page, both in the .small size. A sand pill holding the choices; the
    chosen one is filled with the text colour. */
 
 .group {
@@ -10,6 +10,17 @@
   padding: var(--space-2xs);
   border-radius: var(--radius-full);
   background: var(--color-sand);
+}
+
+/* Small: as tall as the Familier chip on the front page */
+.small {
+  padding: var(--space-3xs);
+}
+
+.small .option {
+  height: calc(var(--control-xs) - 2 * var(--space-3xs));
+  padding: 0 var(--space-sm);
+  font-size: var(--text-sm);
 }
 
 .option {

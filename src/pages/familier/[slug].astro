@@ -1,12 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
 import BackLink from '../../components/BackLink.astro';
+import BrowseNav from '../../components/BrowseNav.astro';
 import FamilyGrid, { type FamilyBird } from '../../components/FamilyGrid.tsx';
 import { coverSpecies, getFamilyBySlug } from '../../lib/families.server';
 import { displayName, photoUrl } from '../../lib/shared';
 import { isNorwegian } from '../../lib/species.server';
 
-// /familier/<slug>: every species in the family, Sett i Norge first.
+// /familier/<slug>: the family's species seen in Norway, and with #verden all of them.
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
 
@@ -29,6 +30,8 @@ const birds: FamilyBird[] = [...family.species, ...family.extinct].map((s) => ({
   no: isNorwegian(s),
   ex: s.extinct,
 }));
+// The Norge | Verden switch only when the views differ: some species seen in Norway, not all
+const split = family.norwegian.length > 0 && family.norwegian.length < birds.length;
 const cover = coverSpecies(family, family.norwegian.length > 0);
 ---
 
@@ -44,7 +47,8 @@ const cover = coverSpecies(family, family.norwegian.length > 0);
     <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
     {family.name && <p class="sci">{family.sci}</p>}
   </header>
-  <FamilyGrid client:load birds={birds} />
+  {split && <BrowseNav />}
+  <FamilyGrid client:load birds={birds} split={split} />
 </Base>
 
 <style>

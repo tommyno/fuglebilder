@@ -13,18 +13,6 @@
   margin-bottom: var(--space-sm);
 }
 
-/* Sett i Norge | Hele verden: the segmented pill (Segmented.module.css), small enough to be as tall
-   as the Familier chip. .nav raises the specificity above the shared look. */
-.nav .areas {
-  padding: var(--space-3xs);
-}
-
-.nav .area {
-  height: calc(var(--control-xs) - 2 * var(--space-3xs));
-  padding: 0 var(--space-sm);
-  font-size: var(--text-sm);
-}
-
 /* Sett i Norge | Hele verden: chosen by #verden in the address (data-view, or :target without JS:
    global.css) */
 :global(:root[data-view='norge']) .nav .area[data-option='norge'],
@@ -33,10 +21,6 @@
 :global(:root:not([data-view]):has(#verden:target)) .nav .area[data-option='verden'] {
   background: var(--color-charcoal);
   color: var(--color-white);
-}
-
-.nav .area {
-  text-decoration: none;
 }
 
 /* Familier: a label and a switch, grey track off, green track with the knob to the right on */

@@ -7,7 +7,7 @@
   color: var(--color-white);
 }
 
-/* A family page's parts: Sett i Norge, Ellers i verden, Utdødde arter */
+/* A family page's parts: the living species, then Utdødde arter */
 .section + .section {
   margin-top: var(--space-xl);
 }
