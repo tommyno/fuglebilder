@@ -22,7 +22,6 @@ const norwegian = norwegianBirds();
   <section class={browse.section} aria-label="Arter">
     <BrowseNav tab="arter" />
     <div data-area="norge">
-      <p class={browse.lead}>{norwegian.length} arter sett i Norge</p>
       <BirdGrid client:load birds={norwegian} />
     </div>
     <div data-area="verden">

@@ -1,5 +1,4 @@
-/* One control made of a few choices side by side: Norge | Hele verden, and the photo filters on a
-   bird page. A sand pill holding the choices; the chosen one is filled with the text colour. */
+/* One control made of a few choices side by side: the photo filters on a bird page. A sand pill holding the choices; the chosen one is filled with the text colour. */
 
 .group {
   display: inline-flex;
@@ -9,14 +8,6 @@
   padding: var(--space-2xs);
   border-radius: var(--radius-full);
   background: var(--color-sand);
-}
-
-/* Equal halves, full width on phones (Norge | Hele verden) */
-.wide {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  width: min(100%, 24rem);
 }
 
 .option {
@@ -46,10 +37,7 @@
   }
 }
 
-.option[aria-pressed='true'],
-/* Norge | Hele verden: chosen by #verden in the address (BrowseNav.astro, global.css) */
-:global(body:not(:has(#verden:target))) .option[data-option='norge'],
-:global(body:has(#verden:target)) .option[data-option='verden'] {
+.option[aria-pressed='true'] {
   background: var(--color-charcoal);
   color: var(--color-white);
 }

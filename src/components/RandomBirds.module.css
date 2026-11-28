@@ -1,5 +1,5 @@
 /* Line above the random grid: "24 tilfeldige arter fra hele verden" with a green "Vis nye" pill
-   at the right. Plain text like the line under the tabs elsewhere (BrowseNav.module.css .lead) */
+   at the right, in plain grey text */
 .info {
   display: flex;
   flex-wrap: wrap;

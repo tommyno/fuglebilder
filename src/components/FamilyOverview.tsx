@@ -1,6 +1,5 @@
 import { photoUrl } from '../lib/shared';
 import { Thumb } from './Thumb';
-import browse from './BrowseNav.module.css';
 import styles from './Grid.module.css';
 import own from './Families.module.css';
 
@@ -52,11 +51,9 @@ export default function FamilyOverview({ families }: { families: OverviewFamily[
   return (
     <>
       <div data-area="norge">
-        <p class={browse.lead}>{norwegian.length} familier sett i Norge</p>
         <Families families={norwegian} norway />
       </div>
       <div data-area="verden">
-        <p class={browse.lead}>{families.length} familier i hele verden</p>
         <Families families={families} norway={false} />
       </div>
     </>

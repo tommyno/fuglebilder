@@ -1,20 +1,20 @@
 ---
-// Top of the front page and /familier: Norge | Hele verden, then Arter | Familier.
+// Top of the front page and /familier, one row: Sett i Norge | Hele verden chips, and at the right
+// a Familier toggle chip (on at /familier, off at /).
 // Both views are in the page, marked data-area="norge" / "verden". #verden in the address shows
 // the world one, by CSS alone (global.css), so the right view is there from the first paint and
 // the switch works without JavaScript. Back and Forward switch too, like any #link.
+import { FamiliesIcon } from './icons';
+import grid from './Grid.module.css';
 import styles from './BrowseNav.module.css';
-import seg from './Segmented.module.css';
 
 interface Props {
   tab: 'arter' | 'familier';
 }
 const { tab } = Astro.props;
-
-const TABS = [
-  { id: 'arter', label: 'Arter', path: '/' },
-  { id: 'familier', label: 'Familier', path: '/familier' },
-];
+const on = tab === 'familier';
+// The toggle goes to the other page, keeping the area
+const target = on ? '/' : '/familier';
 ---
 
 <!-- What #norge and #verden point at: the very top of the page, so switching doesn't scroll -->
@@ -22,27 +22,27 @@ const TABS = [
 <span id="verden" class="area-target"></span>
 
 <div class={styles.nav}>
-  <nav class:list={[seg.group, seg.wide]} aria-label="Område">
-    <a class={seg.option} data-option="norge" href="#norge">
-      Norge<span class="visually-hidden" data-area="norge"> (valgt)</span>
+  <nav class={styles.areas} aria-label="Område">
+    <a class:list={[grid.chip, styles.area]} data-option="norge" href="#norge">
+      Sett i Norge<span class="visually-hidden" data-area="norge"> (valgt)</span>
     </a>
-    <a class={seg.option} data-option="verden" href="#verden">
+    <a class:list={[grid.chip, styles.area]} data-option="verden" href="#verden">
       Hele verden<span class="visually-hidden" data-area="verden"> (valgt)</span>
     </a>
   </nav>
-  <!-- Each tab twice, one per area, so it keeps the area: /familier or /familier#verden -->
-  <nav class={styles.tabs} aria-label="Visning">
-    {
-      TABS.map((t) => (
-        <>
-          <a class={styles.tab} data-area="norge" href={t.path} aria-current={t.id === tab ? 'page' : undefined}>
-            {t.label}
-          </a>
-          <a class={styles.tab} data-area="verden" href={`${t.path}#verden`} aria-current={t.id === tab ? 'page' : undefined}>
-            {t.label}
-          </a>
-        </>
-      ))
-    }
-  </nav>
+  <!-- Twice, one per area, so it keeps the area: /familier or /familier#verden -->
+  {
+    ['norge', 'verden'].map((area) => (
+      <a
+        class:list={[grid.chip, styles.toggle]}
+        data-area={area}
+        data-on={on ? 'true' : undefined}
+        href={area === 'verden' ? `${target}#verden` : target}
+      >
+        <FamiliesIcon />
+        Familier
+        {on && <span class="visually-hidden"> (på)</span>}
+      </a>
+    ))
+  }
 </div>

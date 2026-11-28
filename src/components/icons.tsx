@@ -30,6 +30,16 @@ export const SearchIcon = ({ class: className }: { class?: string }) => (
   </svg>
 );
 
+/** A family tree: one bird above two (the Familier toggle) */
+export const FamiliesIcon = ({ class: className }: { class?: string }) => (
+  <svg class={className} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="5" r="2.5" />
+    <circle cx="5.5" cy="18.5" r="2.5" />
+    <circle cx="18.5" cy="18.5" r="2.5" />
+    <path d="M12 7.5V11M5.5 16v-5h13v5" />
+  </svg>
+);
+
 export const ArrowUpIcon = ({ class: className }: { class?: string }) => (
   <svg class={className} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 19V5M5 12l7-7 7 7" />
