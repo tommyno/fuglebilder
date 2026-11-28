@@ -1,4 +1,6 @@
-/* One control made of a few choices side by side: the photo filters on a bird page. A sand pill holding the choices; the chosen one is filled with the text colour. */
+/* One control made of a few choices side by side: the photo filters on a bird page, and (made
+   small in BrowseNav.module.css) Sett i Norge | Hele verden. A sand pill holding the choices; the
+   chosen one is filled with the text colour. */
 
 .group {
   display: inline-flex;

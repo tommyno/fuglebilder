@@ -1,11 +1,11 @@
 ---
-// Top of the front page and /familier, one row: Sett i Norge | Hele verden chips, and at the right
-// a Familier toggle chip (on at /familier, off at /).
+// Top of the front page and /familier, one row: Sett i Norge | Hele verden (a small segmented
+// pill), and at the right a Familier switch (on at /familier, off at /). The switch is a link
+// to the other page, so it works without JavaScript and Back turns it off again.
 // Both views are in the page, marked data-area="norge" / "verden". #verden in the address shows
 // the world one, by CSS alone (global.css), so the right view is there from the first paint and
 // the switch works without JavaScript. Back and Forward switch too, like any #link.
-import { FamiliesIcon } from './icons';
-import grid from './Grid.module.css';
+import seg from './Segmented.module.css';
 import styles from './BrowseNav.module.css';
 
 interface Props {
@@ -22,11 +22,11 @@ const target = on ? '/' : '/familier';
 <span id="verden" class="area-target"></span>
 
 <div class={styles.nav}>
-  <nav class={styles.areas} aria-label="Område">
-    <a class:list={[grid.chip, styles.area]} data-option="norge" href="#norge">
+  <nav class:list={[seg.group, styles.areas]} aria-label="Område">
+    <a class:list={[seg.option, styles.area]} data-option="norge" href="#norge">
       Sett i Norge<span class="visually-hidden" data-area="norge"> (valgt)</span>
     </a>
-    <a class:list={[grid.chip, styles.area]} data-option="verden" href="#verden">
+    <a class:list={[seg.option, styles.area]} data-option="verden" href="#verden">
       Hele verden<span class="visually-hidden" data-area="verden"> (valgt)</span>
     </a>
   </nav>
@@ -34,14 +34,16 @@ const target = on ? '/' : '/familier';
   {
     ['norge', 'verden'].map((area) => (
       <a
-        class:list={[grid.chip, styles.toggle]}
+        class={styles.toggle}
         data-area={area}
         data-on={on ? 'true' : undefined}
         href={area === 'verden' ? `${target}#verden` : target}
       >
-        <FamiliesIcon />
         Familier
         {on && <span class="visually-hidden"> (på)</span>}
+        <span class={styles.track} aria-hidden="true">
+          <span class={styles.knob} />
+        </span>
       </a>
     ))
   }
