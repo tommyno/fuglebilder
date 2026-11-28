@@ -72,3 +72,14 @@
 .toggle[data-on] .knob {
   transform: translateX(16px);
 }
+
+/* Count line under the row ("Viser 280 arter sett i Norge"): plain grey text, as tall as the random
+   birds' line with its "Vis nye" pill, so switching area doesn't move the grid */
+.count {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-xs);
+  margin: 0 0 var(--space-sm);
+  color: var(--color-gray);
+  font-size: var(--text-sm);
+}

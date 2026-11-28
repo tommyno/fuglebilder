@@ -66,7 +66,7 @@ export default function RandomBirds() {
   return (
     <>
       <div class={own.info}>
-        <p>{random?.length ?? 24} tilfeldige arter fra hele verden</p>
+        <p>Viser {random?.length ?? 24} tilfeldige arter fra hele verden</p>
         <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
           Vis nye
           <ShuffleIcon />

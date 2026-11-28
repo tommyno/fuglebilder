@@ -15,8 +15,11 @@ import styles from './BrowseNav.module.css';
 interface Props {
   /** which page has the Familier switch: off on the front page, on at /familier; none without */
   tab?: 'arter' | 'familier';
+  /** count line under the row, per area ("Viser 280 arter sett i Norge"); an area without one has its own
+   *  (the front page's random birds) */
+  count?: { norge?: string; verden?: string };
 }
-const { tab } = Astro.props;
+const { tab, count = {} } = Astro.props;
 const on = tab === 'familier';
 // The toggle goes to the other page, keeping the area
 const target = on ? '/' : '/familier';
@@ -53,3 +56,18 @@ const target = on ? '/' : '/familier';
     ))
   }
 </div>
+{count.norge && <p class={styles.count} data-area="norge">{count.norge}</p>}
+{count.verden && <p class={styles.count} data-area="verden">{count.verden}</p>}
+
+<script>
+  // The area is a view of the page, not a page of its own: switching replaces the history entry,
+  // so Back (and Tilbake) leaves the page instead of flipping between the views. It is still a
+  // fragment navigation, so :target follows. Without JS the links just add an entry.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-option]').forEach((a) =>
+    a.addEventListener('click', (e) => {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      if (location.hash !== a.hash) location.replace(a.hash);
+    }),
+  );
+</script>

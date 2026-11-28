@@ -17,6 +17,7 @@ const families: OverviewFamily[] = allFamilies().map((f) => ({
   photoNo: f.norwegian.length ? coverSpecies(f, true).photo! : null,
   extinct: isExtinctFamily(f),
 }));
+const norwegianCount = families.filter((f) => f.norway).length;
 ---
 
 <Base
@@ -27,7 +28,13 @@ const families: OverviewFamily[] = allFamilies().map((f) => ({
   <!-- The front page with the Familier switch on: same row of chips, so no back link or visible title -->
   <h1 class="visually-hidden">Fuglefamilier</h1>
   <section class={browse.section} aria-label="Familier">
-    <BrowseNav tab="familier" />
+    <BrowseNav
+      tab="familier"
+      count={{
+        norge: `Viser ${norwegianCount} familier med fugler sett i Norge`,
+        verden: `Viser ${families.length} familier fra hele verden`,
+      }}
+    />
     <FamilyOverview families={families} />
   </section>
 </Base>

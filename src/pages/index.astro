@@ -4,6 +4,7 @@ import BrowseNav from '../components/BrowseNav.astro';
 import BirdGrid from '../components/BirdGrid.tsx';
 import RandomBirds from '../components/RandomBirds.tsx';
 import { norwegianBirds } from '../lib/species.server';
+import { speciesCount } from '../lib/shared';
 import { ArrowUpIcon } from '../components/icons';
 import browse from '../components/BrowseNav.module.css';
 import button from '../components/Button.module.css';
@@ -20,7 +21,7 @@ const norwegian = norwegianBirds();
 >
   <h1 class="visually-hidden">Finn en fugl</h1>
   <section class={browse.section} aria-label="Arter">
-    <BrowseNav tab="arter" />
+    <BrowseNav tab="arter" count={{ norge: `Viser ${speciesCount(norwegian.length)} sett i Norge` }} />
     <div data-area="norge">
       <BirdGrid birds={norwegian} />
     </div>

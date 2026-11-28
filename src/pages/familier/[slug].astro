@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import BackLink from '../../components/BackLink.astro';
 import BrowseNav from '../../components/BrowseNav.astro';
+import browse from '../../components/BrowseNav.module.css';
 import FamilyGrid from '../../components/FamilyGrid.tsx';
 import { allFamilies, coverSpecies, type Family } from '../../lib/families.server';
 import { displayName, photoUrl, speciesCount } from '../../lib/shared';
@@ -40,7 +41,18 @@ const cover = coverSpecies(family, family.norwegian.length > 0);
     <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
     {family.name && <p class="sci">{family.sci}</p>}
   </header>
-  {split && <BrowseNav />}
+  {
+    split ? (
+      <BrowseNav
+        count={{
+          norge: `Viser ${speciesCount(family.norwegian.length)} sett i Norge`,
+          verden: `Viser ${speciesCount(total)} fra hele verden`,
+        }}
+      />
+    ) : (
+      <p class={browse.count}>Viser {speciesCount(total)}</p>
+    )
+  }
   <FamilyGrid
     living={family.species.map(toBird)}
     norwegian={family.norwegian.map(toBird)}
