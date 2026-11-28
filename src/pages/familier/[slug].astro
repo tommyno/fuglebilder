@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import BackLink from '../../components/BackLink.astro';
+import BrowseNav from '../../components/BrowseNav.astro';
+import FamilyGrid from '../../components/FamilyGrid.tsx';
+import { allFamilies, coverSpecies, type Family } from '../../lib/families.server';
+import { displayName, photoUrl, speciesCount } from '../../lib/shared';
+import { toBird } from '../../lib/species.server';
+
+// /familier/<slug>: the family's species seen in Norway, and with #verden all of them.
+// Static: the families only change when the index is rebuilt.
+export function getStaticPaths() {
+  return allFamilies().map((family) => ({ params: { slug: family.slug }, props: { family } }));
+}
+
+const { family } = Astro.props as { family: Family };
+
+const title = displayName(family);
+// "snipefamilien" mid-sentence; Latin names keep their capital
+const inText = family.name?.toLocaleLowerCase('nb') ?? family.sci;
+const total = family.species.length + family.extinct.length;
+const description =
+  `Se bilder av ${speciesCount(total)} i ${inText}` +
+  (family.norwegian.length ? `, ${family.norwegian.length} av dem sett i Norge.` : '.');
+
+// The Norge | Verden switch only when the views differ: some species seen in Norway, not all
+const split = family.norwegian.length > 0 && family.norwegian.length < total;
+const cover = coverSpecies(family, family.norwegian.length > 0);
+---
+
+<Base
+  title={family.name ? `Fugler i ${inText}` : `Fugler i familien ${family.sci}`}
+  description={description}
+  image={photoUrl(cover.photo!, 'large')}
+  imageAlt={displayName(cover)}
+  search
+>
+  <header class="head">
+    <BackLink />
+    <h1 class:list={['page-title', { latin: !family.name }]}>{title}</h1>
+    {family.name && <p class="sci">{family.sci}</p>}
+  </header>
+  {split && <BrowseNav />}
+  <FamilyGrid
+    living={family.species.map(toBird)}
+    norwegian={family.norwegian.map(toBird)}
+    extinct={family.extinct.map(toBird)}
+    split={split}
+  />
+</Base>
+
+<style>
+  .head {
+    margin: var(--space-sm) 0 var(--space-lg);
+  }
+  .latin {
+    font-style: italic;
+  }
+  .sci {
+    margin: var(--space-2xs) 0 0;
+    color: var(--color-gray);
+    font-style: italic;
+  }
+</style>

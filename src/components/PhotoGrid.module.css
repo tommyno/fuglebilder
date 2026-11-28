@@ -1,13 +1,10 @@
-/* Filters above the photos on a bird page (the chips themselves are in Grid.module.css) */
-
+/* The filter above the photos on a bird page (the pill is Segmented.module.css). One row that
+   scrolls sideways on screens too narrow for it, edge to edge. */
 .filters {
   display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  /* one row that scrolls sideways on narrow screens, edge to edge */
   overflow-x: auto;
   margin: 0 calc(-1 * var(--gutter)) var(--space-sm);
-  padding: var(--space-3xs) var(--gutter) var(--space-2xs); /* room for the focus outline */
+  padding: var(--space-3xs) var(--gutter); /* room for the focus outline */
   scrollbar-width: none;
 }
 
@@ -15,18 +12,8 @@
   display: none;
 }
 
-.sep {
+.filters > * {
   flex: none;
-  width: 1px;
-  height: var(--icon-sm);
-  /* on phones only the row's gap on each side, so the row fits a 375px screen without scrolling */
-  background: var(--color-black-10);
-}
-
-@media (min-width: 400px) {
-  .sep {
-    margin: 0 var(--space-2xs);
-  }
 }
 
 .empty {

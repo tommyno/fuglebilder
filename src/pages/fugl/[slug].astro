@@ -2,9 +2,12 @@
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import RedList from '../../components/RedList.astro';
-import { getSpeciesBySlug } from '../../lib/species.server';
-import { photoUrl, snlUrl, type Taxon } from '../../lib/shared';
+import BackLink from '../../components/BackLink.astro';
 import grid from '../../components/Grid.module.css';
+import { getSpeciesBySlug, isNorwegian } from '../../lib/species.server';
+import { ChevronRightIcon } from '../../components/icons';
+import { familyPath, getFamilyOf } from '../../lib/families.server';
+import { displayName, photoUrl, snlUrl, type Taxon } from '../../lib/shared';
 
 // Lages ved første besøk, deretter mellomlagret av Vercel (ISR).
 export const prerender = false;
@@ -19,6 +22,11 @@ const title = species.name ?? species.sci;
 const others = species.names.slice(1);
 // Lower case mid-sentence ("Bilder av dompap"); Latin names keep their capital.
 const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
+
+const family = getFamilyOf(species.id);
+// A bird not seen in Norway is only in the family page's world view
+const familyHref = family && familyPath(family) + (isNorwegian(species) ? '' : '#verden');
+
 ---
 
 <Base
@@ -28,21 +36,31 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
   imageAlt={title}
   search
 >
+  <!-- Compact: Tilbake and the family in one row, then the name and Latin name (to Store norske
+       leksikon) with the status pills at the right; then the photos -->
   <header class="head">
-    <a class:list={[grid.chip, "back"]} href="/" data-back>
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
-        ><path d="M19 12H5M11 6l-6 6 6 6"></path></svg
-      >
-      Tilbake
-    </a>
-    <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
-    {species.name && (
-      <p class="sci">
-        <a href={snlUrl(species.name)} target="_blank" rel="noopener" title="Les om fuglen i Store norske leksikon">{species.sci}</a>
-      </p>
-    )}
-    {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
-    <RedList redList={species.redList} introduced={species.introduced} />
+    <!-- The way back, and the family beside it -->
+    <div class="top">
+      <BackLink />
+      {family && (
+        <a class:list={[grid.chip, 'family']} href={familyHref}>
+          {displayName(family)}
+          <ChevronRightIcon />
+        </a>
+      )}
+    </div>
+    <div class="intro">
+      <div>
+        <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
+        {species.name && (
+          <p class="sci">
+            <a href={snlUrl(species.name)} target="_blank" rel="noopener" title="Les om fuglen i Store norske leksikon">{species.sci}</a>
+          </p>
+        )}
+        {others.length > 0 && <p class="aka">Også kalt {others.join(', ')}</p>}
+      </div>
+      <RedList redList={species.redList} introduced={species.introduced} extinct={species.extinct} />
+    </div>
   </header>
   <PhotoGrid client:load taxon={taxon} />
 </Base>
@@ -51,15 +69,23 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
   .head {
     margin: var(--space-sm) 0 var(--space-lg);
   }
-  /* Same pill as the front-page chips, with the arrow before the text */
-  .back {
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
     margin-bottom: var(--space-sm);
-    padding-left: var(--space-xs);
-    text-decoration: none;
   }
-  .back svg {
-    width: 1.1em;
-    height: 1.1em;
+  .top > :global(.back) {
+    margin: 0;
+  }
+  /* Status pills at the right, level with the last line; under the name when there's no room */
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
   }
   /* The species name stays bigger than other page titles */
   .name {
@@ -73,20 +99,21 @@ const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
     color: var(--color-gray);
     font-style: italic;
   }
+  .sci a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
   .aka {
     margin: var(--space-3xs) 0 0;
     color: var(--color-gray);
   }
+  /* Beside Tilbake, the same pill, with a chevron after the name */
+  .family {
+    padding-right: var(--space-xs);
+    text-decoration: none;
+  }
+  .family :global(svg) {
+    width: 1.1em;
+    height: 1.1em;
+  }
 </style>
-
-<script>
-  // Came here from another page on the site? Go back to it, so the front page keeps its birds and scroll position.
-  // Otherwise (shared link, new tab) the link just goes to the front page.
-  document.querySelector('[data-back]')?.addEventListener('click', (e) => {
-    const ref = document.referrer && new URL(document.referrer);
-    if (ref && ref.origin === location.origin && history.length > 1) {
-      e.preventDefault();
-      history.back();
-    }
-  });
-</script>

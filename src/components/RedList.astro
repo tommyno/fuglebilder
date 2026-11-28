@@ -1,5 +1,5 @@
 ---
-// Status pills on a species page: introduced in Norway, Norway's red list, then IUCN's
+// Status pills on a species page, at the right of the name: introduced in Norway, Norway's red list, then IUCN's
 // worldwide one. Shows nothing when iNaturalist has none of them.
 import type { RedList } from '../lib/species.server';
 
@@ -7,8 +7,11 @@ interface Props {
   redList: RedList;
   /** introduced in Norway (iNat's checklist) */
   introduced: boolean;
+  /** extinct by iNat's flag; shown when IUCN doesn't already say so (birds gone before 1500, like the moas) */
+  extinct: boolean;
 }
-const { redList, introduced } = Astro.props;
+const { redList, introduced, extinct } = Astro.props;
+const iucnExtinct = redList.world === 'EX' || redList.world === 'EW';
 
 const WORDS: Record<string, string> = {
   EX: 'Utdødd',
@@ -29,6 +32,7 @@ const items = [
   introduced && { code: 'IN', text: 'Innført i Norge', source: 'Ikke naturlig hjemmehørende i Norge (iNaturalist)' },
   redList.norway && { code: redList.norway, text: label(redList.norway, 'i Norge'), source: 'Norsk rødliste for arter (Artsdatabanken)' },
   redList.world && { code: redList.world, text: label(redList.world, 'i verden'), source: 'IUCNs rødliste' },
+  extinct && !iucnExtinct && { code: 'EX', text: 'Utdødd', source: 'Utdødd (iNaturalist)' },
 ].filter((i) => i && WORDS[i.code]) as { code: string; text: string; source: string }[];
 ---
 
@@ -47,8 +51,9 @@ const items = [
   .redlist {
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-end;
     gap: var(--space-xs);
-    margin: var(--space-sm) 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }

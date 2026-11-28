@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import BrowseNav from '../../components/BrowseNav.astro';
+import FamilyOverview, { type OverviewFamily } from '../../components/FamilyOverview.tsx';
+import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../../lib/families.server';
+import browse from '../../components/BrowseNav.module.css';
+
+// The Familier tab. Static: the families only change when the index is rebuilt.
+// Both views are in the page: families seen in Norway, and (with #verden) all of them.
+const families: OverviewFamily[] = allFamilies().map((f) => ({
+  href: familyPath(f),
+  sci: f.sci,
+  name: f.name,
+  world: f.species.length + f.extinct.length,
+  norway: f.norwegian.length,
+  photo: coverSpecies(f, false).photo!,
+  photoNo: f.norwegian.length ? coverSpecies(f, true).photo! : null,
+  extinct: isExtinctFamily(f),
+}));
+---
+
+<Base
+  title="Fuglefamilier"
+  description="Alle verdens fuglefamilier fra A til Å. Se hvilke arter som hører til hver familie."
+  search
+>
+  <!-- The front page with the Familier switch on: same row of chips, so no back link or visible title -->
+  <h1 class="visually-hidden">Fuglefamilier</h1>
+  <section class={browse.section} aria-label="Familier">
+    <BrowseNav tab="familier" />
+    <FamilyOverview families={families} />
+  </section>
+</Base>

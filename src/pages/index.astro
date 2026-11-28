@@ -1,8 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
+import BrowseNav from '../components/BrowseNav.astro';
+import BirdGrid from '../components/BirdGrid.tsx';
 import RandomBirds from '../components/RandomBirds.tsx';
+import { norwegianBirds } from '../lib/species.server';
 import { ArrowUpIcon } from '../components/icons';
+import browse from '../components/BrowseNav.module.css';
 import button from '../components/Button.module.css';
+
+// The front page, Arter tab. Static. Both views are in the page: every bird seen in Norway, and
+// (with #verden in the address) 24 random birds from the whole world.
+const norwegian = norwegianBirds();
 ---
 
 <Base
@@ -11,15 +19,24 @@ import button from '../components/Button.module.css';
   search
 >
   <h1 class="visually-hidden">Finn en fugl</h1>
-  <RandomBirds client:load />
+  <section class={browse.section} aria-label="Arter">
+    <BrowseNav tab="arter" />
+    <div data-area="norge">
+      <BirdGrid birds={norwegian} />
+    </div>
+    <div data-area="verden">
+      <!-- client:visible: hidden in the Norge view, so it loads and fetches once Verden shows -->
+      <RandomBirds client:visible />
+    </div>
+  </section>
   <p class="totop">
     <a class:list={[button.button, button.ghost]} href="#top"><ArrowUpIcon />Til toppen</a>
   </p>
 </Base>
 
 <script>
-  // Scroll up without adding #top to the URL (so Back leaves the page), then put focus at the
-  // top like the plain link would. Without JS the link still works.
+  // Scroll up without adding #top to the URL (so Back leaves the page, and #verden stays), then
+  // put focus at the top like the plain link would. Without JS the link still works.
   document.querySelector('.totop a')?.addEventListener('click', (e) => {
     e.preventDefault();
     const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;

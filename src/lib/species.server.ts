@@ -2,9 +2,9 @@
 // data/species.json is built by scripts/build-index.mjs.
 
 import raw from '../../data/species.json';
-import { birdSlug, foldAccents } from './shared';
+import { birdSlug, byName, foldAccents, type GridBird } from './shared';
 
-type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number, status?: string, introduced?: 1];
+type Rec = [id: number, sci: string, obs: number, photo: string | null, names: string[], norway?: number, status?: string, flags?: number];
 
 /** Red-list category code: RE/CR/EN/VU/NT/LC/DD on Norway's list, EX/EW/CR/EN/VU/NT/LC/DD on IUCN's. */
 export interface RedList {
@@ -28,21 +28,23 @@ export interface Species {
   redList: RedList;
   /** iNat lists the species as introduced in Norway (kanadagås, fasan …) */
   introduced: boolean;
+  /** extinct by iNat's flag: also birds gone before 1500 (the moas), which IUCN doesn't list */
+  extinct: boolean;
 }
 
 // sorted by observation count, most observed first
 // A few iNat names are lowercase ("knoppand")
-const capitalize = (n: string) => n.charAt(0).toLocaleUpperCase('nb') + n.slice(1);
+export const capitalize = (n: string) => n.charAt(0).toLocaleUpperCase('nb') + n.slice(1);
 
 // Left out: species with no open-licensed photo and no sightings on iNat (about 300).
 // Their photo page could only ever be empty, so they get no page and no search hit.
 const species: Species[] = (raw as Rec[])
   .filter(([, , obs, photo]) => photo || obs > 0)
-  .map(([id, sci, obs, photo, rawNames, norway = 0, status = '/', introduced]) => {
+  .map(([id, sci, obs, photo, rawNames, norway = 0, status = '/', flags = 0]) => {
     const names = rawNames.map(capitalize);
     const [no, world] = status.split('/');
     const redList = { norway: no || null, world: world || null };
-    return { id, sci, obs, photo, names, name: names[0] ?? null, norway, redList, introduced: introduced === 1 };
+    return { id, sci, obs, photo, names, name: names[0] ?? null, norway, redList, introduced: (flags & 1) > 0, extinct: (flags & 2) > 0 };
   });
 const byId = new Map(species.map((s) => [s.id, s]));
 const bySlug = new Map(species.map((s) => [birdSlug(s), s]));
@@ -182,15 +184,8 @@ function mulberry32(seed: number) {
   };
 }
 
-export interface RandomBird {
-  id: number;
-  sci: string;
-  name: string | null;
-  photo: string;
-}
-
-/** Only called for species that have a photo. */
-const toBird = (s: Species): RandomBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
+/** A species as a grid tile. Only called for species that have a photo. */
+export const toBird = (s: Species): GridBird => ({ id: s.id, sci: s.sci, name: s.name, photo: s.photo! });
 
 /** `count` items picked uniformly without repeats (the first steps of a Fisher–Yates shuffle). */
 function pick<T>(list: T[], count: number, rand: () => number): T[] {
@@ -204,7 +199,7 @@ function pick<T>(list: T[], count: number, rand: () => number): T[] {
 }
 
 /** 24 random birds, deterministic per seed so it can be cached. */
-export function randomBirds(seed: number): RandomBird[] {
+export function randomBirds(seed: number): GridBird[] {
   return pick(pool, RANDOM_COUNT, mulberry32(seed)).map(toBird);
 }
 
@@ -214,11 +209,10 @@ export function randomBirds(seed: number): RandomBird[] {
 // one-off strays and escapes (a turkey, a black swan…). About 280 species.
 const NORWAY_MIN = 3;
 
+/** On the Sett i Norge list: seen in Norway at least 3 times, with a photo and a Norwegian name. */
+export const isNorwegian = (s: Species) => !!(s.photo && s.name && s.norway >= NORWAY_MIN);
+
 /** Birds seen in Norway with a photo and a Norwegian name, sorted A–Å (Norwegian order). */
-export function norwegianBirds(): RandomBird[] {
-  const collator = new Intl.Collator('nb');
-  return species
-    .filter((s) => s.photo && s.name && s.norway >= NORWAY_MIN)
-    .sort((a, b) => collator.compare(a.name!, b.name!))
-    .map(toBird);
+export function norwegianBirds(): GridBird[] {
+  return species.filter(isNorwegian).sort(byName).map(toBird);
 }

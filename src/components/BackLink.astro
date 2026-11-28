@@ -1,0 +1,35 @@
+---
+// "Tilbake" pill at the top of a species or family page.
+import grid from './Grid.module.css';
+import { ArrowLeftIcon } from './icons';
+---
+
+<a class:list={[grid.chip, 'back']} href="/" data-back>
+  <ArrowLeftIcon />
+  Tilbake
+</a>
+
+<style>
+  /* Same pill as the front-page chips, with the arrow before the text */
+  .back {
+    margin-bottom: var(--space-sm);
+    padding-left: var(--space-xs);
+    text-decoration: none;
+  }
+  .back :global(svg) {
+    width: 1.1em;
+    height: 1.1em;
+  }
+</style>
+
+<script>
+  // Came here from another page on the site? Go back to it, so the front page keeps its birds and scroll position.
+  // Otherwise (shared link, new tab) the link just goes to the front page.
+  document.querySelector('[data-back]')?.addEventListener('click', (e) => {
+    const ref = document.referrer && new URL(document.referrer);
+    if (ref && ref.origin === location.origin && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+</script>

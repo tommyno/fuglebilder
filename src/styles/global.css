@@ -58,3 +58,15 @@ button {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Sett i Norge | Hele verden: the view in the page that #verden shows (how: BrowseNav.astro) */
+.area-target {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+:root:is([data-view='verden'], :has(#verden:target)) [data-area='norge'],
+:root:not([data-view='verden'], :has(#verden:target)) [data-area='verden'] {
+  display: none;
+}

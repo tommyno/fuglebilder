@@ -1,0 +1,16 @@
+/* A family page's parts: the living species, then Utdødde arter */
+.section + .section {
+  margin-top: var(--space-xl);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+}
+
+.sectionCount {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-gray);
+}

@@ -10,6 +10,7 @@ import { Skeletons } from './Tile';
 import styles from './Grid.module.css';
 import button from './Button.module.css';
 import filterStyles from './PhotoGrid.module.css';
+import seg from './Segmented.module.css';
 
 /** null = alle bilder */
 type Filter = PhotoFilter | null;
@@ -141,30 +142,28 @@ export default function PhotoGrid({ taxon }: { taxon: Taxon }) {
 
   return (
     <>
-      <div class={filterStyles.filters} role="group" aria-label="Vis bilder">
-        <button
-          class={styles.chip}
-          type="button"
-          aria-pressed={filter === null}
-          onClick={() => choose(null)}
-        >
-          Alle
-        </button>
-        {FILTER_KEYS.map((key, i) => (
-          <Fragment key={key}>
-            {(i === 0 || PHOTO_FILTERS[key].kind !== PHOTO_FILTERS[FILTER_KEYS[i - 1]].kind) && (
-              <span class={filterStyles.sep} aria-hidden="true" />
-            )}
-            <button
-              class={styles.chip}
-              type="button"
-              aria-pressed={filter === key}
-              onClick={() => choose(filter === key ? null : key)}
-            >
-              {PHOTO_FILTERS[key].label}
-            </button>
-          </Fragment>
-        ))}
+      {/* Alle | Voksen Ungfugl | Hann Hunn: the small pill from the front page, scrolls sideways if too wide */}
+      <div class={filterStyles.filters}>
+        <div class={seg.group} role="group" aria-label="Vis bilder av">
+          <button class={seg.option} type="button" aria-pressed={filter === null} onClick={() => choose(null)}>
+            Alle
+          </button>
+          {FILTER_KEYS.map((key, i) => (
+            <Fragment key={key}>
+              {(i === 0 || PHOTO_FILTERS[key].kind !== PHOTO_FILTERS[FILTER_KEYS[i - 1]].kind) && (
+                <span class={seg.sep} aria-hidden="true" />
+              )}
+              <button
+                class={seg.option}
+                type="button"
+                aria-pressed={filter === key}
+                onClick={() => choose(filter === key ? null : key)}
+              >
+                {PHOTO_FILTERS[key].label}
+              </button>
+            </Fragment>
+          ))}
+        </div>
       </div>
 
       <ul class={styles.grid} ref={tiles}>

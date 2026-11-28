@@ -15,6 +15,11 @@ export interface Taxon {
   name: string | null;
 }
 
+/** A bird on a grid tile: enough to name it, link to it and show its photo. */
+export interface GridBird extends Taxon {
+  photo: string;
+}
+
 /** A photo as returned by /api/photos and stored in favorites. */
 export interface Photo {
   /** "<photoId>.<ext>" on the iNaturalist open-data bucket */
@@ -58,11 +63,22 @@ export function photoUrl(photo: string, size: PhotoSize): string {
 /** The Norwegian name, or the Latin one when there is none. */
 export const displayName = (t: Pick<Taxon, 'sci' | 'name'>) => t.name ?? t.sci;
 
-/** "svarttrost"; Latin name when there is no Norwegian one, or appended when the Norwegian one is taken. */
-export function birdSlug(t: Taxon): string {
+const collator = new Intl.Collator('nb');
+/** A–Å by display name, in Norwegian order. */
+export const byName = (a: Pick<Taxon, 'sci' | 'name'>, b: Pick<Taxon, 'sci' | 'name'>) =>
+  collator.compare(displayName(a), displayName(b));
+
+/** "1 art", "25 arter" */
+export const speciesCount = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
+
+/** Slug from the display name, with the Latin name appended for ids in `clashes` (see slugClashes()). */
+export function taxonSlug(t: Taxon, clashes: Set<number>): string {
   const slug = slugify(displayName(t));
-  return CLASHES.has(t.id) ? `${slug}-${slugify(t.sci)}` : slug;
+  return clashes.has(t.id) ? `${slug}-${slugify(t.sci)}` : slug;
 }
+
+/** "svarttrost"; Latin name when there is no Norwegian one, or appended when the Norwegian one is taken. */
+export const birdSlug = (t: Taxon) => taxonSlug(t, CLASHES);
 
 /** /fugl/svarttrost */
 export const birdPath = (t: Taxon) => `/fugl/${birdSlug(t)}`;
