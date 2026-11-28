@@ -60,15 +60,19 @@ button {
 }
 
 /* Sett i Norge | Hele verden on the front page and /familier (BrowseNav.astro): both views are in the
-   page, and #verden in the address shows the world one. CSS only, so it's right from the first
-   paint. The #norge / #verden targets sit at the top of the page, so following them doesn't scroll. */
+   page, and #verden in the address shows the world one. A script in Base.astro's <head> sets
+   data-view on <html> before the first paint (:target only matches once a new page has loaded, so
+   it showed Norge first); without JavaScript, :target does it. The #norge / #verden targets sit at
+   the top of the page, so following them doesn't scroll. */
 .area-target {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-body:has(#verden:target) [data-area='norge'],
-body:not(:has(#verden:target)) [data-area='verden'] {
+:root[data-view='verden'] [data-area='norge'],
+:root[data-view='norge'] [data-area='verden'],
+:root:not([data-view]):has(#verden:target) [data-area='norge'],
+:root:not([data-view]):not(:has(#verden:target)) [data-area='verden'] {
   display: none;
 }

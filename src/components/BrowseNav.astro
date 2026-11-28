@@ -3,8 +3,8 @@
 // pill), and at the right a Familier switch (on at /familier, off at /). The switch is a link
 // to the other page, so it works without JavaScript and Back turns it off again.
 // Both views are in the page, marked data-area="norge" / "verden". #verden in the address shows
-// the world one, by CSS alone (global.css), so the right view is there from the first paint and
-// the switch works without JavaScript. Back and Forward switch too, like any #link.
+// the world one: a script in Base.astro's <head> marks it before the first paint, with :target in
+// global.css as the fallback without JavaScript. Back and Forward switch too, like any #link.
 import seg from './Segmented.module.css';
 import styles from './BrowseNav.module.css';
 

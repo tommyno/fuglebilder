@@ -57,6 +57,16 @@ const ogImageAlt = image ? imageAlt : 'Fuglebilder-logoen: en dompap';
     <meta name="theme-color" content="#fbfbf9" /><!-- = --color-sand-light in variables.css -->
     <script is:inline>
       if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+      // Sett i Norge | Hele verden (BrowseNav.astro, global.css): mark the view from #verden before
+      // the first paint. :target alone only matches once the page has loaded, so a new page showed
+      // Norge first and then jumped to Verden. Without JavaScript, global.css falls back to :target.
+      {
+        const view = () => {
+          document.documentElement.dataset.view = location.hash === '#verden' ? 'verden' : 'norge';
+        };
+        view();
+        addEventListener('hashchange', view);
+      }
     </script>
     <link rel="preconnect" href="https://inaturalist-open-data.s3.amazonaws.com" />
   </head>
