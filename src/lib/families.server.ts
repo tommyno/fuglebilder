@@ -64,7 +64,7 @@ export const getFamilyOf = (speciesId: number) => familyBySpecies.get(speciesId)
 /** Every family, A–Å, the wholly extinct ones last. */
 export const allFamilies = () => families;
 
-export const familyPath = (f: Family) => `/familie/${f.slug}`;
+export const familyPath = (f: Family) => `/familier/${f.slug}`;
 
 /** The species the family is best known by: most observed in Norway, or in the world (living if any). */
 export const coverSpecies = (f: Family, norway: boolean) =>

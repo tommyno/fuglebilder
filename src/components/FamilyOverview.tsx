@@ -1,9 +1,6 @@
-import { areaPath, type Area } from '../lib/area';
 import { photoUrl } from '../lib/shared';
-import { useArea } from './AreaSwitch';
-import BrowseNav from './BrowseNav';
-import browse from './BrowseNav.module.css';
 import { Thumb } from './Thumb';
+import browse from './BrowseNav.module.css';
 import styles from './Grid.module.css';
 import own from './Families.module.css';
 
@@ -24,32 +21,44 @@ export interface OverviewFamily {
 
 const count = (n: number) => (n === 1 ? '1 art' : `${n} arter`);
 
-/** /familier and /verden/familier, the Familier tab: every family as a tile, A–Å, the ones with birds seen in Norway or the whole world. */
-export default function FamilyOverview({ initialArea, families }: { initialArea: Area; families: OverviewFamily[] }) {
-  const [area, choose] = useArea(initialArea);
-  const norway = area === 'norge';
-  const shown = norway ? families.filter((f) => f.norway) : families;
-
+function Families({ families, norway }: { families: OverviewFamily[]; norway: boolean }) {
   return (
-    <section class={browse.section} aria-label="Familier">
-      <BrowseNav tab="familier" area={area} choose={choose} />
-      <p class={browse.lead}>{norway ? `${shown.length} familier sett i Norge` : `${shown.length} familier i hele verden`}</p>
-      <ul class={styles.grid}>
-        {shown.map((f) => (
-          <li key={f.href}>
-            <a class={styles.tile} href={areaPath(f.href, area)}>
-              <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
-              <span class={styles.label}>
-                <span class={styles.labelName}>{f.label}</span>
-                <span class={own.tileCount}>
-                  {count(norway ? f.norway : f.world)}
-                  {f.extinct && ', utdødd'}
-                </span>
+    <ul class={styles.grid}>
+      {families.map((f) => (
+        <li key={f.href}>
+          <a class={styles.tile} href={f.href}>
+            <Thumb src={photoUrl((norway && f.photoNo) || f.photo, 'medium')} alt="" />
+            <span class={styles.label}>
+              <span class={styles.labelName}>{f.label}</span>
+              <span class={own.tileCount}>
+                {count(norway ? f.norway : f.world)}
+                {f.extinct && ', utdødd'}
               </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * /familier, under BrowseNav: every family as a tile, A–Å. Both views are in the page; CSS shows
+ * the Norge one (families with birds seen in Norway, with their Norwegian cover bird and count)
+ * or, with #verden, the world one. Photos in the hidden view load lazily, so aren't fetched.
+ */
+export default function FamilyOverview({ families }: { families: OverviewFamily[] }) {
+  const norwegian = families.filter((f) => f.norway);
+  return (
+    <>
+      <div data-area="norge">
+        <p class={browse.lead}>{norwegian.length} familier sett i Norge</p>
+        <Families families={norwegian} norway />
+      </div>
+      <div data-area="verden">
+        <p class={browse.lead}>{families.length} familier i hele verden</p>
+        <Families families={families} norway={false} />
+      </div>
+    </>
   );
 }

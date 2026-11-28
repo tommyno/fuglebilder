@@ -3,8 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.tsx';
 import SpeciesFacts from '../../components/SpeciesFacts.astro';
 import BackLink from '../../components/BackLink.astro';
-import { getSpeciesBySlug, isNorwegian } from '../../lib/species.server';
-import { areaPath } from '../../lib/area';
+import { getSpeciesBySlug } from '../../lib/species.server';
 import { familyPath, getFamilyOf } from '../../lib/families.server';
 import { displayName, photoUrl, type Taxon } from '../../lib/shared';
 
@@ -23,8 +22,6 @@ const others = species.names.slice(1);
 const inText = species.name?.toLocaleLowerCase('nb') ?? species.sci;
 
 const family = getFamilyOf(species.id);
-// A bird not seen in Norway is only in its family's Hele verden view, so link there
-const familyHref = family && areaPath(familyPath(family), isNorwegian(species) ? 'norge' : 'verden');
 
 ---
 
@@ -41,7 +38,7 @@ const familyHref = family && areaPath(familyPath(family), isNorwegian(species) ?
     <div class="intro">
       <div class="who">
         {family && (
-          <p class="family"><a href={familyHref}>{displayName(family)}</a></p>
+          <p class="family"><a href={familyPath(family)}>{displayName(family)}</a></p>
         )}
         <h1 class:list={["page-title", "name", { latin: !species.name }]}>{title}</h1>
         {species.name && <p class="sci">{species.sci}</p>}

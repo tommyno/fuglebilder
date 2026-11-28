@@ -1,12 +1,5 @@
 /* Shared by FamilyGrid (a family's species) and FamilyOverview (/familier) */
 
-.choices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin-bottom: var(--space-sm);
-}
-
 /* "25 arter" under a family name on its tile */
 .tileCount {
   display: block;
@@ -14,8 +7,19 @@
   color: var(--color-white);
 }
 
-.extinctTitle {
-  margin: var(--space-xl) 0 var(--space-2xs);
+/* A family page's parts: Sett i Norge, Ellers i verden, Utdødde arter */
+.section + .section {
+  margin-top: var(--space-xl);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-sm);
   font-size: var(--text-xl);
   font-weight: var(--weight-medium);
+}
+
+.sectionCount {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-gray);
 }

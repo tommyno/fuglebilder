@@ -47,7 +47,9 @@
 }
 
 .option[aria-pressed='true'],
-.option[aria-current='page'] {
+/* Norge | Hele verden: chosen by #verden in the address (BrowseNav.astro, global.css) */
+:global(body:not(:has(#verden:target))) .option[data-option='norge'],
+:global(body:has(#verden:target)) .option[data-option='verden'] {
   background: var(--color-charcoal);
   color: var(--color-white);
 }

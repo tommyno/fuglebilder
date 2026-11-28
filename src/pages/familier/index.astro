@@ -1,20 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
+import BrowseNav from '../../components/BrowseNav.astro';
 import FamilyOverview, { type OverviewFamily } from '../../components/FamilyOverview.tsx';
 import { allFamilies, coverSpecies, familyPath, isExtinctFamily } from '../../lib/families.server';
 import { displayName } from '../../lib/shared';
-import { areaFromParam } from '../../lib/area';
+import browse from '../../components/BrowseNav.module.css';
 
-// The Familier tab: /familier for Norge, /verden/familier for the whole world.
-// Static: the families only change when the index is rebuilt.
-export const prerender = true;
-
-export function getStaticPaths() {
-  return [{ params: { area: undefined } }, { params: { area: 'verden' } }];
-}
-
-const area = areaFromParam(Astro.params.area)!;
-
+// The Familier tab. Static: the families only change when the index is rebuilt.
+// Both views are in the page: families seen in Norway, and (with #verden) all of them.
 const families: OverviewFamily[] = allFamilies().map((f) => ({
   href: familyPath(f),
   label: displayName(f),
@@ -31,7 +24,10 @@ const families: OverviewFamily[] = allFamilies().map((f) => ({
   description="Alle verdens fuglefamilier fra A til Å. Se hvilke arter som hører til hver familie."
   search
 >
-  <!-- The Familier tab of the front page: same switch and tabs, so no back link or visible title -->
+  <!-- A tab of the front page: same switch and tabs, so no back link or visible title -->
   <h1 class="visually-hidden">Fuglefamilier</h1>
-  <FamilyOverview client:load initialArea={area} families={families} />
+  <section class={browse.section} aria-label="Familier">
+    <BrowseNav tab="familier" />
+    <FamilyOverview client:load families={families} />
+  </section>
 </Base>

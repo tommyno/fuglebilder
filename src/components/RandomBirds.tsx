@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { Area } from '../lib/area';
-import { birdPath, getJson, photoUrl, RANDOM_SEEDS } from '../lib/shared';
+import { getJson, RANDOM_SEEDS } from '../lib/shared';
 import type { RandomBird as Bird } from '../lib/species.server';
-import { useArea } from './AreaSwitch';
-import BrowseNav from './BrowseNav';
-import browse from './BrowseNav.module.css';
+import BirdGrid from './BirdGrid';
 import { ShuffleIcon } from './icons';
-import { Thumb } from './Thumb';
-import { Skeletons, TileLabel } from './Tile';
+import { Skeletons } from './Tile';
 import styles from './Grid.module.css';
 import own from './RandomBirds.module.css';
 
@@ -40,34 +36,35 @@ function newSeed(): number {
   return s;
 }
 
-/** Front page, Arter: every bird seen in Norway A–Å, or 24 random birds from the whole world. */
-export default function RandomBirds({ initialArea, norwegianCount }: { initialArea: Area; norwegianCount: number }) {
-  const [area, choose] = useArea(initialArea);
+// The world view shows when the address ends in #verden (BrowseNav.astro, global.css)
+const worldShown = () => location.hash === '#verden';
+
+/**
+ * Front page, Hele verden: 24 random birds from the whole world, with "Vis nye". Sits in the
+ * page's world view, so it fetches its birds only once that view is shown.
+ */
+export default function RandomBirds() {
   const [seed, setSeed] = useState<number | null>(null);
   const [random, setRandom] = useState<Bird[] | null>(null);
-  const [norske, setNorske] = useState<Bird[] | null>(null);
   const [failed, setFailed] = useState(false);
 
-  /** Fetch a list of birds into `set`; an answer that arrives after cleanup is dropped. */
-  const load = (url: string, set: (b: Bird[]) => void) => {
+  // This tab's set (a new one only if there is none yet), once the world view is shown
+  useEffect(() => {
+    const start = () => worldShown() && setSeed((s) => s ?? initialSeed());
+    start();
+    addEventListener('hashchange', start);
+    return () => removeEventListener('hashchange', start);
+  }, []);
+
+  useEffect(() => {
+    if (seed === null) return;
     const ctrl = new AbortController();
     setFailed(false);
-    getJson<{ birds: Bird[] }>(url, ctrl.signal)
-      .then((d) => set(d.birds))
+    getJson<{ birds: Bird[] }>(`/api/random/${seed}.json`, ctrl.signal)
+      .then((d) => setRandom(d.birds))
       .catch(() => !ctrl.signal.aborted && setFailed(true));
     return () => ctrl.abort();
-  };
-
-  // Hele verden shows this tab's set (a new one only if there is none yet); "Vis nye" deals a new one.
-  useEffect(() => {
-    setFailed(false);
-    if (area === 'verden' && seed === null) setSeed(initialSeed());
-  }, [area]);
-
-  useEffect(() => (seed === null ? undefined : load(`/api/random/${seed}.json`, setRandom)), [seed]);
-
-  // The Norwegian list never changes, so fetch it once.
-  useEffect(() => (area !== 'norge' || norske ? undefined : load('/api/norwegian-birds.json', setNorske)), [area]);
+  }, [seed]);
 
   const shuffle = () => {
     setRandom(null); // don't show the old set while the new one loads
@@ -75,47 +72,25 @@ export default function RandomBirds({ initialArea, norwegianCount }: { initialAr
     setSeed(newSeed());
   };
 
-  const birds = area === 'norge' ? norske : random;
-
   return (
-    <section class={browse.section} aria-labelledby="random-title">
-      <h2 id="random-title" class="visually-hidden">
-        {area === 'verden' ? 'Tilfeldige fugler' : 'Norske fugler fra A til Å'}
-      </h2>
-      <BrowseNav tab="arter" area={area} choose={choose} />
-
-      {area === 'norge' && <p class={browse.lead}>{norwegianCount} arter sett i Norge</p>}
-      {area === 'verden' && (
-        <div class={own.info}>
-          <p>{random?.length ?? 24} tilfeldige arter fra hele verden</p>
-          <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
-            Vis nye
-            <ShuffleIcon />
-          </button>
-        </div>
+    <>
+      <div class={own.info}>
+        <p>{random?.length ?? 24} tilfeldige arter fra hele verden</p>
+        <button class={`${styles.chip} ${own.shuffle}`} type="button" onClick={shuffle}>
+          Vis nye
+          <ShuffleIcon />
+        </button>
+      </div>
+      {failed && <p class={styles.status}>Klarte ikke å hente fugler akkurat nå. Prøv «Vis nye».</p>}
+      {random ? (
+        <BirdGrid birds={random} />
+      ) : (
+        !failed && (
+          <ul class={styles.grid}>
+            <Skeletons count={12} />
+          </ul>
+        )
       )}
-
-      {failed && (
-        <p class={styles.status}>
-          {area === 'norge'
-            ? 'Klarte ikke å hente fuglene akkurat nå. Prøv igjen litt senere.'
-            : 'Klarte ikke å hente fugler akkurat nå. Prøv «Vis nye».'}
-        </p>
-      )}
-
-      <ul class={styles.grid}>
-        {birds
-          ? birds.map((b) => (
-              <li key={b.id}>
-                <a class={styles.tile} href={birdPath(b)}>
-                  {/* empty alt: the label below already names the link */}
-                  <Thumb src={photoUrl(b.photo, 'medium')} alt="" />
-                  <TileLabel taxon={b} />
-                </a>
-              </li>
-            ))
-          : !failed && <Skeletons count={12} />}
-      </ul>
-    </section>
+    </>
   );
 }

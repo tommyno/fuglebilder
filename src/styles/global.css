@@ -58,3 +58,17 @@ button {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Norge | Hele verden on the front page and /familier (BrowseNav.astro): both views are in the
+   page, and #verden in the address shows the world one. CSS only, so it's right from the first
+   paint. The #norge / #verden targets sit at the top of the page, so following them doesn't scroll. */
+.area-target {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+body:has(#verden:target) [data-area='norge'],
+body:not(:has(#verden:target)) [data-area='verden'] {
+  display: none;
+}
